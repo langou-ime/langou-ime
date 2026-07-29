@@ -1,0 +1,78 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Langou Input Method contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+package com.osfans.trime.langou.release
+
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.string.shouldContain
+import io.kotest.matchers.string.shouldNotContain
+import java.io.File
+
+private fun locateRepositoryRoot(): File {
+    val workingDirectory = System.getProperty("user.dir") ?: error("user.dir is unavailable")
+    var directory = File(workingDirectory).absoluteFile
+    while (!File(directory, ".github/workflows").isDirectory) {
+        directory = directory.parentFile ?: error("Android repository root was not found")
+    }
+    return directory
+}
+
+class AndroidReleaseWorkflowContractTest :
+    StringSpec({
+        val repositoryRoot = locateRepositoryRoot()
+
+        "internal CI creates clearly non-production artifacts" {
+            val workflow = File(repositoryRoot, ".github/workflows/langou-android-ci.yml").readText()
+            workflow shouldContain "DEBUG-SIGNED-INTERNAL"
+            workflow shouldContain "./gradlew testDebugUnitTest assembleDebug"
+            workflow shouldNotContain "release-action"
+        }
+
+        "public release requires all signing material and publishes checksums" {
+            val workflow = File(repositoryRoot, ".github/workflows/langou-android-release.yml").readText()
+            workflow shouldContain "ANDROID_KEYSTORE_BASE64"
+            workflow shouldContain "ANDROID_KEYSTORE_PASSWORD"
+            workflow shouldContain "ANDROID_KEY_ALIAS"
+            workflow shouldContain "ANDROID_KEY_PASSWORD"
+            workflow shouldContain
+                "LANGOU_RELEASE_PUBLIC_KEY_BASE64: \"1uFuGlWZWeHpckhp2MTF6+5yCGIZYgBd5ghWEVQjx/k=\""
+            workflow shouldContain "./gradlew testReleaseUnitTest assembleRelease"
+            workflow shouldContain "SHA256SUMS"
+            workflow shouldContain "langou-ime-android-v1.0.0.apk"
+            workflow shouldContain
+                "sha256sum langou-ime-android-v1.0.0.apk > SHA256SUMS"
+            workflow shouldNotContain "SIGNING_KEY"
+            workflow shouldNotContain "Build Trime"
+        }
+
+        "lint report models wait for generated assets" {
+            val buildScript = File(repositoryRoot, "app/build.gradle.kts").readText()
+            buildScript shouldContain
+                """it.name.startsWith("generate") && it.name.endsWith("LintReportModel")"""
+            buildScript shouldContain """it.name.startsWith("lintAnalyze")"""
+            buildScript shouldContain """dependsOn("generateDataChecksums")"""
+        }
+
+        "CI and release workflows pin every third party action by commit" {
+            val workflows =
+                listOf(
+                    File(repositoryRoot, ".github/workflows/langou-android-ci.yml"),
+                    File(repositoryRoot, ".github/workflows/langou-android-release.yml"),
+                ).joinToString("\n") { it.readText() }
+
+            workflows shouldContain
+                "actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803"
+            workflows shouldContain
+                "actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95"
+            workflows shouldContain
+                "android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699"
+            workflows shouldContain
+                "actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f"
+            workflows shouldNotContain "actions/checkout@v"
+            workflows shouldNotContain "actions/setup-java@v"
+            workflows shouldNotContain "android-actions/setup-android@v"
+            workflows shouldNotContain "actions/upload-artifact@v"
+        }
+    })

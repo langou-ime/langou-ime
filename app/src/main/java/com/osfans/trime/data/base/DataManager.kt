@@ -6,7 +6,6 @@ package com.osfans.trime.data.base
 
 import android.content.res.AssetManager
 import android.os.Build
-import android.os.Environment
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.util.FileUtils
 import com.osfans.trime.util.ResourceUtils
@@ -52,9 +51,9 @@ object DataManager {
 
     private val prefs by lazy { AppPrefs.defaultInstance() }
 
-    val defaultDataDir = File(Environment.getExternalStorageDirectory(), "rime")
+    val defaultDataDir = File(appContext.filesDir, "rime")
 
-    val sharedDataDir = File(appContext.getExternalFilesDir(null), "shared").also { it.mkdirs() }
+    val sharedDataDir = File(appContext.filesDir, "shared").also { it.mkdirs() }
 
     val userDataDir
         get() = File(prefs.profile.userDataDir.getValue()).also { it.mkdirs() }

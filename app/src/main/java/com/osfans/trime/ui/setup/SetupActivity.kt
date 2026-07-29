@@ -23,12 +23,14 @@ import com.osfans.trime.R
 import com.osfans.trime.databinding.ActivitySetupBinding
 import com.osfans.trime.ui.setup.SetupPage.Companion.firstUndonePage
 import com.osfans.trime.ui.setup.SetupPage.Companion.isLastPage
+import com.osfans.trime.ui.setup.SetupPage.Companion.availablePages
 import com.osfans.trime.util.appContext
 import com.osfans.trime.util.createNotificationChannel
 import splitties.systemservices.notificationManager
 
 class SetupActivity : FragmentActivity() {
     private lateinit var viewPager: ViewPager2
+    private val pages by lazy { availablePages() }
     private val viewModel: SetupViewModel by viewModels()
 
     companion object {
@@ -74,7 +76,7 @@ class SetupActivity : FragmentActivity() {
         val nextButton =
             binding.nextButton.apply {
                 setOnClickListener {
-                    if (viewPager.currentItem != SetupPage.entries.size - 1) {
+                    if (viewPager.currentItem != pages.size - 1) {
                         viewPager.currentItem += 1
                     } else {
                         finish()
@@ -153,10 +155,10 @@ class SetupActivity : FragmentActivity() {
     }
 
     private inner class Adapter : FragmentStateAdapter(this) {
-        override fun getItemCount(): Int = SetupPage.entries.size
+        override fun getItemCount(): Int = pages.size
 
         override fun createFragment(position: Int): Fragment = SetupFragment().apply {
-            arguments = bundleOf("page" to SetupPage.entries[position])
+            arguments = bundleOf("page" to pages[position])
         }
     }
 }

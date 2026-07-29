@@ -78,6 +78,7 @@ class InputBarDelegate : InputBroadcastReceiver {
 
     private var isClipboardFresh: Boolean = false
     private var isInlineSuggestionPresent: Boolean = false
+    private var isAiSuggestionPresent: Boolean = false
 
     @Keep
     private val onClipboardUpdateListener = ClipboardHelper.OnClipboardUpdateListener {
@@ -111,6 +112,7 @@ class InputBarDelegate : InputBroadcastReceiver {
             when {
                 isClipboardFresh -> AlwaysUi.State.Clipboard
                 isInlineSuggestionPresent -> AlwaysUi.State.InlineSuggestion
+                isAiSuggestionPresent -> AlwaysUi.State.AiSuggestion
                 else -> AlwaysUi.State.Toolbar
             }
         if (newState == alwaysUi.currentState) return
@@ -158,6 +160,27 @@ class InputBarDelegate : InputBroadcastReceiver {
         clipboardTimeoutJob?.cancel()
         clipboardTimeoutJob = null
         isClipboardFresh = false
+        evalAlwaysUiState()
+    }
+
+    fun showAiLoading() {
+        alwaysUi.aiSuggestionsUi.showLoading()
+        isAiSuggestionPresent = true
+        evalAlwaysUiState()
+    }
+
+    fun showAiSuggestions(
+        values: List<String>,
+        onSelect: (String) -> Unit,
+    ) {
+        isAiSuggestionPresent =
+            alwaysUi.aiSuggestionsUi.showSuggestions(values, onSelect)
+        evalAlwaysUiState()
+    }
+
+    fun dismissAiSuggestions() {
+        alwaysUi.aiSuggestionsUi.clear()
+        isAiSuggestionPresent = false
         evalAlwaysUiState()
     }
 

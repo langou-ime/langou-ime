@@ -46,6 +46,11 @@ class MainFragment : PaddingPreferenceFragment() {
     ) {
         preferenceScreen = preferenceManager.createPreferenceScreen(requireContext()).apply {
             addDestinationPreference(
+                R.string.langou_account_and_privacy,
+                R.drawable.ic_baseline_account_circle_24,
+                NavigationRoute.LangouAccount,
+            )
+            addDestinationPreference(
                 R.string.schemata,
                 R.drawable.ic_round_view_list_24,
                 NavigationRoute.SchemaList,

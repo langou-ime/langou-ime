@@ -1,163 +1,83 @@
 <!--
-SPDX-FileCopyrightText: 2015 - 2024 Rime community
+SPDX-FileCopyrightText: 2015 - 2026 Rime community
+SPDX-FileCopyrightText: 2026 Langou Input Method contributors
 
 SPDX-License-Identifier: GPL-3.0-or-later
 -->
 
-# Trime
+# 懒狗输入法 Android
 
-Rime IME for Android
-
-![build](https://github.com/osfans/trime/actions/workflows/commit-ci.yml/badge.svg?branch=develop)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
-[![GitHub release](https://img.shields.io/github/release/osfans/trime.svg)](https://github.com/osfans/trime/releases)
-[![F-Droid release](https://img.shields.io/f-droid/v/com.osfans.trime.svg)](https://f-droid.org/packages/com.osfans.trime)
-[![Latest build](https://img.shields.io/github/last-commit/osfans/trime.svg)](http://osfans.github.io/trime/)
+[![Android CI](https://github.com/langou-ime/android/actions/workflows/langou-android-ci.yml/badge.svg)](https://github.com/langou-ime/android/actions/workflows/langou-android-ci.yml)
 
-English | [简体中文](README_sc.md) | [繁體中文](README_tc.md)
+懒狗输入法是面向 Android 8.0 及以上系统的免费中文输入法。项目以
+[Trime v3.3.10](https://github.com/osfans/trime/tree/v3.3.10) 和
+[RIME](https://rime.im/) 为输入核心，保留 Trime 上游 Git 历史、版权及许可；
+懒狗品牌、AI 上下文助手、三款皮肤、账号与安全更新能力为本项目新增部分。
 
-## About
+正式版本只从 [langou.tech](https://langou.tech/) 和本仓库的 GitHub Release
+提供。应用 ID 固定为 `tech.langou.ime`。任何名称含
+`DEBUG-SIGNED-INTERNAL` 的文件都不是正式发布包。
 
-Trime is originally a frontend of open-source [Android Traditional Chinese IME], based on [RIME] input method framework and written in Java/Kotlin with JNI. It is designed to protect the native language of various local dialects of Chinese and is a universal shape-based and phonetic-based input method platform.
+## v1.0.0 能力
 
-[Documentation](https://github.com/osfans/trime/wiki)
+- 全拼、9 键、英文、数字、符号、Emoji、模糊拼音、候选翻页与本地词频学习。
+- 奶油懒狗、樱桃汽水、月光软糖三款内置皮肤。
+- 在聊天上下文变化后生成最多三条 AI 建议；点击只写入输入框，永不自动发送。
+- Android 11+ 使用无障碍截图；Android 8–10 使用经用户授权的
+  MediaProjection；OCR 在设备本地完成。
+- 游客可使用离线输入与 AI；登录只用于历史和设置同步。
 
-## Download
+密码框、银行/支付、密码管理器和系统安全页面一律禁止采集。截图只存在于内存，
+不上传、不落盘，OCR 后立即释放。网络或 AI 故障不会阻塞 RIME 的离线输入。
 
-- Stable Channel <br>
-  [<img alt='Get it on F-Droid' src='https://fdroid.gitlab.io/artwork/badge/get-it-on.png' height='80px'/>](https://f-droid.org/packages/com.osfans.trime)
-  [<img alt='Google Play Download Now' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height='80px'/>](https://play.google.com/store/apps/details?id=com.osfans.trime)
+## 构建
 
-- Nightly Channel [Download](https://github.com/osfans/trime/releases/tag/nightly)
-
-- Canary Channel [Download](https://github.com/osfans/trime/actions)
-
-- Configurations [rimerc](https://github.com/Bambooin/rimerc)
-
-## History
-
-TRIME is the abbreviation of _Tongwen RIME_ or _ThaeRv Input Method_.
-
-From the beginning, TRIME was written for TaeRv Pinyin, and named _TaeRv Input Method (泰如输入法)_.
-
-Then, we created an input method platform with some code tables, such as Wu dialect (吴语). We renamed it to _Chinese Character Dialect Input Method (汉字方言输入法)_.
-
-Later, it supports Wubi and Liangbi and other shape-based input method, we branded it [_Tongwen Input Method Platform 2.0 (同文输入法平台 2.0)_](https://github.com/osfans/trime-legacy), which implies that the phonetic-based and shape-based input method on one platform, while dialects and Mandrain share one kind of characters.
-
-Benefit from the [librime](https://github.com/rime/librime) project by JNI, we are now in version 3.0 of TRIME aka _Tongwen Input Method (同文输入法)_.
-
-Your are now welcome to [contribution](CONTRIBUTING.md) ~ !
-
-## Getting Started for developer
-
-### Prepare
-
-#### Requirements:
-
-- Android SDK and Android NDK
-  * If you are new to Android development, please install [Android Studio](https://developer.android.com/studio).
-
-- JDK (OpenJDK) 17
-- Python 3 (required by OpenCC to generate dictionary text files)
-
-#### Prerequisites for Windows
-
-Symbolic links will be created according to current build configurations, developers need:
-
-- Enable [Developer Mode](https://learn.microsoft.com/en-us/windows/apps/get-started/enable-your-device-for-development) so that symlinks can be created without administrator privilege.
-
-- Enable symlink support for `git`:
-
-  ```powershell
-  git config --global core.symlinks true
-  ```
-
-If you cannot or wouldn't like to enable anything, it doesn't matter. Copying will be used instead when error on creating symbolic links.
-
-### Build
-
-#### 1. Clone this project and fetch all submodules:
+需要 Android Studio JBR、Android SDK 36、NDK/CMake 及 Git 子模块：
 
 ```sh
-git clone git@github.com:osfans/trime.git
-git submodule update --init --recursive
-# use partial clone to save time
-git submodule update --init --recursive --filter=blob:none
+git clone --recurse-submodules https://github.com/langou-ime/android.git
+cd android
+./gradlew testDebugUnitTest assembleDebug
 ```
 
-#### 2. Debug version without signature:
+OpenCC 1.4.1 的可移植词典已按来源和哈希固定在
+`app/src/main/opencc-1.4.1/`，普通构建不需要 Python。正式 Release 还需要仓库
+外的 Android keystore 和 Ed25519 发布清单公钥；签名材料不得提交到 Git。
+
+```properties
+# keystore.properties（仅示例；请勿提交）
+storeFile=/absolute/path/to/android-release.jks
+storePassword=...
+keyAlias=...
+keyPassword=...
+```
 
 ```sh
-# On Linux or macOS
-make debug
-
-# On Windows
-.\gradlew assembleDebug
+LANGOU_RELEASE_PUBLIC_KEY_BASE64=... \
+  ./gradlew testReleaseUnitTest lintRelease assembleRelease
 ```
 
-#### 3. Release version with signture:
+公开版本的完整检查由 `.github/workflows/langou-android-release.yml` 执行。生产
+APK 的固定文件名为 `langou-ime-android-v1.0.0.apk`。
 
-Create `keystore.properties` file which contains following contents for [signing information](https://developer.android.com/studio/publish/app-signing.html):
+## 开源、隐私与上游
 
-```gradle.properties
-storePassword=myStorePassword
-keyPassword=mykeyPassword
-keyAlias=myKeyAlias
-storeFile=myStoreFileLocation
-```
+本仓库遵循 [GPL-3.0](LICENSE)。Trime/RIME 原始版权、内部类名、上游提交历史
+和许可声明均保留。第三方组件及许可证由 AboutLibraries 在 Release 构建中生成；
+固定输入数据的来源记录在 `third_party/` 与各 `PROVENANCE.md` 文件中。
 
-Then, you may run:
+主要上游组件：
 
-```sh
-# On Linux or macOS
-make release
+- Trime：GPL-3.0-or-later
+- librime：BSD-3-Clause
+- OpenCC：Apache-2.0
+- Boost：Boost Software License 1.0
+- PP-OCRv6 / PaddleOCR：Apache-2.0
+- ONNX Runtime：MIT
+- OpenCV：Apache-2.0
+- Bouncy Castle：MIT
 
-# On Windows
-.\gradlew assembleRelease
-```
-
-### Troubleshooting
-
-```
-Target "boost_log_setup" links to target "Boost::coroutine" but the target was not found.
-```
-
-Run `make clean` on Linux or macOS, or run `.\gradlew clean` on Windows.
-
-Other issues:
-
-1. Try `make clean`
-2. Make sure your repo is up-to-date. If one or more submodules are modified, also make sure they are compatible with the current version.
-3. If the problem still exists(very unlikely), try to make a new clone.
-4. Check if this is there is an issue/PR related to your problem. If yes, try their solutions.
-5. If none of them works, you may make an issue to ask for help.(optional)
-
-## Acknowledgments
-
-- Developer: [osfans](https://github.com/osfans)
-- Contributors: [boboIqiqi](https://github.com/boboIqiqi)、[Bambooin](https://github.com/Bambooin)、[senchi96](https://github.com/senchi96)、[heiher](https://github.com/heiher)、[abay](https://github.com/a342191555)、[iovxw](https://github.com/iovxw)、[huyz-git](https://github.com/huyz-git)、[tumuyan](https://github.com/tumuyan)、[WhiredPlanck](https://github.com/WhiredPlanck)、[nopdan](https://github.com/nopdan)...
-- [Wiki Editors](https://github.com/osfans/trime/wiki): [xiaoqun2016](https://github.com/xiaoqun2016)、[boboIqiqi](https://github.com/boboIqiqi)...
-- Translators: 天真可爱的满满 (Chinese Traditional), 点解 (English) ...
-- Keyboard Designers: 天真可爱的满满、皛筱晓小笨鱼、吴琛 11、熊猫阿 Bo、默默ㄇㄛ ˋ...
-- Donations: See QR Code in [Releases](https://github.com/osfans/trime/releases)
-- Community: Netizens who feedback in [Issues](https://github.com/osfans/trime/issues)、[QQ Group (811142286)](https://jq.qq.com/?_wv=1027&k=AXdR80HN)、[QQ Group (224230445)](http://qm.qq.com/cgi-bin/qm/qr?_wv=1027&k=pg_q7UVumWYLq1Rk8kIAqkK1xGt64VnX&authKey=04m9l7OBO5H5vgrEL8IbpsmtnptWM60xy%2FUwYCfyvw9VcRhe8zRzAS1ezoemZdFr&noverify=0&group_code=224230445)、[Tieba](http://tieba.baidu.com/f?kw=rime)、[Google Play](https://play.google.com/store/apps/details?id=com.osfans.trime)、[Telegram](https://t.me/trime_dev)...
-- Projects: [RIME]、[OpenCC]、[Android Traditional Chinese IME] and so on.
-
-## Third Party Libraries
-
-- [Boost C++ Libraries](https://www.boost.org/) (Boost Software License)
-- [darts-clone](https://github.com/s-yata/darts-clone) (New BSD License)
-- [LevelDB](https://github.com/google/leveldb) (New BSD License)
-- [libiconv](https://www.gnu.org/software/libiconv/) (LGPL License)
-- [marisa-trie](https://github.com/s-yata/marisa-trie) (BSD License)
-- [glog](https://github.com/google/glog) (New BSD License)
-- [OpenCC](https://github.com/BYVoid/OpenCC) (Apache License 2.0)
-- [RIME](https://rime.im) (BSD License)
-- [snappy](https://github.com/google/snappy)(BSD License)
-- [utfcpp](https://github.com/nemtrif/utfcpp) (Boost Software License)
-- [yaml-cpp](https://github.com/jbeder/yaml-cpp) (MIT License)
-- [Android Traditional Chinese IME](https://code.google.com/p/android-traditional-chinese-ime/) (Apache License 2.0)
-
-[Android Traditional Chinese IME]: https://code.google.com/p/android-traditional-chinese-ime/
-[RIME]: http://rime.im
-[OpenCC]: https://github.com/BYVoid/OpenCC
+感谢 [osfans/trime](https://github.com/osfans/trime) 的维护者与历年贡献者，以及
+RIME、OpenCC、PaddleOCR 等开源社区。懒狗输入法的发行问题请提交到本仓库，
+不要向 Trime 上游社区请求懒狗专属功能支持。

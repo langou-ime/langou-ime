@@ -8,6 +8,9 @@ splitties = "3.0.0"
 aboutlibraries = "13.1.0"
 kotest = "6.0.7"
 iconics = "5.4.0"
+onnxruntime = "1.21.1"
+opencv = "4.5.3"
+bouncycastle = "1.84"
 
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -36,6 +39,9 @@ timber = { module = "com.jakewharton.timber:timber", version = "5.0.1" }
 xxpermissions = { module = "com.github.getActivity:XXPermissions", version = "18.5" }
 iconics-core = { module = "com.mikepenz:iconics-core", version.ref = "iconics" }
 community-material-typeface = { module = "com.mikepenz:community-material-typeface", version = "7.0.96.1-kotlin" }
+onnxruntime-android = { group = "com.microsoft.onnxruntime", name = "onnxruntime-android", version.ref = "onnxruntime" }
+opencv-android = { group = "com.quickbirdstudios", name = "opencv", version.ref = "opencv" }
+bcprov = { module = "org.bouncycastle:bcprov-jdk18on", version.ref = "bouncycastle" }
 kodein-di = { module = "org.kodein.di:kodein-di", version = "7.30.0" }
 snakeyaml = { module = "org.yaml:snakeyaml", version = "2.6" }
 splitties-bitflags = { module = "com.louiscad.splitties:splitties-bitflags", version.ref = "splitties" }

@@ -1,0 +1,44 @@
+# SPDX-FileCopyrightText: 2026 Langou Input Method contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Numeric spelling approach inspired by the GPL-3.0 rime-ice t9 schema.
+# This implementation uses only standard librime processors, so it works in Trime.
+
+__include: luna_pinyin_simp.schema:/
+
+schema:
+  schema_id: langou_t9
+  name: 懒狗九键
+  version: "1.0.0"
+  author:
+    - Langou Input Method contributors
+  description: 标准 librime 数字拼写九宫格方案
+
+translator:
+  dictionary: luna_pinyin
+  prism: langou_t9
+  enable_user_dict: true
+  enable_sentence: true
+
+speller:
+  alphabet: "98765432'"
+  initials: "98765432"
+  delimiter: " '"
+  algebra:
+    __patch:
+      - pinyin:/zh_z_bufen
+      - pinyin:/n_l_bufen
+      - pinyin:/en_eng_bufen
+      - pinyin:/abbreviation
+      - pinyin:/spelling_correction
+      - pinyin:/key_correction
+      - xlit/abcdefghijklmnopqrstuvwxyz/22233344455566677778889999/
+
+key_binder:
+  import_preset: default
+  bindings:
+    - { when: has_menu, accept: "1", send: apostrophe }
+
+punctuator:
+  half_shape:
+    "1": ["，", "。", "？", "！", "、", "：", "；"]

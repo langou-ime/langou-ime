@@ -291,6 +291,21 @@ class InputView(
         enterKeyDisplay.updateLabelOnEditorInfo(info)
     }
 
+    fun showAiLoading() {
+        inputBar.showAiLoading()
+    }
+
+    fun showAiSuggestions(
+        values: List<String>,
+        onSelect: (String) -> Unit,
+    ) {
+        inputBar.showAiSuggestions(values, onSelect)
+    }
+
+    fun dismissAiSuggestions() {
+        inputBar.dismissAiSuggestions()
+    }
+
     override fun handleRimeMessage(it: RimeMessage<*>) {
         when (it) {
             is RimeMessage.SchemaMessage -> {

@@ -50,6 +50,16 @@ import com.osfans.trime.data.theme.Theme
 import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.ime.composition.CandidatesView
 import com.osfans.trime.ime.keyboard.InputFeedbackManager
+import com.osfans.trime.langou.LangouClientFactory
+import com.osfans.trime.langou.LangouPreferences
+import com.osfans.trime.langou.ai.AutoSuggestionGate
+import com.osfans.trime.langou.ai.ChatApplicationMapper
+import com.osfans.trime.langou.ai.SuggestionDecision
+import com.osfans.trime.langou.context.ContextSnapshotStore
+import com.osfans.trime.langou.network.ConversationTurn
+import com.osfans.trime.langou.network.SuggestionRequest
+import com.osfans.trime.langou.privacy.ContextSignals
+import com.osfans.trime.langou.privacy.SensitiveContextPolicy
 import com.osfans.trime.receiver.RimeIntentReceiver
 import com.osfans.trime.util.any
 import com.osfans.trime.util.findSectionFrom
@@ -58,14 +68,19 @@ import com.osfans.trime.util.monitorCursorAnchor
 import com.osfans.trime.util.styledFloat
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 import splitties.bitflags.hasFlag
 import splitties.systemservices.clipboardManager
 import splitties.systemservices.inputMethodManager
 import timber.log.Timber
+import java.util.Locale
+import java.util.UUID
 
 /** [輸入法][InputMethodService]主程序  */
 
@@ -92,6 +107,17 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private var composingText: String = ""
 
     private var cursorUpdateIndex = 0
+
+    private val langouApi by lazy(LangouClientFactory::api)
+    private val langouSessionManager by lazy {
+        LangouClientFactory.sessionManager(applicationContext, langouApi)
+    }
+    private val langouSettings by lazy {
+        getSharedPreferences(LangouPreferences.SETTINGS_FILE, MODE_PRIVATE)
+    }
+    private val langouSuggestionGate = AutoSuggestionGate()
+    private var langouSuggestionJob: Job? = null
+    private var suppressNextLangouUpdate = false
 
     private val recreateInputViewPrefs: Array<PreferenceDelegate<*>> =
         arrayOf(prefs.keyboard.hideInputBar)
@@ -171,6 +197,26 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             rime.run { messageFlow }.collect {
                 handleRimeMessage(it)
             }
+        }
+        lifecycleScope.launch {
+            ContextSnapshotStore.snapshots
+                .distinctUntilChangedBy { snapshot ->
+                    snapshot?.let { it.packageName to it.turns }
+                }.collect { snapshot ->
+                    if (snapshot == null) {
+                        langouSuggestionJob?.cancel()
+                        inputView?.dismissAiSuggestions()
+                        return@collect
+                    }
+                    val editorInfo = currentInputEditorInfo ?: return@collect
+                    if (
+                        isInputViewShown &&
+                        snapshot.packageName == editorInfo.packageName &&
+                        ContextSnapshotStore.get(editorInfo.packageName) == snapshot
+                    ) {
+                        scheduleLangouSuggestions(editorInfo)
+                    }
+                }
         }
         recreateInputViewPrefs.forEach {
             it.registerOnChangeListener(recreateInputViewListener)
@@ -423,6 +469,11 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         cursorUpdateIndex += 1
         handleCursorUpdate(newSelStart, newSelEnd, candidatesStart, candidatesEnd, cursorUpdateIndex)
         inputView?.updateSelection(newSelStart, newSelEnd)
+        if (suppressNextLangouUpdate) {
+            suppressNextLangouUpdate = false
+        } else {
+            scheduleLangouSuggestions()
+        }
     }
 
     private fun handleCursorUpdate(
@@ -547,6 +598,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             inputDeviceManager.evaluateOnStartInputView(attribute, this)
         if (useVirtualKeyboard) {
             inputView?.startInput(attribute, restarting)
+            scheduleLangouSuggestions(attribute)
         }
         if (useCandidatesView) {
             if (currentInputConnection?.monitorCursorAnchor() != true) {
@@ -567,10 +619,128 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             monitorCursorAnchor(false)
         }
         composingText = ""
+        langouSuggestionJob?.cancel()
+        langouSuggestionJob = null
+        langouSuggestionGate.reset()
+        inputView?.dismissAiSuggestions()
         postRimeJob {
             clearComposition()
         }
         InputFeedbackManager.finishInput()
+    }
+
+    private fun scheduleLangouSuggestions(info: EditorInfo? = currentInputEditorInfo) {
+        langouSuggestionJob?.cancel()
+        if (!langouSettings.getBoolean(LangouPreferences.AI_AUTO_SUGGEST, true)) {
+            inputView?.dismissAiSuggestions()
+            return
+        }
+        val editorInfo = info ?: return
+        val packageName = editorInfo.packageName.orEmpty()
+        val application = ChatApplicationMapper.map(packageName)
+        if (application == null) {
+            inputView?.dismissAiSuggestions()
+            return
+        }
+        val signals =
+            ContextSignals(
+                inputType = editorInfo.inputType,
+                packageName = packageName,
+            )
+        if (!SensitiveContextPolicy.canCollect(signals)) {
+            inputView?.dismissAiSuggestions()
+            return
+        }
+
+        langouSuggestionJob =
+            lifecycleScope.launch {
+                delay(LANGOU_SUGGESTION_DEBOUNCE_MS)
+                val editorContext = extractLangouEditorContext()
+                val snapshot = ContextSnapshotStore.get(packageName)
+                val turns =
+                    snapshot
+                        ?.turns
+                        ?.map { turn ->
+                            ConversationTurn(role = turn.role, text = turn.text)
+                        }.orEmpty()
+                        .ifEmpty {
+                            editorContext
+                                .takeIf(String::isNotBlank)
+                                ?.let { listOf(ConversationTurn(role = "self", text = it)) }
+                                .orEmpty()
+                        }
+                val draft =
+                    editorContext
+                        .takeIf(String::isNotBlank)
+                        ?.takeLast(MAX_LANGOU_DRAFT_CONTEXT_CHARACTERS)
+                val context =
+                    buildString {
+                        turns.forEach { append(it.text) }
+                        draft?.let(::append)
+                    }.takeLast(MAX_LANGOU_GATE_CONTEXT_CHARACTERS)
+                if (
+                    langouSuggestionGate.evaluate(signals, context) !=
+                    SuggestionDecision.Generate
+                ) {
+                    return@launch
+                }
+                inputView?.showAiLoading()
+                var requestSucceeded = false
+                try {
+                    val session = langouSessionManager.validSession()
+                    val suggestions =
+                        langouApi.suggestions(
+                            bearerToken = session.tokens.accessToken,
+                            request =
+                                SuggestionRequest(
+                                    requestId =
+                                        "req_${UUID.randomUUID().toString().replace("-", "")}",
+                                    deviceId = session.deviceId,
+                                    application = application,
+                                    locale = Locale.getDefault().toLanguageTag().take(16),
+                                    turns = turns,
+                                    draft = draft,
+                                    saveHistory =
+                                        langouSettings.getBoolean(
+                                            LangouPreferences.SAVE_HISTORY,
+                                            true,
+                                        ),
+                                ),
+                        )
+                    requestSucceeded = true
+                    inputView?.showAiSuggestions(suggestions.map { it.text }) { text ->
+                        suppressNextLangouUpdate = true
+                        commitText(text)
+                        inputView?.dismissAiSuggestions()
+                    }
+                } catch (cancellation: CancellationException) {
+                    throw cancellation
+                } catch (failure: Exception) {
+                    Timber.w(
+                        "Langou AI unavailable: ${failure.javaClass.simpleName}",
+                    )
+                    inputView?.dismissAiSuggestions()
+                } finally {
+                    langouSuggestionGate.complete(context, requestSucceeded)
+                }
+            }
+    }
+
+    private fun extractLangouEditorContext(): String {
+        val connection = currentInputConnection ?: return ""
+        return runCatching {
+            val before =
+                connection
+                    .getTextBeforeCursor(MAX_LANGOU_CONTEXT_SIDE_CHARACTERS, 0)
+                    ?.toString()
+                    .orEmpty()
+            val after =
+                connection
+                    .getTextAfterCursor(MAX_LANGOU_CONTEXT_SIDE_CHARACTERS, 0)
+                    ?.toString()
+                    .orEmpty()
+            (before + after).trim()
+        }.getOrDefault("")
     }
 
     fun commitText(text: String) {
@@ -987,5 +1157,12 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         }
         dialog.show()
         showingDialog = dialog
+    }
+
+    private companion object {
+        const val LANGOU_SUGGESTION_DEBOUNCE_MS = 600L
+        const val MAX_LANGOU_CONTEXT_SIDE_CHARACTERS = 1_000
+        const val MAX_LANGOU_DRAFT_CONTEXT_CHARACTERS = 400
+        const val MAX_LANGOU_GATE_CONTEXT_CHARACTERS = 2_000
     }
 }

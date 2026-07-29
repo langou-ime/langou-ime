@@ -136,9 +136,6 @@ class MainActivity : AppCompatActivity() {
             menu.item(R.string.deploy, R.drawable.ic_baseline_refresh_reversed_24, showAsAction = true) {
                 viewModel.rime.launchOnReady { it.deploy() }
             },
-            menu.item(R.string.developer) {
-                navController.navigate(NavigationRoute.Developer)
-            },
             menu.item(R.string.about) {
                 navController.navigate(NavigationRoute.About)
             },

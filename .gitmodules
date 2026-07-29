@@ -38,3 +38,15 @@
 [submodule "essay"]
 	path = app/data/rime/essay
 	url = https://github.com/rime/rime-essay
+[submodule "third_party/rime-prelude"]
+	path = third_party/rime-prelude
+	url = https://github.com/rime/rime-prelude.git
+[submodule "third_party/rime-luna-pinyin"]
+	path = third_party/rime-luna-pinyin
+	url = https://github.com/rime/rime-luna-pinyin.git
+[submodule "third_party/rime-essay"]
+	path = third_party/rime-essay
+	url = https://github.com/rime/rime-essay.git
+[submodule "third_party/rime-emoji"]
+	path = third_party/rime-emoji
+	url = https://github.com/rime/rime-emoji.git

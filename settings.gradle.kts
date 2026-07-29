@@ -23,3 +23,5 @@ dependencyResolutionManagement {
 rootProject.name = "trime"
 include(":app")
 include(":codegen")
+include(":ppocr-sdk")
+project(":ppocr-sdk").projectDir = file("third_party/ppocr-sdk")

@@ -83,6 +83,13 @@ val Node.alias: Node.Alias?
 val Node.string: String?
     get() = scalar?.string
 
+val Node.stringList: List<String>
+    get() = (when (this) {
+        is Node.Scalar -> listOf(string)
+        is Node.Sequence -> mapNotNull(Node::string)
+        else -> emptyList()
+    }).filter(String::isNotBlank)
+
 val Node.int: Int?
     get() = scalar?.parseToIntLikeOrNull(String::toIntOrNull)
 

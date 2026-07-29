@@ -10,7 +10,6 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.content.res.Configuration
 import android.os.Process
-import android.util.Log
 import androidx.core.content.ContextCompat
 import androidx.core.content.edit
 import androidx.preference.PreferenceManager
@@ -109,20 +108,6 @@ class TrimeApplication : Application() {
                                 "${tag?.substringAfter('|')}] $message",
                                 t,
                             )
-                        }
-                    },
-                )
-            } else {
-                Timber.plant(
-                    object : Timber.Tree() {
-                        override fun log(
-                            priority: Int,
-                            tag: String?,
-                            message: String,
-                            t: Throwable?,
-                        ) {
-                            if (priority < Log.INFO) return
-                            Log.println(priority, "[${Thread.currentThread().name}]", message)
                         }
                     },
                 )

@@ -99,41 +99,6 @@ class AboutFragment : PaddingPreferenceFragment() {
                     findNavController().navigate(NavigationRoute.License)
                 }
             }
-            addCategory("") {
-                isIconSpaceReserved = false
-                addPreference(R.string.qq_group_1, Const.QQ_GROUP_1_NUM) {
-                    startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(Const.QQ_GROUP_1_URL),
-                        ),
-                    )
-                }
-                addPreference(R.string.qq_group_2, Const.QQ_GROUP_2_NUM) {
-                    startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(Const.QQ_GROUP_2_URL),
-                        ),
-                    )
-                }
-                addPreference(R.string.rime_qq_group, Const.RIME_QQ_GROUP_NUM) {
-                    startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(Const.RIME_QQ_GROUP_URL),
-                        ),
-                    )
-                }
-                addPreference(R.string.telegram, Const.TELEGRAM_NAME) {
-                    startActivity(
-                        Intent(
-                            Intent.ACTION_VIEW,
-                            Uri.parse(Const.TELEGRAM_URL),
-                        ),
-                    )
-                }
-            }
         }
     }
 

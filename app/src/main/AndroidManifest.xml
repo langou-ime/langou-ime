@@ -9,19 +9,23 @@ SPDX-License-Identifier: GPL-3.0-or-later
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
     <uses-permission android:name="android.permission.VIBRATE" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PROJECTION" />
 
     <application
         android:name="com.osfans.trime.TrimeApplication"
-        android:allowBackup="true"
+        android:allowBackup="false"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        android:fullBackupContent="false"
         android:icon="@mipmap/ic_app_icon"
         android:label="@string/trime_app_name"
-        android:requestLegacyExternalStorage="true"
         android:roundIcon="@mipmap/ic_app_icon_round"
-        android:theme="@style/Theme.TrimeAppTheme">
+        android:supportsRtl="true"
+        android:theme="@style/Theme.TrimeAppTheme"
+        android:usesCleartextTraffic="false">
 
         <service
             android:name=".ime.core.TrimeInputMethodService"
@@ -35,6 +39,26 @@ SPDX-License-Identifier: GPL-3.0-or-later
                 android:name="android.view.im"
                 android:resource="@xml/method" />
         </service>
+
+        <service
+            android:name=".langou.context.LangouAccessibilityService"
+            android:directBootAware="false"
+            android:exported="true"
+            android:label="@string/langou_accessibility_service_name"
+            android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE">
+            <intent-filter>
+                <action android:name="android.accessibilityservice.AccessibilityService" />
+            </intent-filter>
+            <meta-data
+                android:name="android.accessibilityservice"
+                android:resource="@xml/accessibility_service_config" />
+        </service>
+
+        <service
+            android:name=".langou.context.LegacyCaptureService"
+            android:exported="false"
+            android:foregroundServiceType="mediaProjection"
+            android:stopWithTask="false" />
 
         <provider
             android:name=".provider.RimeDataProvider"
@@ -66,6 +90,13 @@ SPDX-License-Identifier: GPL-3.0-or-later
         <activity
             android:name=".ui.setup.SetupActivity"
             android:exported="false" />
+
+        <activity
+            android:name=".langou.context.LegacyCapturePermissionActivity"
+            android:excludeFromRecents="true"
+            android:exported="false"
+            android:noHistory="true"
+            android:theme="@style/Theme.DialogTheme" />
 
         <activity
             android:name=".ui.main.LogActivity"

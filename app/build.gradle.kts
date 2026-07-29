@@ -5,6 +5,10 @@
 @file:Suppress("UnstableApiUsage")
 
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.gradle.api.tasks.Sync
+
+val langouReleasePublicKey =
+    providers.environmentVariable("LANGOU_RELEASE_PUBLIC_KEY_BASE64").orElse("").get()
 
 plugins {
     id("com.osfans.trime.app-convention")
@@ -21,17 +25,23 @@ plugins {
 
 android {
     namespace = "com.osfans.trime"
-    compileSdk = 35
+    compileSdk = 36
     buildToolsVersion = "35.0.0"
 
     defaultConfig {
-        applicationId = "com.osfans.trime"
-        minSdk = 21
-        targetSdk = 35
-        versionCode = 20260501
-        versionName = "3.3.10"
+        applicationId = "tech.langou.ime"
+        minSdk = 26
+        targetSdk = 36
+        versionCode = 10000
+        versionName = "1.0.0"
 
         multiDexEnabled = true
+        buildConfigField("String", "LANGOU_API_BASE_URL", "\"https://api.langou.tech/\"")
+        buildConfigField(
+            "String",
+            "LANGOU_RELEASE_PUBLIC_KEY",
+            "\"$langouReleasePublicKey\"",
+        )
         buildConfigField("String", "BUILDER", "\"${project.builder}\"")
         buildConfigField("long", "BUILD_TIMESTAMP", project.buildTimestamp)
         buildConfigField("String", "BUILD_COMMIT_HASH", "\"${project.buildCommitHash}\"")
@@ -81,6 +91,12 @@ android {
         viewBinding = true
     }
 
+    splits {
+        abi {
+            isUniversalApk = true
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -98,6 +114,12 @@ android {
     // hack workaround lint gradle 8.0.2
     lint {
         checkReleaseBuilds = false
+        // Compose lint bundled with this AGP cannot read Kotlin 2.1 metadata yet.
+        disable +=
+            setOf(
+                "FlowOperatorInvokedInComposition",
+                "CoroutineCreationDuringComposition",
+            )
     }
 
     testOptions {
@@ -123,11 +145,9 @@ android {
                 )
         }
     }
-}
 
-kotlin {
-    sourceSets.configureEach {
-        kotlin.srcDir(layout.buildDirectory.dir("generated/ksp/$name/kotlin"))
+    sourceSets {
+        getByName("main").assets.srcDir(layout.buildDirectory.dir("generated/rimeAssets"))
     }
 }
 
@@ -149,15 +169,84 @@ ksp {
     arg("room.schemaLocation", "$projectDir/schemas")
 }
 
+val syncRimeData =
+    tasks.register<Sync>("syncRimeData") {
+        val sharedDirectory = "shared"
+        into(layout.buildDirectory.dir("generated/rimeAssets"))
+        from("../third_party/rime-prelude") {
+            into(sharedDirectory)
+            include("key_bindings.yaml", "punctuation.yaml", "symbols.yaml")
+        }
+        from("../third_party/rime-luna-pinyin") {
+            into(sharedDirectory)
+            include("*.yaml")
+        }
+        from("../third_party/rime-essay/essay.txt") {
+            into(sharedDirectory)
+        }
+        from("../third_party/rime-emoji/emoji_suggestion.yaml") {
+            into(sharedDirectory)
+        }
+        from("../third_party/rime-emoji/opencc") {
+            into("$sharedDirectory/opencc")
+        }
+        from("src/main/rime") {
+            into(sharedDirectory)
+        }
+        from("../third_party/rime-prelude/LICENSE") {
+            into("$sharedDirectory/licenses")
+            rename { "rime-prelude-LICENSE" }
+        }
+        from("../third_party/rime-luna-pinyin/LICENSE") {
+            into("$sharedDirectory/licenses")
+            rename { "rime-luna-pinyin-LICENSE" }
+        }
+        from("../third_party/rime-essay/LICENSE") {
+            into("$sharedDirectory/licenses")
+            rename { "rime-essay-LICENSE" }
+        }
+        from("../third_party/rime-emoji/LICENSE") {
+            into("$sharedDirectory/licenses")
+            rename { "rime-emoji-LICENSE" }
+        }
+    }
+
+tasks.named("preBuild").configure {
+    dependsOn(syncRimeData)
+}
+
+val validateLangouReleaseKey =
+    tasks.register("validateLangouReleaseKey") {
+        doLast {
+            require(langouReleasePublicKey.isNotBlank()) {
+                "LANGOU_RELEASE_PUBLIC_KEY_BASE64 is required for release builds"
+            }
+        }
+    }
+
+tasks.matching { it.name == "preReleaseBuild" }.configureEach {
+    dependsOn(validateLangouReleaseKey)
+}
+
 android.applicationVariants.all {
     val variantName = name.replaceFirstChar { it.uppercase() }
     tasks.findByName("generateDataChecksums")?.also {
+        it.dependsOn(syncRimeData)
         tasks.getByName("merge${variantName}Assets").dependsOn(it)
     }
 }
 
+tasks
+    .matching {
+        (it.name.startsWith("generate") && it.name.endsWith("LintReportModel")) ||
+            it.name.startsWith("lintAnalyze")
+    }.configureEach {
+        dependsOn("generateDataChecksums")
+    }
+
 dependencies {
     ksp(project(":codegen"))
+    implementation(project(":ppocr-sdk"))
     implementation(libs.kotlinx.coroutines)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.androidx.activity)
@@ -182,6 +271,7 @@ dependencies {
     implementation(libs.xxpermissions)
     implementation(libs.kodein.di)
     implementation(libs.snakeyaml)
+    implementation(libs.bcprov)
     implementation(libs.splitties.bitflags)
     implementation(libs.splitties.systemservices)
     implementation(libs.splitties.views.dsl)

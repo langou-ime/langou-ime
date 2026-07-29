@@ -35,6 +35,7 @@ class AlwaysUi(
         Toolbar,
         Clipboard,
         InlineSuggestion,
+        AiSuggestion,
     }
 
     var currentState = State.Toolbar
@@ -66,6 +67,8 @@ class AlwaysUi(
 
     val inlineSuggestionsUi = InlineSuggestionsUi(ctx)
 
+    val aiSuggestionsUi = AiSuggestionsUi(ctx)
+
     val hideKeyboardButton = ToolButton(ctx, R.drawable.ic_baseline_arrow_drop_down_24)
     private val rightMostButton =
         ViewAnimator(ctx).apply {
@@ -83,6 +86,7 @@ class AlwaysUi(
             add(buttonsUi.root, lParams(matchParent, matchParent))
             add(clipboardUi.root, lParams(matchParent, matchParent))
             add(inlineSuggestionsUi.root, lParams(matchParent, matchParent))
+            add(aiSuggestionsUi.root, lParams(matchParent, matchParent))
         }
 
     override val root: ConstraintLayout = constraintLayout {

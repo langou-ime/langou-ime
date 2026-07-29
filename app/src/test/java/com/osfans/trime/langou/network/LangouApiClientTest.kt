@@ -1,0 +1,104 @@
+/*
+ * SPDX-FileCopyrightText: 2026 Langou Input Method contributors
+ * SPDX-License-Identifier: GPL-3.0-or-later
+ */
+
+package com.osfans.trime.langou.network
+
+import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldNotContain
+
+class LangouApiClientTest :
+    StringSpec({
+        "creates guest session and parses exactly three SSE suggestions" {
+            val transport =
+                RecordingTransport(
+                    jsonResponse =
+                        """
+                        {
+                          "access_token":"access-token-value",
+                          "refresh_token":"refresh-token-value",
+                          "token_type":"bearer",
+                          "expires_in":900,
+                          "subject_type":"guest"
+                        }
+                        """.trimIndent(),
+                    events =
+                        listOf(
+                            SseEvent("meta", """{"request_id":"req_12345678"}"""),
+                            SseEvent("suggestion", """{"index":0,"style":"natural","text":"好呀～"}"""),
+                            SseEvent("suggestion", """{"index":1,"style":"gentle","text":"当然可以呀"}"""),
+                            SseEvent("suggestion", """{"index":2,"style":"boundary","text":"今天不方便哦"}"""),
+                            SseEvent("done", """{"count":3}"""),
+                        ),
+                )
+            val client = LangouApiClient(transport)
+
+            val session =
+                client.createGuestSession(
+                    deviceId = "dev_01JZQ6M0HZK9TBEXB1N6H7Y2RP",
+                    platform = "android",
+                    appVersion = "1.0.0",
+                )
+            val suggestions =
+                client.suggestions(
+                    session.accessToken,
+                    SuggestionRequest(
+                        requestId = "req_01JZQ6K3EP7EZAW4ZK2B7J1X8M",
+                        deviceId = "dev_01JZQ6M0HZK9TBEXB1N6H7Y2RP",
+                        application = "wechat",
+                        locale = "zh-CN",
+                        turns =
+                            listOf(
+                                ConversationTurn(
+                                    role = "other",
+                                    text = "打我电话13800138000",
+                                ),
+                            ),
+                    ),
+                )
+
+            session.subjectType shouldBe "guest"
+            suggestions.map { it.text }.shouldContainExactly(
+                "好呀～",
+                "当然可以呀",
+                "今天不方便哦",
+            )
+            transport.lastBody shouldNotContain "13800138000"
+            transport.lastBody shouldNotContain "screenshot"
+        }
+    })
+
+private class RecordingTransport(
+    private val jsonResponse: String,
+    private val events: List<SseEvent>,
+) : LangouTransport {
+    var lastBody: String = ""
+
+    override suspend fun postJson(
+        path: String,
+        body: String,
+        bearerToken: String?,
+    ): String {
+        del(path, bearerToken)
+        lastBody = body
+        return jsonResponse
+    }
+
+    override suspend fun postSse(
+        path: String,
+        body: String,
+        bearerToken: String,
+        onEvent: (SseEvent) -> Unit,
+    ) {
+        del(path, bearerToken)
+        lastBody = body
+        events.forEach(onEvent)
+    }
+
+    private fun del(vararg values: Any?) {
+        values.size
+    }
+}
