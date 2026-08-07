@@ -6,6 +6,7 @@
 package com.osfans.trime.langou.release
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
 import java.io.File
@@ -30,7 +31,7 @@ class AndroidReleaseWorkflowContractTest :
             workflow shouldNotContain "release-action"
         }
 
-        "public release requires all signing material and publishes checksums" {
+        "signed build requires all signing material without publishing by itself" {
             val workflow = File(repositoryRoot, ".github/workflows/langou-android-release.yml").readText()
             workflow shouldContain "ANDROID_KEYSTORE_BASE64"
             workflow shouldContain "ANDROID_KEYSTORE_PASSWORD"
@@ -38,13 +39,16 @@ class AndroidReleaseWorkflowContractTest :
             workflow shouldContain "ANDROID_KEY_PASSWORD"
             workflow shouldContain
                 "LANGOU_RELEASE_PUBLIC_KEY_BASE64: \"1uFuGlWZWeHpckhp2MTF6+5yCGIZYgBd5ghWEVQjx/k=\""
-            workflow shouldContain "./gradlew testReleaseUnitTest assembleRelease"
+            workflow shouldContain "./gradlew testReleaseUnitTest lintRelease assembleRelease"
             workflow shouldContain "SHA256SUMS"
             workflow shouldContain "langou-ime-android-v1.0.0.apk"
             workflow shouldContain
                 "sha256sum langou-ime-android-v1.0.0.apk > SHA256SUMS"
+            workflow shouldContain "contents: read"
             workflow shouldNotContain "SIGNING_KEY"
             workflow shouldNotContain "Build Trime"
+            workflow shouldNotContain "gh release"
+            workflow shouldNotContain "contents: write"
         }
 
         "lint report models wait for generated assets" {
@@ -74,5 +78,23 @@ class AndroidReleaseWorkflowContractTest :
             workflows shouldNotContain "actions/setup-java@v"
             workflows shouldNotContain "android-actions/setup-android@v"
             workflows shouldNotContain "actions/upload-artifact@v"
+        }
+
+        "CI runs input method instrumentation on the required Android API matrix" {
+            val workflow = File(repositoryRoot, ".github/workflows/langou-android-ci.yml").readText()
+
+            workflow shouldContain "api-level: [26, 29, 30, 34, 36]"
+            workflow shouldContain
+                "reactivecircus/android-emulator-runner@0a638108440efd5c7f980e6ba145dbcdd8f32009"
+            workflow shouldContain "./gradlew connectedDebugAndroidTest"
+
+            val smokeTest =
+                File(
+                    repositoryRoot,
+                    "app/src/androidTest/java/com/osfans/trime/langou/InputMethodSmokeTest.kt",
+                )
+            smokeTest.isFile shouldBe true
+            smokeTest.readText() shouldContain "ime enable"
+            smokeTest.readText() shouldContain "DEFAULT_INPUT_METHOD"
         }
     })

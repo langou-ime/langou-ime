@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+SPDX-FileCopyrightText: 2026 Langou Input Method contributors
+SPDX-License-Identifier: GPL-3.0-or-later
+-->
+<resources>
+    <!--
+    The debug build's generated trime_app_name resource aliases app_name_debug.
+    Instrumentation APKs receive the alias but do not inherit the target APK's
+    value resources, so the test APK must provide the referenced value itself.
+    -->
+    <string name="app_name_debug">Langou Input Method Tests</string>
+</resources>

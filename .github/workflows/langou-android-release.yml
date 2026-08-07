@@ -10,7 +10,7 @@ on:
       - "v*"
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: langou-android-release
@@ -29,7 +29,6 @@ jobs:
       ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
       ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
       LANGOU_RELEASE_PUBLIC_KEY_BASE64: "1uFuGlWZWeHpckhp2MTF6+5yCGIZYgBd5ghWEVQjx/k="
-      GH_TOKEN: ${{ github.token }}
     steps:
       - name: Require a version tag
         shell: bash
@@ -77,7 +76,7 @@ jobs:
           chmod 600 keystore.properties
 
       - name: Test and build signed release
-        run: ./gradlew testReleaseUnitTest assembleRelease --stacktrace
+        run: ./gradlew testReleaseUnitTest lintRelease assembleRelease --stacktrace
 
       - name: Verify package identity and signing certificate
         shell: bash
@@ -109,16 +108,6 @@ jobs:
             app/build/outputs/apk/release/SHA256SUMS
           if-no-files-found: error
           retention-days: 30
-
-      - name: Publish GitHub Release mirror
-        shell: bash
-        run: |
-          gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1 ||
-            gh release create "${GITHUB_REF_NAME}" --verify-tag --title "懒狗输入法 ${GITHUB_REF_NAME}" --notes "Android 8+ 正式签名通用 APK。"
-          gh release upload "${GITHUB_REF_NAME}" \
-            app/build/outputs/apk/release/langou-ime-android-v1.0.0.apk \
-            app/build/outputs/apk/release/SHA256SUMS \
-            --clobber
 
       - name: Remove ephemeral signing configuration
         if: always()
