@@ -7,6 +7,6 @@
 
 #include <WinSDKVer.h>
 
-#define _WIN32_WINNT _WIN32_WINNT_WINBLUE // Specifies that the minimum required platform is Windows 8.1.
+#define _WIN32_WINNT _WIN32_WINNT_WIN10 // Specifies Windows 10 as the minimum platform.
 
 #include <SDKDDKVer.h>

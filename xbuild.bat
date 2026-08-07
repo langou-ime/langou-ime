@@ -19,9 +19,9 @@ if not exist env.bat copy env.bat.template env.bat
 if exist env.bat call env.bat
 set PRODUCT_VERSION=
 if not defined WEASEL_ROOT set WEASEL_ROOT=%CD%
-if not defined VERSION_MAJOR set VERSION_MAJOR=0
-if not defined VERSION_MINOR set VERSION_MINOR=17
-if not defined VERSION_PATCH set VERSION_PATCH=4
+if not defined VERSION_MAJOR set VERSION_MAJOR=1
+if not defined VERSION_MINOR set VERSION_MINOR=0
+if not defined VERSION_PATCH set VERSION_PATCH=0
 
 if not defined WEASEL_VERSION set WEASEL_VERSION=%VERSION_MAJOR%.%VERSION_MINOR%.%VERSION_PATCH%
 if not defined WEASEL_BUILD set WEASEL_BUILD=0

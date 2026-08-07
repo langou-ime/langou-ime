@@ -8,9 +8,9 @@ if exist env.bat call env.bat
 
 if not defined WEASEL_ROOT set WEASEL_ROOT=%CD%
 
-if not defined VERSION_MAJOR set VERSION_MAJOR=0
-if not defined VERSION_MINOR set VERSION_MINOR=17
-if not defined VERSION_PATCH set VERSION_PATCH=4
+if not defined VERSION_MAJOR set VERSION_MAJOR=1
+if not defined VERSION_MINOR set VERSION_MINOR=0
+if not defined VERSION_PATCH set VERSION_PATCH=0
 
 if not defined WEASEL_VERSION set WEASEL_VERSION=%VERSION_MAJOR%.%VERSION_MINOR%.%VERSION_PATCH%
 if not defined WEASEL_BUILD set WEASEL_BUILD=0
@@ -243,7 +243,7 @@ rem build boost
     --with-serialization^
     --with-system^
     --with-thread^
-    define=BOOST_USE_WINAPI_VERSION=0x0603^
+    define=BOOST_USE_WINAPI_VERSION=0x0A00^
     toolset=%BJAM_TOOLSET%^
     link=static^
     runtime-link=static^

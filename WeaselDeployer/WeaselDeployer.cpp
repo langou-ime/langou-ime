@@ -66,7 +66,7 @@ static int Run(LPTSTR lpCmdLine) {
     WCHAR msg[1024] = {0};
     if (LoadString(GetModuleHandle(NULL), IDS_STR_HELP, msg,
                    sizeof(msg) / sizeof(TCHAR))) {
-      MessageBox(NULL, msg, L"Weasel Deployer", MB_ICONINFORMATION | MB_OK);
+      MessageBox(NULL, msg, L"懒狗输入法部署工具", MB_ICONINFORMATION | MB_OK);
     } else {
       MessageBox(NULL,
                  L"Usage: WeaselDeployer.exe [options]\n"
@@ -74,8 +74,8 @@ static int Run(LPTSTR lpCmdLine) {
                  L"/deploy		- Update Workspace\n"
                  L"/dict		- Manage dictionary\n"
                  L"/sync		- Sync user data\n"
-                 L"/install		- Install Weasel (Initial deployment)",
-                 L"Weasel Deployer", MB_ICONINFORMATION | MB_OK);
+                 L"/install		- Initial Langou IME deployment",
+                 L"Langou IME Deployer", MB_ICONINFORMATION | MB_OK);
     }
     return 0;
   }

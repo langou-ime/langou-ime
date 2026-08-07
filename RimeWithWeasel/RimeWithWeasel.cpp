@@ -103,6 +103,56 @@ RimeWithWeaselHandler::~RimeWithWeaselHandler() {
   m_app_options.clear();
 }
 
+bool RimeWithWeaselHandler::QueueExternalCommitText(
+    const std::string& request_id,
+    const std::string& text) {
+  if (request_id.empty() || text.empty() || text.size() > 4000)
+    return false;
+  const WeaselSessionId active_session = m_active_session.load();
+  if (!active_session)
+    return false;
+  {
+    std::lock_guard<std::mutex> lock(m_external_commit_mutex);
+    if (m_active_session.load() != active_session)
+      return false;
+    m_external_commits.clear();
+    m_external_commits.push_back(
+        {active_session, text,
+         std::chrono::steady_clock::now() + std::chrono::seconds(5)});
+  }
+
+  INPUT inputs[2] = {};
+  inputs[0].type = INPUT_KEYBOARD;
+  inputs[0].ki = {VK_SELECT, 0, 0, 0, 0};
+  inputs[1].type = INPUT_KEYBOARD;
+  inputs[1].ki = {VK_SELECT, 0, KEYEVENTF_KEYUP, 0, 0};
+  const bool sent =
+      ::SendInput(_countof(inputs), inputs, sizeof(INPUT)) == _countof(inputs);
+  if (!sent) {
+    std::lock_guard<std::mutex> lock(m_external_commit_mutex);
+    m_external_commits.clear();
+  }
+  return sent;
+}
+
+bool RimeWithWeaselHandler::_TakeExternalCommit(WeaselSessionId ipc_id,
+                                                 std::string* text) {
+  if (!text)
+    return false;
+  std::lock_guard<std::mutex> lock(m_external_commit_mutex);
+  if (m_external_commits.empty())
+    return false;
+  const auto& commit = m_external_commits.front();
+  if (commit.session_id != ipc_id ||
+      commit.expires_at < std::chrono::steady_clock::now()) {
+    m_external_commits.clear();
+    return false;
+  }
+  *text = commit.text;
+  m_external_commits.pop_front();
+  return true;
+}
+
 bool add_session = false;
 void _UpdateUIStyle(RimeConfig* config, UI* ui, bool initialize);
 bool _UpdateUIStyleColor(RimeConfig* config,
@@ -300,7 +350,29 @@ void RimeWithWeaselHandler::UpdateColorTheme(BOOL darkMode) {
       rime_api->free_status(&status);
     }
   }
-  m_ui->style() = get_session_status(m_active_session).style;
+  m_ui->style() = get_session_status(m_active_session.load()).style;
+}
+
+void RimeWithWeaselHandler::ApplyLangouTheme(const std::string& theme) {
+  const std::map<std::string, std::string> themes = {
+      {"cream", "langou_cream"},
+      {"soda", "langou_soda"},
+      {"moon", "langou_moon"}};
+  const auto selected = themes.find(theme);
+  if (selected == themes.end())
+    return;
+
+  RimeConfig config = {NULL};
+  if (!rime_api->config_open("weasel", &config))
+    return;
+  _UpdateUIStyleColor(&config, m_base_style, selected->second);
+  rime_api->config_close(&config);
+  for (auto& session : m_session_status_map)
+    session.second.style = m_base_style;
+  m_ui->style() = m_base_style;
+  const auto active_session = m_active_session.load();
+  if (active_session)
+    _UpdateUI(active_session);
 }
 
 BOOL RimeWithWeaselHandler::ProcessKeyEvent(KeyEvent keyEvent,
@@ -405,12 +477,12 @@ void RimeWithWeaselHandler::UpdateInputPosition(RECT const& rc,
                                                 WeaselSessionId ipc_id) {
   DLOG(INFO) << "Update input position: (" << rc.left << ", " << rc.top
              << "), ipc_id = " << ipc_id
-             << ", m_active_session = " << m_active_session;
+             << ", m_active_session = " << m_active_session.load();
   if (m_ui)
     m_ui->UpdateInputPosition(rc);
   if (m_disabled)
     return;
-  if (m_active_session != ipc_id) {
+  if (m_active_session.load() != ipc_id) {
     _UpdateUI(ipc_id);
     m_active_session = ipc_id;
   }
@@ -543,7 +615,8 @@ void RimeWithWeaselHandler::SetOption(WeaselSessionId ipc_id,
       for (auto& pair : m_session_status_map)
         rime_api->set_option(to_session_id(pair.first), "ascii_mode", val);
     } else {
-      rime_api->set_option(to_session_id(m_active_session), opt.c_str(), val);
+      rime_api->set_option(to_session_id(m_active_session.load()), opt.c_str(),
+                           val);
     }
   } else {
     rime_api->set_option(to_session_id(ipc_id), opt.c_str(), val);
@@ -790,13 +863,21 @@ bool RimeWithWeaselHandler::_Respond(WeaselSessionId ipc_id, EatLine eat) {
 
   SessionStatus& session_status = get_session_status(ipc_id);
   RimeSessionId session_id = session_status.session_id;
-  RIME_STRUCT(RimeCommit, commit);
-  if (rime_api->get_commit(session_id, &commit)) {
+  std::string external_commit;
+  if (_TakeExternalCommit(ipc_id, &external_commit)) {
     actions.insert("commit");
-
-    std::string commit_text = escape_string<char>(commit.text);
+    rime_api->clear_composition(session_id);
+    std::string commit_text = escape_string<char>(external_commit);
     messages.push_back(std::string("commit=") + commit_text + '\n');
-    rime_api->free_commit(&commit);
+  } else {
+    RIME_STRUCT(RimeCommit, commit);
+    if (rime_api->get_commit(session_id, &commit)) {
+      actions.insert("commit");
+
+      std::string commit_text = escape_string<char>(commit.text);
+      messages.push_back(std::string("commit=") + commit_text + '\n');
+      rime_api->free_commit(&commit);
+    }
   }
 
   bool is_composing = false;

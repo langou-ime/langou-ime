@@ -1,0 +1,97 @@
+<Window x:Class="LangouAssistant.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="懒狗 AI 建议"
+        Width="390"
+        SizeToContent="Height"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        ShowActivated="False"
+        Topmost="True"
+        ResizeMode="NoResize">
+  <Border CornerRadius="26"
+          Background="{StaticResource CreamBrush}"
+          BorderBrush="#55FFFFFF"
+          BorderThickness="1"
+          Padding="16">
+    <Border.Effect>
+      <DropShadowEffect BlurRadius="24" ShadowDepth="6" Opacity="0.22" Color="#7E5265" />
+    </Border.Effect>
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+        <RowDefinition Height="Auto" />
+      </Grid.RowDefinitions>
+
+      <Grid Grid.Row="0" Margin="0,0,0,10">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="64" />
+          <ColumnDefinition Width="*" />
+          <ColumnDefinition Width="Auto" />
+        </Grid.ColumnDefinitions>
+        <Border Width="56" Height="56" CornerRadius="18" Background="#FFFFE3EC">
+          <Image Source="/LangouAssistant;component/Assets/Mascot.png"
+                 Stretch="Uniform"
+                 Margin="2" />
+        </Border>
+        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="10,0">
+          <TextBlock Text="懒狗替你想好了"
+                     FontSize="16"
+                     FontWeight="SemiBold"
+                     Foreground="{StaticResource InkBrush}" />
+          <TextBlock x:Name="StatusText"
+                     Text="点一下，只写入，不会发送"
+                     FontSize="11"
+                     Margin="0,3,0,0"
+                     Foreground="{StaticResource MutedInkBrush}" />
+        </StackPanel>
+        <Button Grid.Column="2"
+                x:Name="CloseButton"
+                Click="CloseButton_Click"
+                Content="×"
+                Width="30"
+                Height="30"
+                FontSize="18"
+                Foreground="{StaticResource MutedInkBrush}"
+                Background="Transparent"
+                BorderThickness="0"
+                Cursor="Hand" />
+      </Grid>
+
+      <StackPanel Grid.Row="1" x:Name="SuggestionPanel">
+        <Button x:Name="SuggestionOne"
+                Style="{StaticResource RoundButton}"
+                Margin="0,0,0,8"
+                Click="Suggestion_Click"
+                Tag="0" />
+        <Button x:Name="SuggestionTwo"
+                Style="{StaticResource RoundButton}"
+                Margin="0,0,0,8"
+                Click="Suggestion_Click"
+                Tag="1" />
+        <Button x:Name="SuggestionThree"
+                Style="{StaticResource RoundButton}"
+                Click="Suggestion_Click"
+                Tag="2" />
+      </StackPanel>
+
+      <Grid Grid.Row="2" Margin="2,10,2,0">
+        <TextBlock Text="🔒 截图只在本机内存识别"
+                   Foreground="{StaticResource MutedInkBrush}"
+                   FontSize="10"
+                   VerticalAlignment="Center" />
+        <Button HorizontalAlignment="Right"
+                Content="账号与设置"
+                Click="SettingsButton_Click"
+                Background="Transparent"
+                BorderThickness="0"
+                Foreground="{StaticResource PeachDarkBrush}"
+                Cursor="Hand"
+                FontSize="11" />
+      </Grid>
+    </Grid>
+  </Border>
+</Window>

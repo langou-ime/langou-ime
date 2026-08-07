@@ -9,11 +9,14 @@
 #include <filesystem>
 #include <functional>
 #include <memory>
-#include <winsparkle.h>
-
 #include "WeaselTrayIcon.h"
+#include "LangouBridgeClient.h"
 
 namespace fs = std::filesystem;
+
+#define ID_LANGOU_THEME_CREAM 49001
+#define ID_LANGOU_THEME_SODA 49002
+#define ID_LANGOU_THEME_MOON 49003
 
 class WeaselServerApp {
  public:
@@ -34,19 +37,7 @@ class WeaselServerApp {
   }
 
   static bool check_update() {
-    // when checked manually, show testing versions too
-    std::string feed_url = GetCustomResource("ManualUpdateFeedURL", "APPCAST");
-    std::wstring channel{};
-    auto ret = RegGetStringValue(HKEY_CURRENT_USER, L"Software\\Rime\\Weasel",
-                                 L"UpdateChannel", channel);
-    if (!ret && channel == L"testing") {
-      feed_url = GetCustomResource("TestingManualUpdateFeedURL", "APPCAST");
-    }
-    if (!feed_url.empty()) {
-      win_sparkle_set_appcast_url(feed_url.c_str());
-    }
-    win_sparkle_check_update_with_ui();
-    return true;
+    return execute(install_dir() / L"LangouAssistant.exe", L"/update");
   }
 
   static fs::path install_dir() {
@@ -67,4 +58,5 @@ class WeaselServerApp {
   weasel::UI m_ui;
   WeaselTrayIcon tray_icon;
   std::unique_ptr<RimeWithWeaselHandler> m_handler;
+  std::unique_ptr<LangouBridgeClient> m_langou_bridge;
 };

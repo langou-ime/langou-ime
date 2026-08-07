@@ -1,0 +1,194 @@
+name: Langou Signed Windows Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Release version"
+        required: true
+        default: "1.0.0"
+  push:
+    tags:
+      - "v1.0.0"
+
+permissions:
+  actions: read
+  contents: read
+
+concurrency:
+  group: langou-windows-signed-release
+  cancel-in-progress: false
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  BOOST_VERSION: "1.84.0"
+  BOOST_ROOT: "${{ github.workspace }}\\deps\\boost_1_84_0"
+  SIGNPATH_ORGANIZATION_ID: "${{ secrets.SIGNPATH_ORGANIZATION_ID }}"
+  SIGNPATH_API_TOKEN: "${{ secrets.SIGNPATH_API_TOKEN }}"
+  SIGNPATH_PROJECT_SLUG: "${{ vars.SIGNPATH_PROJECT_SLUG }}"
+  SIGNPATH_POLICY_SLUG: "${{ vars.SIGNPATH_POLICY_SLUG }}"
+  SIGNPATH_ARTIFACT_CONFIGURATION_SLUG: "${{ vars.SIGNPATH_ARTIFACT_CONFIGURATION_SLUG }}"
+  RELEASE_PUBLIC_KEY_BASE64: "1uFuGlWZWeHpckhp2MTF6+5yCGIZYgBd5ghWEVQjx/k="
+
+jobs:
+  signed-release:
+    name: Build, SignPath sign, and verify
+    runs-on: windows-2022
+    timeout-minutes: 90
+    environment: production
+    steps:
+      - name: Enforce v1 release gate
+        shell: pwsh
+        run: |
+          if ("${{ github.repository_owner }}" -ne "langou-ime") {
+            throw "Signed releases are restricted to the langou-ime organization."
+          }
+          if ("${{ github.ref }}" -ne "refs/tags/v1.0.0") {
+            throw "Run this workflow from the signed v1.0.0 tag."
+          }
+          if ("${{ inputs.version }}" -and "${{ inputs.version }}" -ne "1.0.0") {
+            throw "The first public workflow only permits version 1.0.0."
+          }
+          $required = @(
+            $env:SIGNPATH_ORGANIZATION_ID,
+            $env:SIGNPATH_API_TOKEN,
+            $env:SIGNPATH_PROJECT_SLUG,
+            $env:SIGNPATH_POLICY_SLUG,
+            $env:SIGNPATH_ARTIFACT_CONFIGURATION_SLUG,
+            $env:RELEASE_PUBLIC_KEY_BASE64
+          )
+          if ($required | Where-Object { [string]::IsNullOrWhiteSpace($_) }) {
+            throw "Signing and release-key settings are incomplete. Public release is blocked."
+          }
+
+      - name: Check out exact source and submodules
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install .NET 8
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: "8.0.x"
+          cache: true
+          cache-dependency-path: |
+            LangouAssistant.Core/packages.lock.json
+            LangouAssistant.Tests/packages.lock.json
+            LangouAssistant/packages.lock.json
+            LangouInstaller/packages.lock.json
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2
+
+      - name: Configure Visual Studio 2022 native build
+        shell: pwsh
+        run: Copy-Item .\env.vs2022.bat .\env.bat
+
+      - name: Cache fixed Boost source and libraries
+        id: boost-cache
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: "${{ env.BOOST_ROOT }}"
+          key: "windows-2022-boost-${{ env.BOOST_VERSION }}-win10-v1"
+
+      - name: Install and build Boost
+        if: steps.boost-cache.outputs.cache-hit != 'true'
+        shell: cmd
+        run: |
+          call install_boost.bat
+          if errorlevel 1 exit /b 1
+
+      - name: Fetch pinned librime 1.13.1 binaries
+        shell: pwsh
+        run: .\get-rime.ps1 -tag 1.13.1 -use dev
+
+      - name: Compile and run native bridge parser test
+        shell: cmd
+        run: |
+          cl /nologo /std:c++17 /EHsc /utf-8 /I"%BOOST_ROOT%" /I"WeaselServer" test\LangouBridgeProtocolTest.cpp WeaselServer\LangouBridgeProtocol.cpp /Fe:LangouBridgeProtocolTest.exe
+          if errorlevel 1 exit /b 1
+          LangouBridgeProtocolTest.exe
+          if errorlevel 1 exit /b 1
+
+      - name: Build native TSF and RIME binaries
+        shell: cmd
+        env:
+          RELEASE_BUILD: "1"
+        run: |
+          xcopy /E /I /Y rime-data output\data
+          call build.bat release
+          if errorlevel 1 exit /b 1
+
+      - name: Build unsigned signing input
+        shell: pwsh
+        run: |
+          .\scripts\Build-LangouPackage.ps1 `
+            -ReleasePublicKeyBase64 "${{ env.RELEASE_PUBLIC_KEY_BASE64 }}"
+          $unsigned = @(
+            Get-ChildItem .\artifacts\langou\installer `
+              -Filter "langou-ime-windows-x64-v1.0.0.msi" -Recurse -File
+          )
+          if ($unsigned.Count -ne 1) {
+            throw "Expected exactly one unsigned signing input, found $($unsigned.Count)."
+          }
+          New-Item .\artifacts\langou\signing-input -ItemType Directory -Force | Out-Null
+          Copy-Item $unsigned[0].FullName `
+            .\artifacts\langou\signing-input\langou-ime-windows-x64-v1.0.0.msi
+
+      - name: Upload unsigned MSI for trusted signing
+        id: upload-unsigned-artifact
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: langou-windows-v1.0.0-signing-input
+          path: artifacts/langou/signing-input/langou-ime-windows-x64-v1.0.0.msi
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Submit SignPath signing request
+        id: signpath
+        uses: signpath/github-action-submit-signing-request@b9d91eadd323de506c0c81cf0c7fe7438f3360fd # v2
+        with:
+          api-token: "${{ env.SIGNPATH_API_TOKEN }}"
+          organization-id: "${{ env.SIGNPATH_ORGANIZATION_ID }}"
+          project-slug: "${{ env.SIGNPATH_PROJECT_SLUG }}"
+          signing-policy-slug: "${{ env.SIGNPATH_POLICY_SLUG }}"
+          artifact-configuration-slug: "${{ env.SIGNPATH_ARTIFACT_CONFIGURATION_SLUG }}"
+          github-artifact-id: "${{ steps.upload-unsigned-artifact.outputs.artifact-id }}"
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: "1800"
+          output-artifact-directory: "${{ github.workspace }}\\artifacts\\langou\\signed"
+          parameters: |
+            version: "1.0.0"
+
+      - name: Require a valid Authenticode signature
+        id: verify-signed-msi
+        shell: pwsh
+        run: |
+          $signed = @(
+            Get-ChildItem .\artifacts\langou\signed `
+              -Filter "langou-ime-windows-x64-v1.0.0.msi" -Recurse -File
+          )
+          if ($signed.Count -ne 1) {
+            throw "Expected exactly one signed Langou MSI, found $($signed.Count)."
+          }
+          $signature = Get-AuthenticodeSignature $signed[0].FullName
+          if ($signature.Status -ne "Valid" -or $null -eq $signature.SignerCertificate) {
+            throw "Authenticode verification failed: $($signature.Status) $($signature.StatusMessage)"
+          }
+          $hash = Get-FileHash $signed[0].FullName -Algorithm SHA256
+          $hashPath = Join-Path $signed[0].DirectoryName `
+            "langou-ime-windows-x64-v1.0.0.msi.sha256"
+          Set-Content $hashPath "$($hash.Hash.ToLowerInvariant())  $($signed[0].Name)" -Encoding ascii
+          "msi=$($signed[0].FullName)" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "sha256=$hashPath" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+
+      - name: Upload verified signed release evidence
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: langou-windows-v1.0.0-SIGNED
+          path: |
+            ${{ steps.verify-signed-msi.outputs.msi }}
+            ${{ steps.verify-signed-msi.outputs.sha256 }}
+          if-no-files-found: error
+          retention-days: 30

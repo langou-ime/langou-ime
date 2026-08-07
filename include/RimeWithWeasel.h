@@ -1,7 +1,11 @@
 #pragma once
 #include <WeaselIPC.h>
 #include <WeaselUI.h>
+#include <atomic>
+#include <chrono>
+#include <deque>
 #include <map>
+#include <mutex>
 #include <string>
 
 #include <rime_api.h>
@@ -63,6 +67,9 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
   virtual void UpdateColorTheme(BOOL darkMode);
 
   void OnUpdateUI(std::function<void()> const& cb);
+  bool QueueExternalCommitText(const std::string& request_id,
+                               const std::string& text);
+  void ApplyLangouTheme(const std::string& theme);
 
  private:
   void _Setup();
@@ -74,6 +81,7 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
                                 bool ignore_app_name = false);
   bool _ShowMessage(weasel::Context& ctx, weasel::Status& status);
   bool _Respond(WeaselSessionId ipc_id, EatLine eat);
+  bool _TakeExternalCommit(WeaselSessionId ipc_id, std::string* text);
   void _ReadClientInfo(WeaselSessionId ipc_id, LPWSTR buffer);
   void _GetCandidateInfo(weasel::CandidateInfo& cinfo, RimeContext& ctx);
   void _GetStatus(weasel::Status& stat,
@@ -97,7 +105,7 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
 
   AppOptionsByAppName m_app_options;
   weasel::UI* m_ui;  // reference
-  DWORD m_active_session;
+  std::atomic<DWORD> m_active_session;
   bool m_disabled;
   std::string m_last_schema_id;
   std::string m_last_app_name;
@@ -119,4 +127,11 @@ class RimeWithWeaselHandler : public weasel::RequestHandler {
   bool m_global_ascii_mode;
   int m_show_notifications_time;
   DWORD m_pid;
+  struct ExternalCommit {
+    WeaselSessionId session_id;
+    std::string text;
+    std::chrono::steady_clock::time_point expires_at;
+  };
+  std::mutex m_external_commit_mutex;
+  std::deque<ExternalCommit> m_external_commits;
 };

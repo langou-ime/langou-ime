@@ -20,7 +20,7 @@ global_ascii: false
 style:
   antialias_mode: default
   ascii_tip_follow_cursor: false
-  color_scheme: aqua
+  color_scheme: langou_cream
   font_face: Microsoft YaHei
   label_font_face: Microsoft YaHei
   comment_font_face: Microsoft YaHei
@@ -29,7 +29,7 @@ style:
   comment_font_point: 14
   candidate_abbreviate_length: 0
   click_to_capture: false
-  horizontal: false
+  horizontal: true
   fullscreen: false
   inline_preedit: false
   preedit_type: composition
@@ -45,25 +45,70 @@ style:
   layout:
     align_type: center
     max_width: 0	#set 0 to disable max width
-    min_width: 160
+    min_width: 260
     min_height: 0
     max_height: 0	#set 0 to disable max height
-    border_width: 3
-    margin_x: 12
-    margin_y: 12
-    spacing: 10
-    candidate_spacing: 5
-    hilite_spacing: 4
-    hilite_padding: 2
-    round_corner: 4   #别名 hilited_corner_radius
-    corner_radius: 4
-    shadow_radius: 0
-    shadow_offset_x: 4
+    border_width: 1
+    margin_x: 14
+    margin_y: 10
+    spacing: 12
+    candidate_spacing: 10
+    hilite_spacing: 6
+    hilite_padding: 7
+    round_corner: 14
+    corner_radius: 18
+    shadow_radius: 10
+    shadow_offset_x: 0
     shadow_offset_y: 4
     linespacing: 0 # percentage of font point, 0 to disable
     baseline: 0 # percentage of font point, 0 to disable
 
 preset_color_schemes:
+  langou_cream:
+    name: 奶油懒狗
+    author: Langou Input Method contributors
+    text_color: 0x493e51
+    back_color: 0xeff9ff
+    shadow_color: 0x33493e51
+    border_color: 0xf4d9ff
+    hilited_text_color: 0x493e51
+    hilited_back_color: 0xeff9ff
+    candidate_text_color: 0x493e51
+    comment_text_color: 0x82778d
+    hilited_candidate_text_color: 0x493e51
+    hilited_comment_text_color: 0x82778d
+    hilited_candidate_back_color: 0xc5afff
+
+  langou_soda:
+    name: 樱桃汽水
+    author: Langou Input Method contributors
+    text_color: 0x493e51
+    back_color: 0xf8f6ff
+    shadow_color: 0x33493e51
+    border_color: 0xded4ff
+    hilited_text_color: 0x493e51
+    hilited_back_color: 0xf8f6ff
+    candidate_text_color: 0x493e51
+    comment_text_color: 0x82778d
+    hilited_candidate_text_color: 0xffffff
+    hilited_comment_text_color: 0xffffff
+    hilited_candidate_back_color: 0x6d7ce8
+
+  langou_moon:
+    name: 月光软糖
+    author: Langou Input Method contributors
+    text_color: 0xfff5fb
+    back_color: 0x4a344f
+    shadow_color: 0x66000000
+    border_color: 0x6a4b72
+    hilited_text_color: 0xfff5fb
+    hilited_back_color: 0x4a344f
+    candidate_text_color: 0xfff5fb
+    comment_text_color: 0xcbb7dc
+    hilited_candidate_text_color: 0x493e51
+    hilited_comment_text_color: 0x6a536f
+    hilited_candidate_back_color: 0xffdfe9
+
   aqua:
     name: 碧水／Aqua
     author: 佛振 <chen.sst@gmail.com>

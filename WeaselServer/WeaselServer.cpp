@@ -9,7 +9,6 @@
 #include <WeaselUI.h>
 #include <RimeWithWeasel.h>
 #include <WeaselUtility.h>
-#include <winsparkle.h>
 #include <functional>
 #include <ShellScalingApi.h>
 #include <WinUser.h>
@@ -26,7 +25,7 @@ int WINAPI _tWinMain(HINSTANCE hInstance,
   SetThreadUILanguage(langId);
   SetThreadLocale(langId);
 
-  if (!IsWindowsBlueOrLaterEx()) {
+  if (!IsWindows10OrGreaterEx()) {
     CString info, cap;
     info.LoadStringW(IDS_STR_SYSTEM_VERSION_WARNING);
     cap.LoadStringW(IDS_STR_SYSTEM_VERSION_WARNING_CAPTION);

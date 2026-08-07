@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+  <Package
+      Name="懒狗输入法"
+      Manufacturer="懒狗输入法"
+      Version="1.0.0"
+      UpgradeCode="3D452240-8C8E-44CF-B880-8EF52FCE95A6"
+      Language="2052"
+      Scope="perMachine"
+      InstallerVersion="500"
+      Compressed="yes">
+
+    <SummaryInformation
+        Description="懒狗输入法 1.0.0（Windows 10/11 x64）"
+        Manufacturer="懒狗输入法" />
+    <MajorUpgrade
+        DowngradeErrorMessage="已安装更高版本的懒狗输入法。"
+        Schedule="afterInstallInitialize" />
+    <MediaTemplate EmbedCab="yes" CompressionLevel="high" />
+
+    <Launch
+        Condition="Installed OR (VersionNT64 &gt;= 1000)"
+        Message="懒狗输入法需要 Windows 10/11 x64。" />
+
+    <Icon Id="LangouProductIcon" SourceFile="Assets\Langou.ico" />
+    <Property Id="ARPPRODUCTICON" Value="LangouProductIcon" />
+    <Property Id="ARPHELPLINK" Value="https://langou.tech/" />
+    <Property Id="ARPNOREPAIR" Value="1" />
+
+    <WixVariable Id="WixUIBannerBmp" Value="Assets\Banner.bmp" />
+    <WixVariable Id="WixUIDialogBmp" Value="Assets\Dialog.bmp" />
+    <WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+
+    <StandardDirectory Id="ProgramFiles64Folder">
+      <Directory Id="LangouCompanyFolder" Name="Langou">
+        <Directory Id="INSTALLFOLDER" Name="LangouIME">
+          <Component Id="LangouCoreExecutables" Guid="*">
+            <File
+                Id="LangouAssistantExe"
+                Source="!(bindpath.Payload)\LangouAssistant.exe"
+                KeyPath="yes" />
+            <File
+                Id="WeaselServerExe"
+                Source="!(bindpath.Payload)\WeaselServer.exe" />
+            <File
+                Id="WeaselSetupExe"
+                Source="!(bindpath.Payload)\WeaselSetup.exe" />
+            <File
+                Id="WeaselDeployerExe"
+                Source="!(bindpath.Payload)\WeaselDeployer.exe" />
+          </Component>
+
+          <Component Id="LangouAutoStart" Guid="*">
+            <RegistryValue
+                Root="HKLM"
+                Key="Software\Microsoft\Windows\CurrentVersion\Run"
+                Name="LangouIME"
+                Type="string"
+                Value="&quot;[INSTALLFOLDER]WeaselServer.exe&quot;"
+                KeyPath="yes" />
+          </Component>
+
+          <Files Include="!(bindpath.Payload)\**">
+            <Exclude Include="!(bindpath.Payload)\LangouAssistant.exe" />
+            <Exclude Include="!(bindpath.Payload)\WeaselServer.exe" />
+            <Exclude Include="!(bindpath.Payload)\WeaselSetup.exe" />
+            <Exclude Include="!(bindpath.Payload)\WeaselDeployer.exe" />
+            <Exclude Include="!(bindpath.Payload)\**\*.pdb" />
+            <Exclude Include="!(bindpath.Payload)\**\*.xml" />
+          </Files>
+        </Directory>
+      </Directory>
+    </StandardDirectory>
+
+    <StandardDirectory Id="ProgramMenuFolder">
+      <Directory Id="LangouProgramMenuFolder" Name="懒狗输入法">
+        <Component Id="LangouStartMenu" Guid="*">
+          <Shortcut
+              Id="LangouSettingsShortcut"
+              Name="懒狗输入法设置"
+              Target="[#LangouAssistantExe]"
+              Arguments="/settings"
+              WorkingDirectory="INSTALLFOLDER"
+              Icon="LangouProductIcon" />
+          <Shortcut
+              Id="LangouDeployShortcut"
+              Name="重新部署输入法"
+              Target="[#WeaselDeployerExe]"
+              Arguments="/deploy"
+              WorkingDirectory="INSTALLFOLDER"
+              Icon="LangouProductIcon" />
+          <RemoveFolder Id="RemoveLangouProgramMenuFolder" On="uninstall" />
+          <RegistryValue
+              Root="HKCU"
+              Key="Software\Langou\IME"
+              Name="StartMenuInstalled"
+              Type="integer"
+              Value="1"
+              KeyPath="yes" />
+        </Component>
+      </Directory>
+    </StandardDirectory>
+
+    <CustomAction
+        Id="StopWeaselServer"
+        FileRef="WeaselServerExe"
+        ExeCommand="/quit"
+        Execute="immediate"
+        Impersonate="yes"
+        Return="ignore" />
+    <CustomAction
+        Id="PurgeAssistantState"
+        FileRef="LangouAssistantExe"
+        ExeCommand="/quit-and-purge"
+        Execute="immediate"
+        Impersonate="yes"
+        Return="ignore" />
+    <CustomAction
+        Id="UnregisterTsf"
+        FileRef="WeaselSetupExe"
+        ExeCommand="/u"
+        Execute="deferred"
+        Impersonate="no"
+        Return="ignore" />
+    <CustomAction
+        Id="RegisterTsf"
+        FileRef="WeaselSetupExe"
+        ExeCommand="/i"
+        Execute="deferred"
+        Impersonate="no"
+        Return="check" />
+    <CustomAction
+        Id="DeployRimeData"
+        FileRef="WeaselDeployerExe"
+        ExeCommand="/install"
+        Execute="immediate"
+        Impersonate="yes"
+        Return="check" />
+    <CustomAction
+        Id="StartLangou"
+        FileRef="WeaselServerExe"
+        ExeCommand=""
+        Execute="immediate"
+        Impersonate="yes"
+        Return="asyncNoWait" />
+
+    <InstallExecuteSequence>
+      <Custom
+          Action="StopWeaselServer"
+          Before="PurgeAssistantState"
+          Condition="REMOVE~=&quot;ALL&quot;" />
+      <Custom
+          Action="PurgeAssistantState"
+          Before="UnregisterTsf"
+          Condition="REMOVE~=&quot;ALL&quot; AND NOT UPGRADINGPRODUCTCODE" />
+      <Custom
+          Action="UnregisterTsf"
+          Before="RemoveFiles"
+          Condition="REMOVE~=&quot;ALL&quot;" />
+      <Custom
+          Action="RegisterTsf"
+          After="InstallFiles"
+          Condition="NOT Installed" />
+      <Custom
+          Action="DeployRimeData"
+          After="RegisterTsf"
+          Condition="NOT Installed" />
+      <Custom
+          Action="StartLangou"
+          After="InstallFinalize"
+          Condition="NOT Installed" />
+    </InstallExecuteSequence>
+  </Package>
+</Wix>

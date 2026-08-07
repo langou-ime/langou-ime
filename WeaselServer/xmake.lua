@@ -15,6 +15,7 @@ target("WeaselServer")
     end
     target:set("targetdir", target_dir)
   end)
+
   after_build(function(target)
     if is_arch("x86") then
       os.cp(path.join(target:targetdir(), "WeaselServer.exe"), "$(projectdir)/output/Win32")
@@ -24,4 +25,3 @@ target("WeaselServer")
       os.cp(path.join(target:targetdir(), "WeaselServer.pdb"), "$(projectdir)/output")
     end
   end)
-
