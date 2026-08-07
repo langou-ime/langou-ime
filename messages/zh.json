@@ -1,0 +1,10 @@
+{
+  "home": {
+    "hero": { "badge": "🚀 AI驱动 · 新一代智能输入法", "title": "懒狗输入法", "subtitle": "Langou Input Method", "slogan": "解放你的双手", "sloganEn": "Free Your Hands", "desc": "全球首款注入 AI Agent 的智能输入法。自动理解对话上下文，一键生成多风格回复建议。告别打字，让交流回归交流本身。", "cta": "立即下载", "learnMore": "了解更多" },
+    "values": { "title": "为什么选择懒狗输入法", "subtitle": "重新定义输入体验", "cards": [ { "icon": "🤖", "title": "AI驱动", "text": "搭载MiMo大语言模型，深度理解对话上下文，秒级生成高质量回复" }, { "icon": "⚡", "title": "极速体验", "text": "3秒生成回复建议，比手动打字快10倍，一键选用即刻发送" }, { "icon": "🔒", "title": "隐私安全", "text": "端到端加密传输，不存储原始截图，你的对话只有你知道" } ] },
+    "features": { "title": "核心功能", "subtitle": "三步完成智能回复", "items": [ { "num": "01", "title": "智能上下文感知", "text": "输入法自动识别当前聊天场景和对话内容，无需手动操作，后台无感运行" }, { "num": "02", "title": "AI多风格回复生成", "text": "基于大模型理解，生成甜蜜、幽默、专业、简洁等不同风格回复建议" }, { "num": "03", "title": "一键选用发送", "text": "看到满意的回复点击即可发送，无需复制粘贴，整个流程丝滑流畅" } ] },
+    "platforms": { "title": "支持平台", "subtitle": "多端覆盖，一次安装", "items": [ { "icon": "📱", "name": "Android", "status": "可用", "available": true }, { "icon": "🖥️", "name": "Windows", "status": "可用", "available": true }, { "icon": "🍎", "name": "iOS", "status": "即将推出", "available": false }, { "icon": "💻", "name": "macOS", "status": "即将推出", "available": false }, { "icon": "🔷", "name": "鸿蒙", "status": "即将推出", "available": false } ] },
+    "download": { "title": "立即下载", "subtitle": "选择你的平台，体验AI输入", "android": { "name": "Android版", "ver": "v1.0.0-alpha", "size": "约45MB", "req": "Android 8.0+ · 2GB+ RAM" }, "windows": { "name": "Windows版", "ver": "v1.0.0-alpha", "size": "约75MB", "req": "Win10/11 · x64 · 4GB+ RAM" }, "coming": { "ver": "开发中", "req": "即将发布" } },
+    "footer": { "copyright": "© 2026 懒狗输入法 Langou Input Method. All rights reserved.", "links": ["隐私政策", "使用条款", "联系我们", "GitHub"], "tagline": "懒狗输入法，解放你的双手 🐶" }
+  }
+}
