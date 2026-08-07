@@ -1,0 +1,46 @@
+name: Backend CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Check out source
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@a309ff8b426b58ec0e2a45f0f869d46889d02405 # v6.2.0
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: |
+            requirements.lock
+            requirements-dev.lock
+
+      - name: Install exact dependencies
+        run: |
+          python -m pip install --require-hashes --requirement requirements.lock
+          python -m pip install --requirement requirements-dev.lock
+          python -m pip install --no-deps .
+
+      - name: Audit production dependencies
+        run: |
+          python -m pip install pip-audit==2.10.1
+          pip-audit --requirement requirements.lock --disable-pip
+
+      - name: Test
+        run: pytest -q tests
+
+      - name: Lint
+        run: ruff check src tests scripts

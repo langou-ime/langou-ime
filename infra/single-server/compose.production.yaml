@@ -1,0 +1,102 @@
+name: langou-v1
+
+services:
+  api:
+    build:
+      context: /opt/langou/production-v1/backend
+      args:
+        PIP_INDEX_URL: https://mirrors.cloud.tencent.com/pypi/simple
+    image: langou/backend:1.0.0
+    restart: unless-stopped
+    user: "10001:10001"
+    read_only: true
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    env_file:
+      - /etc/langou/production-v1.env
+    ports:
+      - "127.0.0.1:18000:8000"
+    volumes:
+      - /opt/langou/production-v1/releases:/srv/releases:ro
+    tmpfs:
+      - /tmp:size=64m,mode=1777,noexec,nosuid,nodev
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=3)"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    mem_limit: 768m
+    cpus: 1.0
+    pids_limit: 256
+    logging:
+      driver: json-file
+      options:
+        max-size: 20m
+        max-file: "5"
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    env_file:
+      - /etc/langou/production-v1.env
+    environment:
+      POSTGRES_DB: langou
+      POSTGRES_USER: langou
+      POSTGRES_PASSWORD: ${LANGOU_POSTGRES_PASSWORD:?set LANGOU_POSTGRES_PASSWORD}
+    volumes:
+      - /opt/langou/production-v1/data/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langou -d langou"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 1024m
+    cpus: 1.0
+    pids_limit: 256
+    logging:
+      driver: json-file
+      options:
+        max-size: 20m
+        max-file: "5"
+
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    env_file:
+      - /etc/langou/production-v1.env
+    entrypoint:
+      - /opt/langou/redis-entrypoint.sh
+    volumes:
+      - /opt/langou/production-v1/data/redis:/data
+      - /opt/langou/production-v1/infra/single-server/redis-entrypoint.sh:/opt/langou/redis-entrypoint.sh:ro
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - test "$$(redis-cli --raw -a "$$LANGOU_REDIS_PASSWORD" ping 2>/dev/null)" = PONG
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    mem_limit: 384m
+    cpus: 0.5
+    pids_limit: 128
+    logging:
+      driver: json-file
+      options:
+        max-size: 20m
+        max-file: "5"
+
+networks:
+  default:
+    name: langou-v1-private

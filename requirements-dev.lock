@@ -1,0 +1,12 @@
+# Exact test/lint dependencies layered on top of requirements.lock.
+# Keep this file reviewed and regenerated together with requirements.lock.
+aiosqlite==0.22.1
+coverage==7.15.2
+iniconfig==2.3.0
+packaging==26.2
+pluggy==1.6.0
+Pygments==2.20.0
+pytest==8.4.2
+pytest-asyncio==1.4.0
+pytest-cov==6.3.0
+ruff==0.16.0

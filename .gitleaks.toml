@@ -1,0 +1,14 @@
+title = "Langou backend secret scanning"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Local environments and generated Python caches"
+paths = [
+  '''(^|/)\.git/''',
+  '''(^|/)\.venv/''',
+  '''(^|/)\.pytest_cache/''',
+  '''(^|/)\.ruff_cache/''',
+  '''(^|/)__pycache__/''',
+]
