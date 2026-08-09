@@ -97,6 +97,19 @@ public sealed class InstallerSourceContractTests
                 $"Component '{component.Attribute("Id")?.Value}' groups multiple files with an automatic GUID."));
     }
 
+    [Fact]
+    public void Start_menu_shortcuts_do_not_cross_reference_files_from_other_components()
+    {
+        var shortcuts = Load().Descendants(Wix + "Shortcut");
+
+        Assert.All(
+            shortcuts,
+            shortcut => Assert.DoesNotContain(
+                "[#",
+                shortcut.Attribute("Target")?.Value ?? string.Empty,
+                StringComparison.Ordinal));
+    }
+
     private static XDocument Load() => XDocument.Load(SourcePath());
 
     private static string SourcePath() =>

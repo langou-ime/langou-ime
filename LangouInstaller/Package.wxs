@@ -88,14 +88,14 @@
           <Shortcut
               Id="LangouSettingsShortcut"
               Name="懒狗输入法设置"
-              Target="[#LangouAssistantExe]"
+              Target="[INSTALLFOLDER]LangouAssistant.exe"
               Arguments="/settings"
               WorkingDirectory="INSTALLFOLDER"
               Icon="LangouProductIcon" />
           <Shortcut
               Id="LangouDeployShortcut"
               Name="重新部署输入法"
-              Target="[#WeaselDeployerExe]"
+              Target="[INSTALLFOLDER]WeaselDeployer.exe"
               Arguments="/deploy"
               WorkingDirectory="INSTALLFOLDER"
               Icon="LangouProductIcon" />
