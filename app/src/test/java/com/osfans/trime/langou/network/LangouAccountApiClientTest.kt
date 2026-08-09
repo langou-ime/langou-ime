@@ -138,7 +138,7 @@ private class AccountRecordingTransport(
         bearerToken: String?,
     ): String {
         requests += RecordedRequest(method, path, body.orEmpty(), bearerToken)
-        return responses.removeFirst()
+        return responses.removeAt(0)
     }
 
     override suspend fun postSse(
