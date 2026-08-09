@@ -37,6 +37,16 @@ class AndroidReleaseWorkflowContractTest :
             workflow shouldContain "./gradlew -p build-logic :convention:test"
         }
 
+        "internal CI resolves apksigner from the pinned Android build tools" {
+            val workflow = File(repositoryRoot, ".github/workflows/langou-android-ci.yml").readText()
+
+            workflow shouldContain "ANDROID_BUILD_TOOLS_VERSION: \"36.0.0\""
+            workflow shouldContain "build-tools;${'$'}ANDROID_BUILD_TOOLS_VERSION"
+            workflow shouldContain
+                "\"${'$'}ANDROID_HOME/build-tools/${'$'}ANDROID_BUILD_TOOLS_VERSION/apksigner\" verify"
+            workflow shouldNotContain "run: apksigner verify"
+        }
+
         "signed build requires all signing material without publishing by itself" {
             val workflow = File(repositoryRoot, ".github/workflows/langou-android-release.yml").readText()
             workflow shouldContain "ANDROID_KEYSTORE_BASE64"
@@ -102,5 +112,19 @@ class AndroidReleaseWorkflowContractTest :
             smokeTest.isFile shouldBe true
             smokeTest.readText() shouldContain "ime enable"
             smokeTest.readText() shouldContain "DEFAULT_INPUT_METHOD"
+        }
+
+        "instrumentation host activity belongs to the debug target APK" {
+            val hostActivity =
+                File(
+                    repositoryRoot,
+                    "app/src/debug/java/com/osfans/trime/langou/ImeHostActivity.kt",
+                )
+            val debugManifest = File(repositoryRoot, "app/src/debug/AndroidManifest.xml")
+            val testManifest = File(repositoryRoot, "app/src/androidTest/AndroidManifest.xml").readText()
+
+            hostActivity.isFile shouldBe true
+            debugManifest.readText() shouldContain "ImeHostActivity"
+            testManifest shouldNotContain "ImeHostActivity"
         }
     })

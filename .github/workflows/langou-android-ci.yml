@@ -25,6 +25,7 @@ jobs:
     timeout-minutes: 60
     env:
       BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+      ANDROID_BUILD_TOOLS_VERSION: "36.0.0"
     steps:
       - name: Checkout source and pinned submodules
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -43,7 +44,7 @@ jobs:
         uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4
 
       - name: Install native build tools
-        run: sdkmanager --install "cmake;3.31.6"
+        run: sdkmanager --install "cmake;3.31.6" "build-tools;$ANDROID_BUILD_TOOLS_VERSION"
 
       - name: Verify build logic regressions
         run: ./gradlew -p build-logic :convention:test
@@ -52,7 +53,7 @@ jobs:
         run: ./gradlew testDebugUnitTest assembleDebug --stacktrace
 
       - name: Verify the universal APK signature
-        run: apksigner verify --verbose app/build/outputs/apk/debug/*-universal-debug.apk
+        run: '"$ANDROID_HOME/build-tools/$ANDROID_BUILD_TOOLS_VERSION/apksigner" verify --verbose app/build/outputs/apk/debug/*-universal-debug.apk'
 
       - name: Create checksums
         working-directory: app/build/outputs/apk/debug
