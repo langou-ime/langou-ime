@@ -21,15 +21,37 @@ class AutoSuggestionGateTest :
                     secureWindow = false,
                 )
 
-            gate.evaluate(chatSignals, "今晚去吃火锅吗？") shouldBe SuggestionDecision.Generate
-            gate.evaluate(chatSignals, "今晚去吃火锅吗？") shouldBe SuggestionDecision.SkipDuplicate
-            gate.complete("今晚去吃火锅吗？", successful = true)
-            gate.evaluate(chatSignals, "今晚去吃火锅吗？") shouldBe SuggestionDecision.SkipDuplicate
-            gate.evaluate(chatSignals, "改成明天去吃火锅吗？") shouldBe SuggestionDecision.Generate
+            gate.evaluate(
+                chatSignals,
+                "wechat:小夏",
+                "今晚去吃火锅吗？",
+                SuggestionTrigger.ContextChange,
+            ) shouldBe SuggestionDecision.Generate
+            gate.evaluate(
+                chatSignals,
+                "wechat:小夏",
+                "今晚去吃火锅吗？",
+                SuggestionTrigger.ContextChange,
+            ) shouldBe SuggestionDecision.SkipDuplicate
+            gate.complete("wechat:小夏", "今晚去吃火锅吗？", successful = true)
+            gate.evaluate(
+                chatSignals,
+                "wechat:小夏",
+                "今晚去吃火锅吗？",
+                SuggestionTrigger.ContextChange,
+            ) shouldBe SuggestionDecision.SkipDuplicate
+            gate.evaluate(
+                chatSignals,
+                "wechat:小夏",
+                "改成明天去吃火锅吗？",
+                SuggestionTrigger.ContextChange,
+            ) shouldBe SuggestionDecision.Generate
 
             gate.evaluate(
                 chatSignals.copy(inputType = 0x00000081),
+                "wechat:小夏",
                 "银行卡密码",
+                SuggestionTrigger.ContextChange,
             ) shouldBe SuggestionDecision.BlockSensitive
         }
 
@@ -43,8 +65,18 @@ class AutoSuggestionGateTest :
                     secureWindow = false,
                 )
 
-            gate.evaluate(signals, "   ") shouldBe SuggestionDecision.SkipBlank
-            gate.evaluate(signals, "这是一段超过二十个字符而且不应该上传给服务器的聊天上下文") shouldBe
+            gate.evaluate(
+                signals,
+                "telegram:session",
+                "   ",
+                SuggestionTrigger.ContextChange,
+            ) shouldBe SuggestionDecision.SkipBlank
+            gate.evaluate(
+                signals,
+                "telegram:session",
+                "这是一段超过二十个字符而且不应该上传给服务器的聊天上下文",
+                SuggestionTrigger.ContextChange,
+            ) shouldBe
                 SuggestionDecision.SkipOversized
         }
 
@@ -56,8 +88,43 @@ class AutoSuggestionGateTest :
                     packageName = "com.tencent.mm",
                 )
 
-            gate.evaluate(signals, "对方：在吗？") shouldBe SuggestionDecision.Generate
-            gate.complete("对方：在吗？", successful = false)
-            gate.evaluate(signals, "对方：在吗？") shouldBe SuggestionDecision.Generate
+            gate.evaluate(
+                signals,
+                "wechat:session",
+                "对方：在吗？",
+                SuggestionTrigger.ContextChange,
+            ) shouldBe SuggestionDecision.Generate
+            gate.complete("wechat:session", "对方：在吗？", successful = false)
+            gate.evaluate(
+                signals,
+                "wechat:session",
+                "对方：在吗？",
+                SuggestionTrigger.ContextChange,
+            ) shouldBe SuggestionDecision.Generate
+        }
+
+        "never generates from draft changes and permits explicit refresh" {
+            val gate = AutoSuggestionGate()
+            val signals = ContextSignals(inputType = 1, packageName = "com.tencent.mm")
+
+            gate.evaluate(
+                signals,
+                "wechat:session",
+                "用户刚输入了几个字",
+                SuggestionTrigger.DraftChange,
+            ) shouldBe SuggestionDecision.SkipDraftOnly
+            gate.evaluate(
+                signals,
+                "wechat:session",
+                "对方：在吗？",
+                SuggestionTrigger.ContextChange,
+            ) shouldBe SuggestionDecision.Generate
+            gate.complete("wechat:session", "对方：在吗？", successful = true)
+            gate.evaluate(
+                signals,
+                "wechat:session",
+                "对方：在吗？",
+                SuggestionTrigger.ManualRefresh,
+            ) shouldBe SuggestionDecision.Generate
         }
     })
