@@ -169,6 +169,12 @@ class InputBarDelegate : InputBroadcastReceiver {
         evalAlwaysUiState()
     }
 
+    fun showAiPermissionRequired(onClick: () -> Unit) {
+        alwaysUi.aiSuggestionsUi.showPermissionRequired(onClick)
+        isAiSuggestionPresent = true
+        evalAlwaysUiState()
+    }
+
     fun showAiSuggestions(
         values: List<String>,
         onSelect: (String) -> Unit,

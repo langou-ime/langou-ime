@@ -295,6 +295,10 @@ class InputView(
         inputBar.showAiLoading()
     }
 
+    fun showAiPermissionRequired(onClick: () -> Unit) {
+        inputBar.showAiPermissionRequired(onClick)
+    }
+
     fun showAiSuggestions(
         values: List<String>,
         onSelect: (String) -> Unit,

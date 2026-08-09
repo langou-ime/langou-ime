@@ -7,6 +7,7 @@ package com.osfans.trime.ime.core
 
 import android.annotation.SuppressLint
 import android.app.Dialog
+import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -15,6 +16,7 @@ import android.inputmethodservice.InputMethodService
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
+import android.provider.Settings
 import android.text.InputType
 import android.view.InputDevice
 import android.view.KeyCharacterMap
@@ -671,11 +673,6 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             inputView?.dismissAiSuggestions()
             return
         }
-        if (!ContextPermissionStatus.isAccessibilityEnabled(this)) {
-            ContextCaptureState.deactivate()
-            inputView?.dismissAiSuggestions()
-            return
-        }
         val editorInfo = info ?: return
         val packageName = editorInfo.packageName.orEmpty()
         val application = ChatApplicationMapper.map(packageName)
@@ -692,6 +689,17 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         if (!SensitiveContextPolicy.canCollect(signals)) {
             ContextCaptureState.deactivate()
             inputView?.dismissAiSuggestions()
+            return
+        }
+        if (!ContextPermissionStatus.isAccessibilityEnabled(this)) {
+            ContextCaptureState.deactivate()
+            inputView?.showAiPermissionRequired {
+                startActivity(
+                    Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
+                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                    },
+                )
+            }
             return
         }
 

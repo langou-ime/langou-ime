@@ -49,7 +49,19 @@ class AiSuggestionsUi(
         content.removeAllViews()
         content.addView(createMascot(), mascotLayoutParams())
         content.addView(
-            createChip("懒狗正在想…", enabled = false),
+            createChip(ctx.getString(R.string.langou_ai_thinking), enabled = false),
+            chipLayoutParams(),
+        )
+    }
+
+    fun showPermissionRequired(onClick: () -> Unit) {
+        selection.update(emptyList())
+        content.removeAllViews()
+        content.addView(createMascot(), mascotLayoutParams())
+        content.addView(
+            createChip(ctx.getString(R.string.langou_ai_permission_required)).apply {
+                setOnClickListener { onClick() }
+            },
             chipLayoutParams(),
         )
     }

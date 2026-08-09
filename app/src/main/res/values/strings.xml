@@ -219,8 +219,8 @@
     <string name="langou_accessibility_service_name">Langou chat context</string>
     <string name="langou_accessibility_description">Reads visible text in supported chat apps only to prepare reply suggestions. Password, payment, banking, and security screens are never collected.</string>
     <string name="setup__step_context">Step 3</string>
-    <string name="setup__context_access_hint">Enable Langou chat context. It only reads visible text in supported chat apps and always blocks passwords, payment, banking, and security screens.</string>
-    <string name="setup__context_access_action">Enable chat context</string>
+    <string name="setup__context_access_hint">AI replies are on by default. Enable Langou Chat Understanding so suggestions can use the current conversation and local memory. Offline typing still works if you skip it, and Langou never guesses from your draft without permission. Password, payment, banking, and security screens are always blocked.</string>
+    <string name="setup__context_access_action">Enable chat understanding</string>
     <string name="setup__step_legacy_capture">Step 4</string>
     <string name="setup__legacy_capture_hint">Android 8–10 requires one screen capture approval per service session for local OCR. Screenshots stay in memory and are deleted immediately after recognition.</string>
     <string name="setup__legacy_capture_action">Allow local OCR</string>
@@ -246,7 +246,9 @@
     <string name="langou_skin_soda">Cherry Soda</string>
     <string name="langou_skin_moon">Moonlight Gummy</string>
     <string name="langou_auto_suggest">Automatic AI reply suggestions</string>
-    <string name="langou_auto_suggest_summary">Only in supported chat apps; tap inserts but never sends</string>
+    <string name="langou_auto_suggest_summary">On by default; uses authorized chat context only, and tapping inserts but never sends</string>
+    <string name="langou_ai_permission_required">Enable chat understanding for replies</string>
+    <string name="langou_ai_thinking">Langou is thinking…</string>
     <string name="langou_save_history">Save encrypted AI history</string>
     <string name="langou_save_history_summary">Encrypted in the cloud and deleted after 30 days; typing remains local</string>
     <string name="langou_diagnostics">Share anonymous diagnostics</string>

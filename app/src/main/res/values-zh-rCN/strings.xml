@@ -218,8 +218,8 @@
     <string name="langou_accessibility_service_name">懒狗聊天上下文</string>
     <string name="langou_accessibility_description">仅在支持的聊天应用中读取屏幕可见文字，用于生成回复建议；密码、支付、银行与安全页面绝不采集。</string>
     <string name="setup__step_context">第 3 步</string>
-    <string name="setup__context_access_hint">开启“懒狗聊天上下文”。它只读取支持的聊天应用中可见文字，密码、支付、银行和安全页面始终禁止采集。</string>
-    <string name="setup__context_access_action">开启聊天上下文</string>
+    <string name="setup__context_access_hint">AI 回复已默认开启。开启“懒狗聊天理解”后，懒狗才能根据当前对话和本地记忆生成建议；跳过后仍可正常离线输入，未授权时不会根据草稿猜测。密码、支付、银行和安全页面始终禁止采集。</string>
+    <string name="setup__context_access_action">开启聊天理解</string>
     <string name="setup__step_legacy_capture">第 4 步</string>
     <string name="setup__legacy_capture_hint">Android 8–10 每次服务会话需集中授权一次屏幕捕获，用于本地 OCR；截图只在内存中存在，识别后立即删除。</string>
     <string name="setup__legacy_capture_action">允许本地 OCR</string>
@@ -245,7 +245,9 @@
     <string name="langou_skin_soda">樱桃汽水</string>
     <string name="langou_skin_moon">月光软糖</string>
     <string name="langou_auto_suggest">自动生成 AI 回复</string>
-    <string name="langou_auto_suggest_summary">仅在支持的聊天应用触发；点选只写入，绝不自动发送</string>
+    <string name="langou_auto_suggest_summary">默认开启；仅根据已授权的聊天上下文触发，点选只写入，绝不自动发送</string>
+    <string name="langou_ai_permission_required">开启聊天理解后生成回复</string>
+    <string name="langou_ai_thinking">懒狗正在想…</string>
     <string name="langou_save_history">保存加密 AI 历史</string>
     <string name="langou_save_history_summary">云端加密并在 30 天后删除；普通输入始终留在本机</string>
     <string name="langou_diagnostics">分享匿名诊断</string>
