@@ -5,6 +5,7 @@ namespace LangouAssistant.Tests;
 public sealed class InstallerSourceContractTests
 {
     private static readonly XNamespace Wix = "http://wixtoolset.org/schemas/v4/wxs";
+    private static readonly XNamespace WixUi = "http://wixtoolset.org/schemas/v4/wxs/ui";
 
     [Fact]
     public void Msi_is_machine_wide_x64_and_blocks_pre_windows_10()
@@ -65,6 +66,21 @@ public sealed class InstallerSourceContractTests
             .Single(item => item.Attribute("Id")?.Value == "ARPHELPLINK");
 
         Assert.Equal("https://langou.tech/", helpLink.Attribute("Value")?.Value);
+    }
+
+    [Fact]
+    public void Msi_uses_the_wix5_ui_and_file_exclusion_schemas()
+    {
+        var document = Load();
+
+        Assert.NotNull(document.Descendants(WixUi + "WixUI").SingleOrDefault());
+        var excludes = document.Descendants(Wix + "Exclude").ToArray();
+        Assert.NotEmpty(excludes);
+        Assert.All(excludes, exclude =>
+        {
+            Assert.NotNull(exclude.Attribute("Files"));
+            Assert.Null(exclude.Attribute("Include"));
+        });
     }
 
     private static XDocument Load() => XDocument.Load(SourcePath());

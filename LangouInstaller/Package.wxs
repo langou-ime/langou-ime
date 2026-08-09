@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs">
+<Wix xmlns="http://wixtoolset.org/schemas/v4/wxs"
+     xmlns:ui="http://wixtoolset.org/schemas/v4/wxs/ui">
   <Package
       Name="懒狗输入法"
       Manufacturer="懒狗输入法"
@@ -29,7 +30,7 @@
 
     <WixVariable Id="WixUIBannerBmp" Value="Assets\Banner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="Assets\Dialog.bmp" />
-    <WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
+    <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
 
     <StandardDirectory Id="ProgramFiles64Folder">
       <Directory Id="LangouCompanyFolder" Name="Langou">
@@ -61,12 +62,12 @@
           </Component>
 
           <Files Include="!(bindpath.Payload)\**">
-            <Exclude Include="!(bindpath.Payload)\LangouAssistant.exe" />
-            <Exclude Include="!(bindpath.Payload)\WeaselServer.exe" />
-            <Exclude Include="!(bindpath.Payload)\WeaselSetup.exe" />
-            <Exclude Include="!(bindpath.Payload)\WeaselDeployer.exe" />
-            <Exclude Include="!(bindpath.Payload)\**\*.pdb" />
-            <Exclude Include="!(bindpath.Payload)\**\*.xml" />
+            <Exclude Files="!(bindpath.Payload)\LangouAssistant.exe" />
+            <Exclude Files="!(bindpath.Payload)\WeaselServer.exe" />
+            <Exclude Files="!(bindpath.Payload)\WeaselSetup.exe" />
+            <Exclude Files="!(bindpath.Payload)\WeaselDeployer.exe" />
+            <Exclude Files="!(bindpath.Payload)\**\*.pdb" />
+            <Exclude Files="!(bindpath.Payload)\**\*.xml" />
           </Files>
         </Directory>
       </Directory>
