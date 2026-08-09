@@ -1,4 +1,4 @@
-from langou_backend.privacy import sanitize_suggestion_request
+from langou_backend.privacy import sanitize_generated_summary, sanitize_suggestion_request
 from langou_backend.schemas import SuggestionRequest
 
 
@@ -39,3 +39,11 @@ def test_sanitizer_removes_common_identifiers_before_model_or_storage() -> None:
     assert "[邮箱]" in combined
     assert "[身份证]" in combined
     assert "[银行卡]" in combined
+
+
+def test_generated_memory_summary_is_redacted_and_bounded() -> None:
+    summary = sanitize_generated_summary("朋友电话 13800138000；" + "偏好简短回复。" * 800)
+
+    assert "13800138000" not in summary
+    assert "[手机号]" in summary
+    assert len(summary) <= 4000

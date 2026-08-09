@@ -75,6 +75,76 @@ def test_suggestion_stream_emits_meta_three_suggestions_and_done() -> None:
     ]
 
 
+def test_suggestion_stream_returns_memory_after_replies_without_blocking_first() -> None:
+    class SummarizingProvider:
+        async def generate(self, request):
+            del request
+            from langou_backend.suggestions import Suggestion
+
+            yield Suggestion(style="natural", text="好呀")
+            yield Suggestion(style="gentle", text="听起来不错")
+
+        async def summarize(self, request):
+            assert request.conversation_id == "conv_0123456789abcdef"
+            return "朋友；喜欢轻松简短的回复；仍在确认今晚时间。"
+
+    payload = suggestion_payload()
+    payload["conversation_id"] = "conv_0123456789abcdef"
+    client = TestClient(
+        create_app(environment="test", suggestion_provider=SummarizingProvider())
+    )
+
+    response = client.post(
+        "/v1/ai/suggestions:stream",
+        json=payload,
+        headers=guest_headers(client),
+    )
+
+    events = parse_sse(response.text)
+    assert [name for name, _ in events] == [
+        "meta",
+        "suggestion",
+        "suggestion",
+        "memory",
+        "done",
+    ]
+    assert events[-2][1] == {
+        "conversation_id": "conv_0123456789abcdef",
+        "summary": "朋友；喜欢轻松简短的回复；仍在确认今晚时间。",
+    }
+
+
+def test_summary_failure_does_not_turn_successful_replies_into_an_error() -> None:
+    class FailingSummaryProvider:
+        async def generate(self, request):
+            del request
+            from langou_backend.suggestions import Suggestion
+
+            yield Suggestion(style="natural", text="好呀")
+
+        async def summarize(self, request):
+            del request
+            raise SuggestionUnavailable
+
+    payload = suggestion_payload()
+    payload["conversation_id"] = "conv_0123456789abcdef"
+    client = TestClient(
+        create_app(environment="test", suggestion_provider=FailingSummaryProvider())
+    )
+
+    response = client.post(
+        "/v1/ai/suggestions:stream",
+        json=payload,
+        headers=guest_headers(client),
+    )
+
+    assert [name for name, _ in parse_sse(response.text)] == [
+        "meta",
+        "suggestion",
+        "done",
+    ]
+
+
 def test_suggestion_meta_does_not_claim_the_development_model() -> None:
     class ProductionLikeProvider:
         async def generate(self, request):

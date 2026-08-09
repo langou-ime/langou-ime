@@ -40,6 +40,10 @@ def sanitize_suggestion_request(request: SuggestionRequest) -> SuggestionRequest
     )
 
 
+def sanitize_generated_summary(value: str) -> str:
+    return _redact(" ".join(value.split()))[:4000]
+
+
 def _redact(value: str) -> str:
     sanitized = value
     for pattern, replacement in _PATTERNS:

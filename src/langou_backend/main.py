@@ -33,7 +33,10 @@ from langou_backend.guards import (
     SuggestionGate,
 )
 from langou_backend.history import HistoryService, InMemoryHistoryRepository
-from langou_backend.privacy import sanitize_suggestion_request
+from langou_backend.privacy import (
+    sanitize_generated_summary,
+    sanitize_suggestion_request,
+)
 from langou_backend.releases import FileReleaseRepository, ReleaseNotFound
 from langou_backend.schemas import (
     ClientSettings,
@@ -280,6 +283,22 @@ def create_app(
                         ],
                     },
                 )
+            summarize = getattr(suggestion_provider, "summarize", None)
+            if suggestions and sanitized_request.conversation_id and summarize:
+                try:
+                    summary = await summarize(sanitized_request)
+                except Exception:  # Best effort; replies have already succeeded.
+                    summary = None
+                if summary:
+                    sanitized_summary = sanitize_generated_summary(summary)
+                    if sanitized_summary:
+                        yield _sse(
+                            "memory",
+                            {
+                                "conversation_id": sanitized_request.conversation_id,
+                                "summary": sanitized_summary,
+                            },
+                        )
             yield _sse("done", {"count": len(suggestions)})
 
         return StreamingResponse(
