@@ -4,6 +4,22 @@
 [SignPath Foundation](https://signpath.org/) 的开源签名服务；如果申请在
 v1.0.0 RC 截止前没有获批，则使用项目所有者持有的 OV 代码签名证书。
 
+Free code signing provided by SignPath.io, certificate by SignPath Foundation.
+
+## Team roles
+
+- Committers and reviewers: [langou-ime organization members](https://github.com/orgs/langou-ime/people),
+  currently [@t5gy5475pg-cmyk](https://github.com/t5gy5475pg-cmyk).
+- Approvers: [langou-ime organization owners](https://github.com/orgs/langou-ime/people?query=role%3Aowner),
+  currently [@t5gy5475pg-cmyk](https://github.com/t5gy5475pg-cmyk). Every signing request
+  requires manual approval and cannot be approved by an automated workflow.
+
+## Privacy
+
+[Privacy policy](PRIVACY.md). 普通 RIME 输入离线运行。用户可在懒狗输入法设置中分别关闭
+自动 AI、云端历史和匿名诊断；安装器在安装前显示隐私说明。AI 启用时才会将脱敏后的
+聊天文字发送到 `api.langou.tech` 及所声明的模型处理方；本地 OCR 截图从不上传。
+
 ## Build integrity
 
 - 只有 GitHub-hosted Windows runner 可以生成提交给 SignPath 的产物。

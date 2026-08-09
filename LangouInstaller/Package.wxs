@@ -30,6 +30,7 @@
 
     <WixVariable Id="WixUIBannerBmp" Value="Assets\Banner.bmp" />
     <WixVariable Id="WixUIDialogBmp" Value="Assets\Dialog.bmp" />
+    <WixVariable Id="WixUILicenseRtf" Value="Assets\Privacy.rtf" />
     <ui:WixUI Id="WixUI_InstallDir" InstallDirectory="INSTALLFOLDER" />
 
     <StandardDirectory Id="ProgramFiles64Folder">

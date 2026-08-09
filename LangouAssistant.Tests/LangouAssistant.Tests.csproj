@@ -47,6 +47,15 @@
     <None Include="..\PRIVACY.md"
           Link="Public\PRIVACY.md"
           CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\README.md"
+          Link="Public\README.md"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\CODE_SIGNING_POLICY.md"
+          Link="Public\CODE_SIGNING_POLICY.md"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\LangouInstaller\Assets\Privacy.rtf"
+          Link="Installer\Privacy.rtf"
+          CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\LangouAssistant\SettingsWindow.xaml"
           Link="Assistant\SettingsWindow.xaml"
           CopyToOutputDirectory="PreserveNewest" />

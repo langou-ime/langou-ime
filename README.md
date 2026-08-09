@@ -40,6 +40,12 @@ Git 历史；“懒狗助手”负责本地上下文识别、PP-OCRv6、AI 建�
 公开版必须经过 [签名策略](CODE_SIGNING_POLICY.md) 中的 SignPath 或 OV
 Authenticode 流程；未签名 MSI 不进入 GitHub Release、服务器或官网。
 
+## Code signing policy
+
+Windows 公开安装包的来源、深度签名范围、人工批准角色和发布门禁记录在
+[CODE_SIGNING_POLICY.md](CODE_SIGNING_POLICY.md)。用户可在安装前查看隐私政策，并在安装后的
+“懒狗输入法设置”中关闭自动 AI、云端历史和匿名诊断。
+
 ## 开源与上游
 
 本仓库遵循 [GPL-3.0](LICENSE.txt)。原始 Weasel/RIME 版权、内部注册名、
