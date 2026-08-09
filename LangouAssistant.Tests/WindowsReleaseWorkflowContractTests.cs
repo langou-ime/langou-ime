@@ -99,6 +99,16 @@ public sealed class WindowsReleaseWorkflowContractTests
         }
     }
 
+    [Fact]
+    public void Pull_request_branches_are_not_built_twice()
+    {
+        var workflow = File.ReadAllText(CiSourcePath());
+
+        Assert.Contains("pull_request:", workflow, StringComparison.Ordinal);
+        Assert.Contains("      - main", workflow, StringComparison.Ordinal);
+        Assert.DoesNotContain("      - \"**\"", workflow, StringComparison.Ordinal);
+    }
+
     private static string SourcePath() =>
         Path.Combine(AppContext.BaseDirectory, "Workflows", "langou-release.yml");
 
