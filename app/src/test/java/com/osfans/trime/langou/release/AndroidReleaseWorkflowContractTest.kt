@@ -31,6 +31,12 @@ class AndroidReleaseWorkflowContractTest :
             workflow shouldNotContain "release-action"
         }
 
+        "internal CI executes build logic regression tests" {
+            val workflow = File(repositoryRoot, ".github/workflows/langou-android-ci.yml").readText()
+
+            workflow shouldContain "./gradlew -p build-logic :convention:test"
+        }
+
         "signed build requires all signing material without publishing by itself" {
             val workflow = File(repositoryRoot, ".github/workflows/langou-android-release.yml").readText()
             workflow shouldContain "ANDROID_KEYSTORE_BASE64"

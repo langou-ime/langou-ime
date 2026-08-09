@@ -45,6 +45,9 @@ jobs:
       - name: Install native build tools
         run: sdkmanager --install "cmake;3.31.6"
 
+      - name: Verify build logic regressions
+        run: ./gradlew -p build-logic :convention:test
+
       - name: Verify unit tests and build debug APKs
         run: ./gradlew testDebugUnitTest assembleDebug --stacktrace
 

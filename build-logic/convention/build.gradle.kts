@@ -13,6 +13,8 @@ dependencies {
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
     implementation(libs.kotlinx.serialization.json)
+    testImplementation(gradleTestKit())
+    testImplementation(kotlin("test"))
 }
 
 gradlePlugin {
