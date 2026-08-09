@@ -10,6 +10,7 @@ import com.osfans.trime.util.yaml.mapping
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactlyInAnyOrder
 import io.kotest.matchers.collections.shouldContainExactly
+import io.kotest.matchers.collections.shouldContain
 import io.kotest.matchers.shouldBe
 import java.io.File
 
@@ -36,8 +37,12 @@ class LangouThemeTest :
                 "number",
                 "symbols",
             )
-            theme.presetKeyboards.getValue("qwerty").keys.size shouldBe 33
-            theme.presetKeyboards.getValue("langou_t9").keys.size shouldBe 16
+            theme.presetKeyboards.getValue("qwerty").keys.size shouldBe 34
+            theme.presetKeyboards.getValue("langou_t9").keys.size shouldBe 15
+            theme.presetKeyboards.getValue("qwerty").keys.map { it.click } shouldContain
+                "Schema_switch"
+            theme.presetKeyboards.getValue("langou_t9").keys.map { it.click } shouldContain
+                "Schema_switch"
         }
 
         "qwerty contains each latin letter exactly once" {
