@@ -15,6 +15,7 @@ class LangouApiClientTest :
     StringSpec({
         "creates guest session and delivers each SSE suggestion immediately" {
             val delivered = mutableListOf<String>()
+            val memoryUpdates = mutableListOf<MemoryUpdate>()
             val deliveredCountsAfterEvents = mutableListOf<Int>()
             val transport =
                 RecordingTransport(
@@ -34,7 +35,10 @@ class LangouApiClientTest :
                             SseEvent("suggestion", """{"index":0,"style":"natural","text":"好呀～"}"""),
                             SseEvent("suggestion", """{"index":1,"style":"gentle","text":"当然可以呀"}"""),
                             SseEvent("suggestion", """{"index":2,"style":"boundary","text":"今天不方便哦"}"""),
-                            SseEvent("memory", """{"summary":"朋友；喜欢简短回复"}"""),
+                            SseEvent(
+                                "memory",
+                                """{"conversation_id":"conv_0123456789abcdef","summary":"朋友电话13800138000；喜欢简短回复"}""",
+                            ),
                             SseEvent("done", """{"count":3}"""),
                         ),
                     afterEvent = { event ->
@@ -68,6 +72,7 @@ class LangouApiClientTest :
                                 ),
                             ),
                     ),
+                    onMemory = memoryUpdates::add,
                 ) { suggestion -> delivered += suggestion.text }
 
             session.subjectType shouldBe "guest"
@@ -77,6 +82,12 @@ class LangouApiClientTest :
                 "今天不方便哦",
             )
             deliveredCountsAfterEvents.shouldContainExactly(1, 2, 3)
+            memoryUpdates.shouldContainExactly(
+                MemoryUpdate(
+                    conversationId = "conv_0123456789abcdef",
+                    summary = "朋友电话[手机号]；喜欢简短回复",
+                ),
+            )
             transport.lastBody shouldNotContain "13800138000"
             transport.lastBody shouldNotContain "screenshot"
             transport.lastBody shouldContain "朋友；喜欢简短回复"

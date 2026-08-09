@@ -96,6 +96,12 @@ data class Suggestion(
 )
 
 @Serializable
+data class MemoryUpdate(
+    @SerialName("conversation_id") val conversationId: String,
+    val summary: String,
+)
+
+@Serializable
 data class ApiError(
     val code: String = "unknown_error",
     val message: String = "请求失败",

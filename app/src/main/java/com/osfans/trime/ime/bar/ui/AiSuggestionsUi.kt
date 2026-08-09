@@ -68,11 +68,25 @@ class AiSuggestionsUi(
 
     fun showSuggestions(
         values: List<String>,
+        onRefresh: () -> Unit,
+        onForget: () -> Unit,
         onSelect: (String) -> Unit,
     ): Boolean {
         selection = AiSuggestionSelection(onSelect).apply { update(values) }
         content.removeAllViews()
         content.addView(createMascot(), mascotLayoutParams())
+        content.addView(
+            createChip(ctx.getString(R.string.langou_ai_refresh)).apply {
+                setOnClickListener { onRefresh() }
+            },
+            compactChipLayoutParams(),
+        )
+        content.addView(
+            createChip(ctx.getString(R.string.langou_ai_forget_chat)).apply {
+                setOnClickListener { onForget() }
+            },
+            compactChipLayoutParams(),
+        )
         selection.items.forEachIndexed { index, text ->
             content.addView(
                 createChip(text).apply {
@@ -131,5 +145,10 @@ class AiSuggestionsUi(
             LinearLayout.LayoutParams.MATCH_PARENT,
         ).apply {
             marginEnd = ctx.dp(6)
+        }
+
+    private fun compactChipLayoutParams() =
+        chipLayoutParams().apply {
+            marginEnd = ctx.dp(4)
         }
 }

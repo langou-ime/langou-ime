@@ -24,13 +24,17 @@ import com.osfans.trime.data.theme.ThemeManager
 import com.osfans.trime.langou.LangouClientFactory
 import com.osfans.trime.langou.LangouPreferences
 import com.osfans.trime.langou.account.PhoneNormalizer
+import com.osfans.trime.langou.memory.ConversationMemoryController
+import com.osfans.trime.langou.memory.LangouMemoryFactory
 import com.osfans.trime.langou.network.ClientSettings
 import com.osfans.trime.langou.update.ReleaseDecision
 import com.osfans.trime.langou.update.ReleaseSignatureVerifier
 import com.osfans.trime.langou.update.ReleaseUpdatePolicy
 import com.osfans.trime.ui.common.PaddingPreferenceFragment
 import com.osfans.trime.util.addCategory
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class LangouAccountFragment : PaddingPreferenceFragment() {
     private val api by lazy(LangouClientFactory::api)
@@ -41,6 +45,11 @@ class LangouAccountFragment : PaddingPreferenceFragment() {
         requireContext().getSharedPreferences(
             LangouPreferences.SETTINGS_FILE,
             Context.MODE_PRIVATE,
+        )
+    }
+    private val localMemoryController by lazy {
+        ConversationMemoryController(
+            LangouMemoryFactory.store(requireContext().applicationContext),
         )
     }
 
@@ -333,16 +342,22 @@ class LangouAccountFragment : PaddingPreferenceFragment() {
             .setNegativeButton(android.R.string.cancel, null)
             .setPositiveButton(R.string.delete) { _, _ ->
                 lifecycleScope.launch {
-                    val result =
+                    val localResult =
+                        runCatching {
+                            withContext(Dispatchers.IO) {
+                                localMemoryController.deleteAll()
+                            }
+                        }
+                    val cloudResult =
                         runCatching {
                             val current = sessionManager.validSession()
                             api.deleteAllHistory(current.tokens.accessToken)
                         }
                     toast(
-                        if (result.isSuccess) {
-                            R.string.langou_history_cleared
-                        } else {
-                            R.string.langou_network_error
+                        when {
+                            localResult.isFailure -> R.string.langou_network_error
+                            cloudResult.isSuccess -> R.string.langou_history_cleared
+                            else -> R.string.langou_local_history_cleared
                         },
                     )
                 }

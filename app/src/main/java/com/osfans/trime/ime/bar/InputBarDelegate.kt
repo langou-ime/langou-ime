@@ -177,10 +177,17 @@ class InputBarDelegate : InputBroadcastReceiver {
 
     fun showAiSuggestions(
         values: List<String>,
+        onRefresh: () -> Unit,
+        onForget: () -> Unit,
         onSelect: (String) -> Unit,
     ) {
         isAiSuggestionPresent =
-            alwaysUi.aiSuggestionsUi.showSuggestions(values, onSelect)
+            alwaysUi.aiSuggestionsUi.showSuggestions(
+                values,
+                onRefresh,
+                onForget,
+                onSelect,
+            )
         evalAlwaysUiState()
     }
 

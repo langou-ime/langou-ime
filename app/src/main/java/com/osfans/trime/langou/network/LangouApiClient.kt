@@ -116,13 +116,18 @@ class LangouApiClient(
         request: SuggestionRequest,
     ): List<Suggestion> {
         val suggestions = mutableListOf<Suggestion>()
-        streamSuggestions(bearerToken, request, suggestions::add)
+        streamSuggestions(
+            bearerToken = bearerToken,
+            request = request,
+            onSuggestion = suggestions::add,
+        )
         return suggestions
     }
 
     suspend fun streamSuggestions(
         bearerToken: String,
         request: SuggestionRequest,
+        onMemory: (MemoryUpdate) -> Unit = {},
         onSuggestion: (Suggestion) -> Unit,
     ) {
         val safeRequest =
@@ -146,6 +151,17 @@ class LangouApiClient(
                         suggestionCount += 1
                         onSuggestion(json.decodeFromString<Suggestion>(event.data))
                     }
+                }
+                "memory" -> {
+                    val update = json.decodeFromString<MemoryUpdate>(event.data)
+                    onMemory(
+                        update.copy(
+                            summary =
+                                ClientRedactor
+                                    .redact(update.summary)
+                                    .take(MAX_MEMORY_SUMMARY_CHARACTERS),
+                        ),
+                    )
                 }
                 "error" -> {
                     val error = json.decodeFromString<ApiError>(event.data)
@@ -172,5 +188,6 @@ class LangouApiClient(
 
     private companion object {
         const val MAX_SUGGESTIONS = 3
+        const val MAX_MEMORY_SUMMARY_CHARACTERS = 4000
     }
 }

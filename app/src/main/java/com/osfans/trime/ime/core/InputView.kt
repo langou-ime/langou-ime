@@ -301,9 +301,11 @@ class InputView(
 
     fun showAiSuggestions(
         values: List<String>,
+        onRefresh: () -> Unit,
+        onForget: () -> Unit,
         onSelect: (String) -> Unit,
     ) {
-        inputBar.showAiSuggestions(values, onSelect)
+        inputBar.showAiSuggestions(values, onRefresh, onForget, onSelect)
     }
 
     fun dismissAiSuggestions() {
