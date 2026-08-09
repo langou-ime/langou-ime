@@ -158,8 +158,8 @@ preset_keys:
     send: Mode_switch
     states: [中, En]
   Schema_switch:
-    label: 拼音
-    send: Control+Shift+1
+    label: "26/9"
+    send: Control+grave
   Keyboard_symbols:
     label: 符
     send: Eisu_toggle
@@ -179,6 +179,11 @@ preset_keys:
   Space:
     label: 懒狗
     send: space
+  Shift_L: {label: "⇧", send: Shift_L}
+  BackSpace: {label: "⌫", repeatable: true, send: BackSpace}
+  Return: {label: "换行", send: Return}
+  Left: {label: "←", repeatable: true, send: Left}
+  Right: {label: "→", repeatable: true, send: Right}
 
 preset_keyboards:
   default:
@@ -225,9 +230,10 @@ preset_keyboards:
       - {click: n, width: 10}
       - {click: m, width: 10}
       - {click: BackSpace, width: 15, key_back_color: functional_key_back_color}
-      - {click: Keyboard_symbols, long_click: Keyboard_number, width: 15, key_back_color: functional_key_back_color}
-      - {click: Mode_switch, long_click: Schema_switch, width: 13, key_back_color: functional_key_back_color}
-      - {click: Space, width: 42}
+      - {click: Keyboard_symbols, long_click: Keyboard_number, width: 14, key_back_color: functional_key_back_color}
+      - {click: Mode_switch, width: 12, key_back_color: functional_key_back_color}
+      - {click: Schema_switch, width: 14, key_back_color: functional_key_back_color}
+      - {click: Space, width: 30}
       - {click: "，", long_click: "。", width: 12}
       - {click: Return, width: 18, key_back_color: enter_key_back_color}
 
@@ -261,10 +267,9 @@ preset_keyboards:
       - {click: "8", label: "TUV"}
       - {click: "9", label: "WXYZ"}
       - {click: Keyboard_symbols, long_click: Keyboard_number, width: 14, key_back_color: functional_key_back_color}
-      - {click: Mode_switch, long_click: Schema_switch, width: 14, key_back_color: functional_key_back_color}
-      - {click: Left, width: 10, key_back_color: functional_key_back_color}
-      - {click: Space, width: 24}
-      - {click: Right, width: 10, key_back_color: functional_key_back_color}
+      - {click: Mode_switch, width: 14, key_back_color: functional_key_back_color}
+      - {click: Schema_switch, width: 14, key_back_color: functional_key_back_color}
+      - {click: Space, width: 30}
       - {click: BackSpace, width: 14, key_back_color: functional_key_back_color}
       - {click: Return, width: 14, key_back_color: enter_key_back_color}
 
