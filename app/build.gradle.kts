@@ -216,6 +216,10 @@ tasks.named("preBuild").configure {
     dependsOn(syncRimeData)
 }
 
+tasks.matching { it.name.startsWith("test") && it.name.endsWith("UnitTest") }.configureEach {
+    dependsOn("generateDataChecksums")
+}
+
 val validateLangouReleaseKey =
     tasks.register("validateLangouReleaseKey") {
         doLast {

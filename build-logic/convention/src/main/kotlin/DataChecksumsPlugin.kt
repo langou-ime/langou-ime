@@ -7,20 +7,16 @@ import kotlinx.serialization.encodeToString
 import org.gradle.api.DefaultTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.api.file.DirectoryProperty
+import org.gradle.api.file.ConfigurableFileCollection
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.logging.LogLevel
 import org.gradle.api.tasks.Delete
-import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.InputFiles
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
 import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.task
-import org.gradle.work.ChangeType
-import org.gradle.work.Incremental
-import org.gradle.work.InputChanges
 import org.jetbrains.kotlin.com.google.common.hash.Hashing
 import org.jetbrains.kotlin.com.google.common.io.ByteSource
 import java.io.File
@@ -39,7 +35,10 @@ class DataChecksumsPlugin : Plugin<Project> {
 
     override fun apply(target: Project) {
         target.tasks.register<DataChecksumsTask>(TASK) {
-            inputDir.set(target.assetsDir)
+            inputDirs.from(
+                target.assetsDir,
+                target.layout.buildDirectory.dir("generated/rimeAssets"),
+            )
             outputFile.set(target.assetsDir.resolve(FILE_NAME))
         }
         target.tasks.register<Delete>(CLEAN_TASK) {
@@ -56,10 +55,9 @@ class DataChecksumsPlugin : Plugin<Project> {
             val files: Map<String, String>,
         )
 
-        @get:Incremental
-        @get:PathSensitive(PathSensitivity.NAME_ONLY)
-        @get:InputDirectory
-        abstract val inputDir: DirectoryProperty
+        @get:PathSensitive(PathSensitivity.RELATIVE)
+        @get:InputFiles
+        abstract val inputDirs: ConfigurableFileCollection
 
         @get:OutputFile
         abstract val outputFile: RegularFileProperty
@@ -80,49 +78,32 @@ class DataChecksumsPlugin : Plugin<Project> {
             file.writeText(json.encodeToString(checksums))
         }
 
-        private fun deserialize(): Map<String, String> = json.decodeFromString<DataChecksums>(file.readText()).files
-
         companion object {
             fun sha256(file: File): String = ByteSource.wrap(file.readBytes()).hash(Hashing.sha256()).toString()
         }
 
         @TaskAction
-        fun execute(inputChanges: InputChanges) {
-            val map =
-                file
-                    .exists()
-                    .takeIf { it }
-                    ?.runCatching {
-                        deserialize()
-                            // remove all old dirs
-                            .filterValues { it.isNotBlank() }
-                            .toMutableMap()
-                    }?.getOrNull()
-                    ?: mutableMapOf()
+        fun execute() {
+            val map = mutableMapOf<String, String>()
+            val output = file.canonicalFile
 
-            fun File.allParents(): List<File> = if (parentFile == null || parentFile.invariantSeparatorsPath in map) {
-                listOf()
-            } else {
-                listOf(parentFile) + parentFile.allParents()
-            }
-            inputChanges.getFileChanges(inputDir).forEach { change ->
-                if (change.file.name == file.name) {
-                    return@forEach
-                }
-                logger.log(LogLevel.DEBUG, "${change.changeType}: ${change.normalizedPath}")
-                val relativeFile = change.file.relativeTo(file.parentFile)
-                val key = relativeFile.invariantSeparatorsPath
-                if (change.changeType == ChangeType.REMOVED) {
-                    map.remove(key)
-                } else {
-                    map[key] = sha256(change.file)
+            inputDirs.files.filter(File::isDirectory).sortedBy(File::getAbsolutePath).forEach { root ->
+                root.walkTopDown().filter(File::isFile).sortedBy(File::getAbsolutePath).forEach assetLoop@{ asset ->
+                    if (asset.canonicalFile == output) return@assetLoop
+                    val key = asset.relativeTo(root).invariantSeparatorsPath
+                    val hash = sha256(asset)
+                    val previous = map.putIfAbsent(key, hash)
+                    require(previous == null || previous == hash) {
+                        "Conflicting asset path '$key' in checksum inputs"
+                    }
                 }
             }
-            // calculate dirs
-            inputDir.asFileTree.forEach {
-                it.relativeTo(file.parentFile).allParents().forEach { p ->
-                    map[p.invariantSeparatorsPath] = ""
-                }
+
+            map.keys.toList().forEach { relativePath ->
+                generateSequence(File(relativePath).parentFile) { it.parentFile }
+                    .map { it.invariantSeparatorsPath }
+                    .filter(String::isNotBlank)
+                    .forEach { map.putIfAbsent(it, "") }
             }
             serialize(map.toSortedMap())
         }

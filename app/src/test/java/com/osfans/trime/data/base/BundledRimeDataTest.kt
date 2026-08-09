@@ -36,4 +36,19 @@ class BundledRimeDataTest :
             ) shouldBe true
             schema.contains("t9_processor") shouldBe false
         }
+
+        "checksums include every generated schema required on first install" {
+            val checksums = File("src/main/assets/checksums.json").readText()
+
+            listOf(
+                "shared/default.yaml",
+                "shared/luna_pinyin.dict.yaml",
+                "shared/luna_pinyin_simp.schema.yaml",
+                "shared/langou_t9.schema.yaml",
+                "shared/essay.txt",
+                "shared/emoji_suggestion.yaml",
+            ).forEach { relativePath ->
+                checksums.contains("\"$relativePath\"") shouldBe true
+            }
+        }
     })
