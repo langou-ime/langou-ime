@@ -4,6 +4,7 @@ data class VisibleText(
     val text: String,
     val centerX: Int,
     val screenWidth: Int,
+    val centerY: Int = Int.MAX_VALUE,
     val editable: Boolean = false,
     val password: Boolean = false,
 )

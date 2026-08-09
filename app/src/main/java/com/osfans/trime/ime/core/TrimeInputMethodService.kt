@@ -56,8 +56,14 @@ import com.osfans.trime.langou.ai.AutoSuggestionGate
 import com.osfans.trime.langou.ai.ChatApplicationMapper
 import com.osfans.trime.langou.ai.SuggestionDecision
 import com.osfans.trime.langou.ai.SuggestionTrigger
+import com.osfans.trime.langou.context.ContextCaptureState
 import com.osfans.trime.langou.context.ContextPermissionStatus
 import com.osfans.trime.langou.context.ContextSnapshotStore
+import com.osfans.trime.langou.memory.ConversationIdentity
+import com.osfans.trime.langou.memory.ConversationMemory
+import com.osfans.trime.langou.memory.LangouMemoryFactory
+import com.osfans.trime.langou.memory.MemoryRetriever
+import com.osfans.trime.langou.memory.StoredTurn
 import com.osfans.trime.langou.network.ConversationTurn
 import com.osfans.trime.langou.network.SuggestionRequest
 import com.osfans.trime.langou.privacy.ContextSignals
@@ -71,12 +77,14 @@ import com.osfans.trime.util.styledFloat
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import splitties.bitflags.hasFlag
 import splitties.systemservices.clipboardManager
 import splitties.systemservices.inputMethodManager
@@ -119,6 +127,10 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
     private val langouSuggestionGate = AutoSuggestionGate()
     private var langouSuggestionJob: Job? = null
+    private val langouMemoryStore by lazy { LangouMemoryFactory.store(applicationContext) }
+    private val langouIdentityResolver by lazy(LangouMemoryFactory::identityResolver)
+    private val langouMemoryRetriever = MemoryRetriever()
+    private val langouEphemeralMemories = mutableMapOf<String, ConversationMemory>()
 
     private val recreateInputViewPrefs: Array<PreferenceDelegate<*>> =
         arrayOf(prefs.keyboard.hideInputBar)
@@ -202,7 +214,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         lifecycleScope.launch {
             ContextSnapshotStore.snapshots
                 .distinctUntilChangedBy { snapshot ->
-                    snapshot?.let { it.packageName to it.turns }
+                    snapshot?.let { Triple(it.packageName, it.conversationHint, it.turns) }
                 }.collect { snapshot ->
                     if (snapshot == null) {
                         langouSuggestionJob?.cancel()
@@ -594,7 +606,10 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             inputDeviceManager.evaluateOnStartInputView(attribute, this)
         if (useVirtualKeyboard) {
             inputView?.startInput(attribute, restarting)
+            updateLangouCaptureState(attribute)
             scheduleLangouSuggestions(attribute)
+        } else {
+            ContextCaptureState.deactivate()
         }
         if (useCandidatesView) {
             if (currentInputConnection?.monitorCursorAnchor() != true) {
@@ -608,6 +623,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
 
     override fun onFinishInputView(finishingInput: Boolean) {
         Timber.d("onFinishInputView: finishingInput=$finishingInput")
+        ContextCaptureState.deactivate()
         decorLocationUpdated = false
         inputDeviceManager.onFinishInputView()
         currentInputConnection?.apply {
@@ -625,13 +641,38 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         InputFeedbackManager.finishInput()
     }
 
+    private fun updateLangouCaptureState(editorInfo: EditorInfo) {
+        val packageName = editorInfo.packageName.orEmpty()
+        val enabled = langouSettings.getBoolean(LangouPreferences.AI_AUTO_SUGGEST, true)
+        val supported = ChatApplicationMapper.map(packageName) != null
+        val safe =
+            SensitiveContextPolicy.canCollect(
+                ContextSignals(
+                    inputType = editorInfo.inputType,
+                    packageName = packageName,
+                ),
+            )
+        if (
+            enabled &&
+            supported &&
+            safe &&
+            ContextPermissionStatus.isAccessibilityEnabled(this)
+        ) {
+            ContextCaptureState.activate(packageName)
+        } else {
+            ContextCaptureState.deactivate()
+        }
+    }
+
     private fun scheduleLangouSuggestions(info: EditorInfo? = currentInputEditorInfo) {
         langouSuggestionJob?.cancel()
         if (!langouSettings.getBoolean(LangouPreferences.AI_AUTO_SUGGEST, true)) {
+            ContextCaptureState.deactivate()
             inputView?.dismissAiSuggestions()
             return
         }
         if (!ContextPermissionStatus.isAccessibilityEnabled(this)) {
+            ContextCaptureState.deactivate()
             inputView?.dismissAiSuggestions()
             return
         }
@@ -639,6 +680,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         val packageName = editorInfo.packageName.orEmpty()
         val application = ChatApplicationMapper.map(packageName)
         if (application == null) {
+            ContextCaptureState.deactivate()
             inputView?.dismissAiSuggestions()
             return
         }
@@ -648,6 +690,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                 packageName = packageName,
             )
         if (!SensitiveContextPolicy.canCollect(signals)) {
+            ContextCaptureState.deactivate()
             inputView?.dismissAiSuggestions()
             return
         }
@@ -656,8 +699,28 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             lifecycleScope.launch {
                 delay(LANGOU_SUGGESTION_DEBOUNCE_MS)
                 val snapshot = ContextSnapshotStore.get(packageName) ?: return@launch
+                val identity =
+                    langouIdentityResolver.resolve(
+                        application = application,
+                        conversationHint = snapshot.conversationHint,
+                        confidence = snapshot.identityConfidence,
+                    )
+                val capturedTurns =
+                    snapshot.turns.map { turn ->
+                        StoredTurn(
+                            role = turn.role,
+                            text = turn.text,
+                            capturedAtEpochMillis = snapshot.capturedAtEpochMillis,
+                        )
+                    }
+                val memory = loadConversationMemory(identity, capturedTurns)
+                val retrieved =
+                    langouMemoryRetriever.retrieve(
+                        memory = memory,
+                        latestText = snapshot.turns.lastOrNull()?.text.orEmpty(),
+                    )
                 val turns =
-                    snapshot
+                    retrieved
                         .turns
                         .takeLast(MAX_LANGOU_TURNS)
                         .map { turn ->
@@ -670,7 +733,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                 if (
                     langouSuggestionGate.evaluate(
                         signals = signals,
-                        conversationId = packageName,
+                        conversationId = identity.id,
                         context = context,
                         trigger = SuggestionTrigger.ContextChange,
                     ) !=
@@ -692,6 +755,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                             application = application,
                             locale = Locale.getDefault().toLanguageTag().take(16),
                             turns = turns,
+                            conversationId = identity.id,
+                            memorySummary = retrieved.summary.takeIf(String::isNotBlank),
                             saveHistory =
                                 langouSettings.getBoolean(
                                     LangouPreferences.SAVE_HISTORY,
@@ -725,9 +790,50 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                     )
                     inputView?.dismissAiSuggestions()
                 } finally {
-                    langouSuggestionGate.complete(packageName, context, requestSucceeded)
+                    langouSuggestionGate.complete(identity.id, context, requestSucceeded)
                 }
             }
+    }
+
+    private suspend fun loadConversationMemory(
+        identity: ConversationIdentity,
+        capturedTurns: List<StoredTurn>,
+    ): ConversationMemory {
+        val now = System.currentTimeMillis()
+        val fallback =
+            ConversationMemory(
+                conversationId = identity.id,
+                turns = capturedTurns,
+                updatedAtEpochMillis = now,
+            )
+        if (identity.persistent) {
+            return withContext(Dispatchers.IO) {
+                runCatching {
+                    langouMemoryStore.merge(identity.id, capturedTurns)
+                }.onFailure { failure ->
+                    Timber.w(
+                        "Encrypted chat memory unavailable: ${failure.javaClass.simpleName}",
+                    )
+                }.getOrDefault(fallback)
+            }
+        }
+
+        val existing = langouEphemeralMemories[identity.id]
+        val mergedTurns =
+            (existing?.turns.orEmpty() + capturedTurns)
+                .filter { now - it.capturedAtEpochMillis < LANGOU_MEMORY_RETENTION_MILLIS }
+                .fold(mutableListOf<StoredTurn>()) { result, turn ->
+                    if (result.lastOrNull()?.let { it.role == turn.role && it.text == turn.text } != true) {
+                        result += turn
+                    }
+                    result
+                }.takeLast(MAX_LANGOU_MEMORY_TURNS)
+        return ConversationMemory(
+            conversationId = identity.id,
+            turns = mergedTurns,
+            summary = existing?.summary.orEmpty(),
+            updatedAtEpochMillis = now,
+        ).also { memory -> langouEphemeralMemories[identity.id] = memory }
     }
 
     fun commitText(text: String) {
@@ -1149,6 +1255,8 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     private companion object {
         const val LANGOU_SUGGESTION_DEBOUNCE_MS = 150L
         const val MAX_LANGOU_TURNS = 12
+        const val MAX_LANGOU_MEMORY_TURNS = 100
+        const val LANGOU_MEMORY_RETENTION_MILLIS = 30L * 24L * 60L * 60L * 1_000L
         const val MAX_LANGOU_GATE_CONTEXT_CHARACTERS = 2_000
     }
 }

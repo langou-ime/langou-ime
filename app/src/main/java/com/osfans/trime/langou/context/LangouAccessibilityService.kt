@@ -46,8 +46,18 @@ class LangouAccessibilityService : AccessibilityService() {
             ContextSnapshotStore.clear()
             return
         }
+        if (!ContextCaptureState.isActive(packageName)) {
+            ContextSnapshotStore.clear()
+            return
+        }
 
         val nodes = collectVisibleText(root)
+        val screenHeight = resources.displayMetrics.heightPixels
+        val conversationHint =
+            ConversationHintResolver.resolve(
+                items = nodes,
+                screenHeight = screenHeight,
+            )
         val labels = nodes.joinToString(" ") { it.text }.take(MAX_SCREEN_LABEL_CHARACTERS)
         val signals =
             ContextSignals(
@@ -65,7 +75,12 @@ class LangouAccessibilityService : AccessibilityService() {
             return
         }
 
-        val turns = ChatTextSegmenter.segment(nodes)
+        val turns =
+            ChatTextSegmenter.segment(
+                nodes.filter { item ->
+                    item.centerY >= screenHeight * CHAT_CONTENT_START_RATIO
+                },
+            )
         if (turns.isEmpty()) {
             ContextSnapshotStore.clear()
         } else {
@@ -73,6 +88,8 @@ class LangouAccessibilityService : AccessibilityService() {
                 ChatContextSnapshot(
                     packageName = packageName,
                     application = application,
+                    conversationHint = conversationHint.text,
+                    identityConfidence = conversationHint.confidence,
                     turns = turns,
                     capturedAtEpochMillis = System.currentTimeMillis(),
                 ),
@@ -80,9 +97,9 @@ class LangouAccessibilityService : AccessibilityService() {
         }
         if (turns.size < MIN_ACCESSIBILITY_TURNS) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                captureAndRecognize(packageName, application)
+                captureAndRecognize(packageName, application, conversationHint)
             } else {
-                captureLegacyAndRecognize(packageName, application)
+                captureLegacyAndRecognize(packageName, application, conversationHint)
             }
         }
     }
@@ -107,6 +124,7 @@ class LangouAccessibilityService : AccessibilityService() {
     private fun captureAndRecognize(
         packageName: String,
         application: String,
+        conversationHint: ConversationHint,
     ) {
         if (!beginOcrAttempt()) return
         takeScreenshot(
@@ -125,7 +143,7 @@ class LangouAccessibilityService : AccessibilityService() {
                         bitmap?.recycle()
                         return
                     }
-                    recognizeBitmap(bitmap, packageName, application)
+                    recognizeBitmap(bitmap, packageName, application, conversationHint)
                 }
 
                 override fun onFailure(errorCode: Int) {
@@ -138,6 +156,7 @@ class LangouAccessibilityService : AccessibilityService() {
     private fun captureLegacyAndRecognize(
         packageName: String,
         application: String,
+        conversationHint: ConversationHint,
     ) {
         if (!beginOcrAttempt()) return
         if (
@@ -145,7 +164,7 @@ class LangouAccessibilityService : AccessibilityService() {
                 if (destroyed) {
                     bitmap.recycle()
                 } else {
-                    recognizeBitmap(bitmap, packageName, application)
+                    recognizeBitmap(bitmap, packageName, application, conversationHint)
                 }
             }
         ) {
@@ -170,6 +189,7 @@ class LangouAccessibilityService : AccessibilityService() {
         bitmap: Bitmap,
         packageName: String,
         application: String,
+        conversationHint: ConversationHint,
     ) {
         ocrJob =
             serviceScope.launch {
@@ -188,6 +208,8 @@ class LangouAccessibilityService : AccessibilityService() {
                             ChatContextSnapshot(
                                 packageName = packageName,
                                 application = application,
+                                conversationHint = conversationHint.text,
+                                identityConfidence = conversationHint.confidence,
                                 turns = turns,
                                 capturedAtEpochMillis = System.currentTimeMillis(),
                             ),
@@ -228,6 +250,7 @@ class LangouAccessibilityService : AccessibilityService() {
                             text = value,
                             centerX = bounds.centerX(),
                             screenWidth = screenWidth,
+                            centerY = bounds.centerY(),
                             editable = node.isEditable || node.isFocused,
                             password = node.isPassword,
                         )
@@ -245,5 +268,6 @@ class LangouAccessibilityService : AccessibilityService() {
         const val MAX_SCREEN_LABEL_CHARACTERS = 4_000
         const val MIN_ACCESSIBILITY_TURNS = 2
         const val OCR_THROTTLE_MILLIS = 2_000L
+        const val CHAT_CONTENT_START_RATIO = 0.18
     }
 }

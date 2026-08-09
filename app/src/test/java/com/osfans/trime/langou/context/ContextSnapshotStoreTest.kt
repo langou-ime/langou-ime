@@ -5,6 +5,7 @@
 
 package com.osfans.trime.langou.context
 
+import com.osfans.trime.langou.memory.IdentityConfidence
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
 
@@ -19,6 +20,8 @@ class ContextSnapshotStoreTest :
                 ChatContextSnapshot(
                     packageName = "com.tencent.mm",
                     application = "wechat",
+                    conversationHint = "小夏",
+                    identityConfidence = IdentityConfidence.High,
                     turns = listOf(ChatTurn("other", "晚上吃什么？")),
                     capturedAtEpochMillis = 100L,
                 )

@@ -1,5 +1,6 @@
 package com.osfans.trime.langou.context
 
+import com.osfans.trime.langou.memory.IdentityConfidence
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -7,6 +8,8 @@ import kotlinx.coroutines.flow.asStateFlow
 data class ChatContextSnapshot(
     val packageName: String,
     val application: String,
+    val conversationHint: String? = null,
+    val identityConfidence: IdentityConfidence = IdentityConfidence.Low,
     val turns: List<ChatTurn>,
     val capturedAtEpochMillis: Long,
 )
