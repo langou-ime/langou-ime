@@ -295,6 +295,20 @@
             "title": "Application",
             "type": "string"
           },
+          "conversation_id": {
+            "anyOf": [
+              {
+                "maxLength": 64,
+                "minLength": 8,
+                "pattern": "^[A-Za-z0-9_-]+$",
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Conversation Id"
+          },
           "device_id": {
             "maxLength": 64,
             "minLength": 8,
@@ -320,6 +334,18 @@
             "title": "Locale",
             "type": "string"
           },
+          "memory_summary": {
+            "anyOf": [
+              {
+                "maxLength": 4000,
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Memory Summary"
+          },
           "request_id": {
             "maxLength": 64,
             "minLength": 8,
@@ -331,6 +357,15 @@
             "default": true,
             "title": "Save History",
             "type": "boolean"
+          },
+          "trigger": {
+            "default": "context_change",
+            "enum": [
+              "context_change",
+              "manual_refresh"
+            ],
+            "title": "Trigger",
+            "type": "string"
           },
           "turns": {
             "items": {

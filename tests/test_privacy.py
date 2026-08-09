@@ -19,19 +19,22 @@ def test_sanitizer_removes_common_identifiers_before_model_or_storage() -> None:
                 }
             ],
             "draft": "也可以打 +86 139 0013 9000",
+            "memory_summary": "小夏的备用电话是 13700137000",
             "save_history": True,
         }
     )
 
     sanitized = sanitize_suggestion_request(request)
     combined = " ".join(
-        [turn.text for turn in sanitized.turns] + [sanitized.draft or ""]
+        [turn.text for turn in sanitized.turns]
+        + [sanitized.draft or "", sanitized.memory_summary or ""]
     )
 
     assert "13800138000" not in combined
     assert "girl@example.com" not in combined
     assert "11010519491231002X" not in combined
     assert "6222021234567890" not in combined
+    assert "13700137000" not in combined
     assert "[手机号]" in combined
     assert "[邮箱]" in combined
     assert "[身份证]" in combined

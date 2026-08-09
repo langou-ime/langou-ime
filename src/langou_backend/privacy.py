@@ -31,6 +31,11 @@ def sanitize_suggestion_request(request: SuggestionRequest) -> SuggestionRequest
                 for turn in request.turns
             ],
             "draft": _redact(request.draft) if request.draft is not None else None,
+            "memory_summary": (
+                _redact(request.memory_summary)
+                if request.memory_summary is not None
+                else None
+            ),
         }
     )
 

@@ -21,3 +21,8 @@ def test_committed_openapi_contract_contains_v1_surface() -> None:
     }.issubset(contract["paths"])
     request_schema = contract["components"]["schemas"]["SuggestionRequest"]
     assert "screenshot" not in request_schema.get("properties", {})
+    assert {
+        "conversation_id",
+        "memory_summary",
+        "trigger",
+    }.issubset(request_schema["properties"])

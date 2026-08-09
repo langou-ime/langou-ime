@@ -36,6 +36,9 @@ class SuggestionRequest(StrictModel):
     locale: Annotated[str, Field(min_length=2, max_length=16)]
     turns: Annotated[list[ConversationTurn], Field(min_length=1, max_length=12)]
     draft: Annotated[str | None, Field(max_length=1000)] = None
+    conversation_id: Identifier | None = None
+    memory_summary: Annotated[str | None, Field(max_length=4000)] = None
+    trigger: Literal["context_change", "manual_refresh"] = "context_change"
     save_history: bool = True
 
 

@@ -42,6 +42,35 @@ def test_suggestion_request_limits_context_size() -> None:
         schemas.SuggestionRequest.model_validate(payload)
 
 
+def test_suggestion_request_accepts_bounded_anonymous_memory() -> None:
+    schemas = load_schemas()
+    payload = valid_request() | {
+        "conversation_id": "conv_0123456789abcdef",
+        "memory_summary": "朋友；喜欢简短轻松回复；还在确认周末时间。",
+        "trigger": "context_change",
+    }
+
+    request = schemas.SuggestionRequest.model_validate(payload)
+
+    assert request.conversation_id == "conv_0123456789abcdef"
+    assert request.memory_summary == "朋友；喜欢简短轻松回复；还在确认周末时间。"
+    assert request.trigger == "context_change"
+
+
+def test_suggestion_request_rejects_invalid_memory_fields() -> None:
+    schemas = load_schemas()
+
+    with pytest.raises(ValidationError, match="memory_summary"):
+        schemas.SuggestionRequest.model_validate(
+            valid_request() | {"memory_summary": "x" * 4001}
+        )
+
+    with pytest.raises(ValidationError, match="trigger"):
+        schemas.SuggestionRequest.model_validate(
+            valid_request() | {"trigger": "draft_change"}
+        )
+
+
 def test_release_manifest_requires_https_and_sha256() -> None:
     schemas = load_schemas()
 
@@ -59,4 +88,3 @@ def test_release_manifest_requires_https_and_sha256() -> None:
                 "published_at": "2026-07-26T00:00:00Z",
             }
         )
-
