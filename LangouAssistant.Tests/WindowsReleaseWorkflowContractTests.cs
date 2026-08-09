@@ -107,6 +107,7 @@ public sealed class WindowsReleaseWorkflowContractTests
         Assert.Contains("pull_request:", workflow, StringComparison.Ordinal);
         Assert.Contains("      - main", workflow, StringComparison.Ordinal);
         Assert.DoesNotContain("      - \"**\"", workflow, StringComparison.Ordinal);
+        Assert.Contains("cancel-in-progress: true", workflow, StringComparison.Ordinal);
     }
 
     private static string SourcePath() =>
