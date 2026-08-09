@@ -35,20 +35,29 @@
     <StandardDirectory Id="ProgramFiles64Folder">
       <Directory Id="LangouCompanyFolder" Name="Langou">
         <Directory Id="INSTALLFOLDER" Name="LangouIME">
-          <Component Id="LangouCoreExecutables" Guid="*">
+          <Component Id="LangouAssistantExecutable" Guid="*">
             <File
                 Id="LangouAssistantExe"
                 Source="!(bindpath.Payload)\LangouAssistant.exe"
                 KeyPath="yes" />
+          </Component>
+          <Component Id="WeaselServerExecutable" Guid="*">
             <File
                 Id="WeaselServerExe"
-                Source="!(bindpath.Payload)\WeaselServer.exe" />
+                Source="!(bindpath.Payload)\WeaselServer.exe"
+                KeyPath="yes" />
+          </Component>
+          <Component Id="WeaselSetupExecutable" Guid="*">
             <File
                 Id="WeaselSetupExe"
-                Source="!(bindpath.Payload)\WeaselSetup.exe" />
+                Source="!(bindpath.Payload)\WeaselSetup.exe"
+                KeyPath="yes" />
+          </Component>
+          <Component Id="WeaselDeployerExecutable" Guid="*">
             <File
                 Id="WeaselDeployerExe"
-                Source="!(bindpath.Payload)\WeaselDeployer.exe" />
+                Source="!(bindpath.Payload)\WeaselDeployer.exe"
+                KeyPath="yes" />
           </Component>
 
           <Component Id="LangouAutoStart" Guid="*">

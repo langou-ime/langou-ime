@@ -83,6 +83,20 @@ public sealed class InstallerSourceContractTests
         });
     }
 
+    [Fact]
+    public void Auto_guid_components_do_not_group_multiple_versioned_executables()
+    {
+        var autoGuidComponents = Load()
+            .Descendants(Wix + "Component")
+            .Where(component => component.Attribute("Guid")?.Value == "*");
+
+        Assert.All(
+            autoGuidComponents,
+            component => Assert.True(
+                component.Elements(Wix + "File").Count() <= 1,
+                $"Component '{component.Attribute("Id")?.Value}' groups multiple files with an automatic GUID."));
+    }
+
     private static XDocument Load() => XDocument.Load(SourcePath());
 
     private static string SourcePath() =>
