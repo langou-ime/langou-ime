@@ -79,7 +79,8 @@ def test_suggestion_meta_does_not_claim_the_development_model() -> None:
     class ProductionLikeProvider:
         async def generate(self, request):
             del request
-            return []
+            if False:
+                yield
 
     client = TestClient(
         create_app(
@@ -102,6 +103,8 @@ def test_suggestion_stream_returns_retryable_error_without_breaking_transport() 
     class FailingProvider:
         async def generate(self, request):
             del request
+            if False:
+                yield
             raise SuggestionUnavailable
 
     client = TestClient(

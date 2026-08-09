@@ -243,23 +243,27 @@ def create_app(
                     {"code": "service_busy", "retryable": True},
                 )
                 return
+            suggestions = []
             try:
-                suggestions = await suggestion_provider.generate(sanitized_request)
+                async for suggestion in suggestion_provider.generate(sanitized_request):
+                    if len(suggestions) >= 3:
+                        break
+                    suggestions.append(suggestion)
+                    yield _sse(
+                        "suggestion",
+                        {
+                            "index": len(suggestions) - 1,
+                            "style": suggestion.style,
+                            "text": suggestion.text,
+                        },
+                    )
             except SuggestionUnavailable:
-                yield _sse(
-                    "error",
-                    {"code": "suggestion_unavailable", "retryable": True},
-                )
-                return
-            for index, suggestion in enumerate(suggestions[:3]):
-                yield _sse(
-                    "suggestion",
-                    {
-                        "index": index,
-                        "style": suggestion.style,
-                        "text": suggestion.text,
-                    },
-                )
+                if not suggestions:
+                    yield _sse(
+                        "error",
+                        {"code": "suggestion_unavailable", "retryable": True},
+                    )
+                    return
             settings = await settings_repository.get(principal.subject)
             if sanitized_request.save_history and settings.save_history:
                 await history_service.save(
@@ -272,11 +276,11 @@ def create_app(
                         ],
                         "suggestions": [
                             {"style": suggestion.style, "text": suggestion.text}
-                            for suggestion in suggestions[:3]
+                            for suggestion in suggestions
                         ],
                     },
                 )
-            yield _sse("done", {"count": min(len(suggestions), 3)})
+            yield _sse("done", {"count": len(suggestions)})
 
         return StreamingResponse(
             events(),
