@@ -82,6 +82,9 @@ data class SuggestionRequest(
     val locale: String,
     val turns: List<ConversationTurn>,
     val draft: String? = null,
+    @SerialName("conversation_id") val conversationId: String? = null,
+    @SerialName("memory_summary") val memorySummary: String? = null,
+    val trigger: String = "context_change",
     @SerialName("save_history") val saveHistory: Boolean = true,
 )
 

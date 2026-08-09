@@ -115,6 +115,16 @@ class LangouApiClient(
         bearerToken: String,
         request: SuggestionRequest,
     ): List<Suggestion> {
+        val suggestions = mutableListOf<Suggestion>()
+        streamSuggestions(bearerToken, request, suggestions::add)
+        return suggestions
+    }
+
+    suspend fun streamSuggestions(
+        bearerToken: String,
+        request: SuggestionRequest,
+        onSuggestion: (Suggestion) -> Unit,
+    ) {
         val safeRequest =
             request.copy(
                 turns =
@@ -122,8 +132,9 @@ class LangouApiClient(
                         turn.copy(text = ClientRedactor.redact(turn.text))
                     },
                 draft = request.draft?.let(ClientRedactor::redact),
+                memorySummary = request.memorySummary?.let(ClientRedactor::redact),
             )
-        val suggestions = mutableListOf<Suggestion>()
+        var suggestionCount = 0
         transport.postSse(
             path = "/v1/ai/suggestions:stream",
             body = json.encodeToString(safeRequest),
@@ -131,8 +142,9 @@ class LangouApiClient(
         ) { event ->
             when (event.event) {
                 "suggestion" -> {
-                    if (suggestions.size < MAX_SUGGESTIONS) {
-                        suggestions += json.decodeFromString<Suggestion>(event.data)
+                    if (suggestionCount < MAX_SUGGESTIONS) {
+                        suggestionCount += 1
+                        onSuggestion(json.decodeFromString<Suggestion>(event.data))
                     }
                 }
                 "error" -> {
@@ -141,7 +153,6 @@ class LangouApiClient(
                 }
             }
         }
-        return suggestions
     }
 
     private suspend inline fun <reified T> request(

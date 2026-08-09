@@ -8,11 +8,14 @@ package com.osfans.trime.langou.network
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.shouldBe
+import io.kotest.matchers.string.shouldContain
 import io.kotest.matchers.string.shouldNotContain
 
 class LangouApiClientTest :
     StringSpec({
-        "creates guest session and parses exactly three SSE suggestions" {
+        "creates guest session and delivers each SSE suggestion immediately" {
+            val delivered = mutableListOf<String>()
+            val deliveredCountsAfterEvents = mutableListOf<Int>()
             val transport =
                 RecordingTransport(
                     jsonResponse =
@@ -31,8 +34,14 @@ class LangouApiClientTest :
                             SseEvent("suggestion", """{"index":0,"style":"natural","text":"好呀～"}"""),
                             SseEvent("suggestion", """{"index":1,"style":"gentle","text":"当然可以呀"}"""),
                             SseEvent("suggestion", """{"index":2,"style":"boundary","text":"今天不方便哦"}"""),
+                            SseEvent("memory", """{"summary":"朋友；喜欢简短回复"}"""),
                             SseEvent("done", """{"count":3}"""),
                         ),
+                    afterEvent = { event ->
+                        if (event.event == "suggestion") {
+                            deliveredCountsAfterEvents += delivered.size
+                        }
+                    },
                 )
             val client = LangouApiClient(transport)
 
@@ -42,14 +51,15 @@ class LangouApiClientTest :
                     platform = "android",
                     appVersion = "1.0.0",
                 )
-            val suggestions =
-                client.suggestions(
+            client.streamSuggestions(
                     session.accessToken,
                     SuggestionRequest(
                         requestId = "req_01JZQ6K3EP7EZAW4ZK2B7J1X8M",
                         deviceId = "dev_01JZQ6M0HZK9TBEXB1N6H7Y2RP",
                         application = "wechat",
                         locale = "zh-CN",
+                        conversationId = "conv_0123456789abcdef",
+                        memorySummary = "朋友；喜欢简短回复",
                         turns =
                             listOf(
                                 ConversationTurn(
@@ -58,22 +68,25 @@ class LangouApiClientTest :
                                 ),
                             ),
                     ),
-                )
+                ) { suggestion -> delivered += suggestion.text }
 
             session.subjectType shouldBe "guest"
-            suggestions.map { it.text }.shouldContainExactly(
+            delivered.shouldContainExactly(
                 "好呀～",
                 "当然可以呀",
                 "今天不方便哦",
             )
+            deliveredCountsAfterEvents.shouldContainExactly(1, 2, 3)
             transport.lastBody shouldNotContain "13800138000"
             transport.lastBody shouldNotContain "screenshot"
+            transport.lastBody shouldContain "朋友；喜欢简短回复"
         }
     })
 
 private class RecordingTransport(
     private val jsonResponse: String,
     private val events: List<SseEvent>,
+    private val afterEvent: (SseEvent) -> Unit = {},
 ) : LangouTransport {
     var lastBody: String = ""
 
@@ -95,7 +108,10 @@ private class RecordingTransport(
     ) {
         del(path, bearerToken)
         lastBody = body
-        events.forEach(onEvent)
+        events.forEach { event ->
+            onEvent(event)
+            afterEvent(event)
+        }
     }
 
     private fun del(vararg values: Any?) {
