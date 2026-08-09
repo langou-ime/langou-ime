@@ -21,6 +21,10 @@ def test_single_server_stack_is_isolated_private_and_non_root() -> None:
         "/opt/langou/redis-entrypoint.sh:ro"
     ) in compose
     assert "/etc/langou/production-v1.env" in compose
+    assert (
+        'image: "langou/backend:${LANGOU_BACKEND_IMAGE_TAG:?set '
+        'LANGOU_BACKEND_IMAGE_TAG}"'
+    ) in compose
     assert "PIP_INDEX_URL: https://mirrors.cloud.tencent.com/pypi/simple" in compose
     assert "mem_limit:" in compose
     assert "cap_drop:" in compose
@@ -78,7 +82,7 @@ def test_operational_units_cover_health_and_log_rotation_only() -> None:
         "ExecStart=/opt/langou/production-v1/infra/monitoring/healthcheck.sh"
         in service
     )
-    assert "Unit=langou-v1-healthcheck.service" in timer
+    assert "Unit=langou-healthcheck.service" in timer
 
 
 def test_container_and_monitoring_scripts_are_executable() -> None:

@@ -6,7 +6,7 @@ OnBootSec=2m
 OnUnitActiveSec=5m
 AccuracySec=30s
 Persistent=true
-Unit=langou-v1-healthcheck.service
+Unit=langou-healthcheck.service
 
 [Install]
 WantedBy=timers.target

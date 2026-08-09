@@ -6,7 +6,7 @@ services:
       context: /opt/langou/production-v1/backend
       args:
         PIP_INDEX_URL: https://mirrors.cloud.tencent.com/pypi/simple
-    image: langou/backend:1.0.0
+    image: "langou/backend:${LANGOU_BACKEND_IMAGE_TAG:?set LANGOU_BACKEND_IMAGE_TAG}"
     restart: unless-stopped
     user: "10001:10001"
     read_only: true
