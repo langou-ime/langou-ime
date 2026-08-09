@@ -72,7 +72,6 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 dotnet restore (Join-Path $repoRoot "LangouAssistant\LangouAssistant.csproj") `
-    --runtime win-x64 `
     --locked-mode `
     --nologo
 if ($LASTEXITCODE -ne 0) {

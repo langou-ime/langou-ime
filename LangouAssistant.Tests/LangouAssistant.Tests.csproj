@@ -29,6 +29,9 @@
     <None Include="..\LangouInstaller\Package.wxs"
           Link="Installer\Package.wxs"
           CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\scripts\Build-LangouPackage.ps1"
+          Link="Scripts\Build-LangouPackage.ps1"
+          CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\.github\workflows\langou-release.yml"
           Link="Workflows\langou-release.yml"
           CopyToOutputDirectory="PreserveNewest" />
