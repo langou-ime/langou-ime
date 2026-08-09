@@ -82,6 +82,23 @@ public sealed class WindowsReleaseWorkflowContractTests
             StringComparison.Ordinal);
     }
 
+    [Fact]
+    public void Native_parser_build_initializes_the_visual_cpp_toolchain()
+    {
+        var workflows = new[]
+        {
+            File.ReadAllText(SourcePath()),
+            File.ReadAllText(CiSourcePath()),
+        };
+
+        foreach (var workflow in workflows)
+        {
+            Assert.Contains("Microsoft.VisualStudio.Component.VC.Tools.x86.x64", workflow, StringComparison.Ordinal);
+            Assert.Contains("VSDEVCMD=", workflow, StringComparison.Ordinal);
+            Assert.Contains("call \"%VSDEVCMD%\" -arch=x64 -host_arch=x64", workflow, StringComparison.Ordinal);
+        }
+    }
+
     private static string SourcePath() =>
         Path.Combine(AppContext.BaseDirectory, "Workflows", "langou-release.yml");
 
