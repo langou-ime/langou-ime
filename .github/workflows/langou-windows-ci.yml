@@ -20,7 +20,7 @@ env:
   DOTNET_CLI_TELEMETRY_OPTOUT: "1"
   BOOST_VERSION: "1.84.0"
   BOOST_ROOT: "${{ github.workspace }}\\deps\\boost_1_84_0"
-  INTERNAL_RELEASE_PUBLIC_KEY_BASE64: "1uFuGlWZWeHpckhp2MTF6+5yCGIZYgBd5ghWEVQjx/k="
+  INTERNAL_RELEASE_PUBLIC_KEY_BASE64: "NL+5JaOJjU8FhrLZueXoqi7XNagy6K0xe9etWtUvPQY="
 
 jobs:
   managed:

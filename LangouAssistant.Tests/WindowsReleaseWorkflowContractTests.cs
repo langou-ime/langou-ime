@@ -53,12 +53,12 @@ public sealed class WindowsReleaseWorkflowContractTests
         Assert.DoesNotContain("LangouIME-1.0.0-x64.msi", release, StringComparison.Ordinal);
         Assert.Contains(
             "RELEASE_PUBLIC_KEY_BASE64: " +
-            "\"1uFuGlWZWeHpckhp2MTF6+5yCGIZYgBd5ghWEVQjx/k=\"",
+            "\"NL+5JaOJjU8FhrLZueXoqi7XNagy6K0xe9etWtUvPQY=\"",
             release,
             StringComparison.Ordinal);
         Assert.Contains(
             "INTERNAL_RELEASE_PUBLIC_KEY_BASE64: " +
-            "\"1uFuGlWZWeHpckhp2MTF6+5yCGIZYgBd5ghWEVQjx/k=\"",
+            "\"NL+5JaOJjU8FhrLZueXoqi7XNagy6K0xe9etWtUvPQY=\"",
             ci,
             StringComparison.Ordinal);
     }
