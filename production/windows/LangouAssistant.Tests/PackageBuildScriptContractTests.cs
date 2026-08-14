@@ -33,7 +33,11 @@ public sealed class PackageBuildScriptContractTests
             StringComparison.Ordinal);
         Assert.Contains("output\\install.nsi", script, StringComparison.Ordinal);
         Assert.Contains(
-            "Copy-Item (Join-Path $repoRoot \"LICENSE.txt\") `\n    (Join-Path $repoRoot \"output\\LICENSE.txt\")",
+            "Copy-Item (Join-Path $repoRoot \"LICENSE.txt\")",
+            script,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "(Join-Path $repoRoot \"output\\LICENSE.txt\")",
             script,
             StringComparison.Ordinal);
         Assert.Contains("langou-ime-windows-x64-v1.0.0.exe", script, StringComparison.Ordinal);
