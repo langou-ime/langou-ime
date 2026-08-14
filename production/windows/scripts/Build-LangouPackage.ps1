@@ -121,6 +121,12 @@ if ([string]::IsNullOrWhiteSpace($nsisCompiler)) {
 Copy-Item (Join-Path $repoRoot "LICENSE.txt") `
     (Join-Path $repoRoot "output\LICENSE.txt") `
     -Force
+Copy-Item (Join-Path $repoRoot "README.md") `
+    (Join-Path $repoRoot "output\README.txt") `
+    -Force
+Copy-Item (Join-Path $repoRoot "plum\rime-install.bat") `
+    (Join-Path $repoRoot "output\rime-install.bat") `
+    -Force
 
 & $nsisCompiler `
     /DWEASEL_VERSION=1.0.0 `

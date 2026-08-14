@@ -40,6 +40,22 @@ public sealed class PackageBuildScriptContractTests
             "(Join-Path $repoRoot \"output\\LICENSE.txt\")",
             script,
             StringComparison.Ordinal);
+        Assert.Contains(
+            "Copy-Item (Join-Path $repoRoot \"README.md\")",
+            script,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "(Join-Path $repoRoot \"output\\README.txt\")",
+            script,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "Copy-Item (Join-Path $repoRoot \"plum\\rime-install.bat\")",
+            script,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "(Join-Path $repoRoot \"output\\rime-install.bat\")",
+            script,
+            StringComparison.Ordinal);
         Assert.Contains("langou-ime-windows-x64-v1.0.0.exe", script, StringComparison.Ordinal);
         Assert.DoesNotContain(".msi", script, StringComparison.OrdinalIgnoreCase);
     }
