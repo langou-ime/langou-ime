@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle">
 <channel>
-    <title>【小狼毫】輸入法更新頻道</title>
-    <link>http://rime.github.io/release/weasel/appcast.xml</link>
-    <description>小狼毫 Appcast 更新頻道</description>
+    <title>懒狗输入法更新频道</title>
+    <link>https://api.langou.tech/v1/releases/windows/latest</link>
+    <description>懒狗输入法 Windows 正式更新频道</description>
     <language>zh</language>
     <item>
-      <title>小狼毫 0.17.4</title>
-      <sparkle:releaseNotesLink>http://rime.github.io/release/weasel/</sparkle:releaseNotesLink>
-      <pubDate>Wed, 04 Jun 2025 12:33:57 +0800</pubDate>
-      <enclosure url="https://github.com/rime/weasel/releases/download/0.17.4/weasel-0.17.4.0-installer.exe"
-                 sparkle:version="0.17.4"
+      <title>懒狗输入法 1.0.0</title>
+      <sparkle:releaseNotesLink>https://github.com/langou-ime/langou-ime/releases</sparkle:releaseNotesLink>
+      <pubDate>Wed, 12 Aug 2026 12:00:00 +0800</pubDate>
+      <enclosure url="https://github.com/langou-ime/langou-ime/releases/download/v1.0.0/langou-ime-windows-x64-v1.0.0.exe"
+                 sparkle:version="1.0.0"
                  type="application/octet-stream"/>
     </item>
   </channel>

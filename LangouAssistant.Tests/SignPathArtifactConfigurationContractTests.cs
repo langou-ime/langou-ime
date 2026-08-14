@@ -8,20 +8,20 @@ public sealed class SignPathArtifactConfigurationContractTests
         "http://signpath.io/artifact-configuration/v1";
 
     [Fact]
-    public void Msi_and_first_party_binaries_are_deep_signed()
+    public void Exe_installer_and_first_party_binaries_are_deep_signed()
     {
         var document = XDocument.Load(SourcePath());
         var zip = document.Root!.Element(SignPath + "zip-file")!;
-        var msi = zip.Element(SignPath + "msi-file")!;
-        var includes = msi
+        var exe = zip.Element(SignPath + "pe-file")!;
+        var includes = exe
             .Descendants(SignPath + "include")
             .Select(item => item.Attribute("path")?.Value)
             .ToHashSet(StringComparer.OrdinalIgnoreCase);
 
         Assert.Equal(
-            "langou-ime-windows-x64-v${version}.msi",
-            msi.Attribute("path")?.Value);
-        Assert.Contains(msi.Elements(SignPath + "authenticode-sign"), _ => true);
+            "langou-ime-windows-x64-v${version}.exe",
+            exe.Attribute("path")?.Value);
+        Assert.Contains(exe.Elements(SignPath + "authenticode-sign"), _ => true);
         Assert.Contains("LangouAssistant.exe", includes);
         Assert.Contains("LangouAssistant.dll", includes);
         Assert.Contains("LangouAssistant.Core.dll", includes);
@@ -36,5 +36,5 @@ public sealed class SignPathArtifactConfigurationContractTests
     }
 
     private static string SourcePath() =>
-        Path.Combine(AppContext.BaseDirectory, "SignPath", "langou-windows-msi.xml");
+        Path.Combine(AppContext.BaseDirectory, "SignPath", "langou-windows-exe.xml");
 }

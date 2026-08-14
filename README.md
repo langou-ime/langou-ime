@@ -25,7 +25,7 @@ Git 历史；“懒狗助手”负责本地上下文识别、PP-OCRv6、AI 建�
 - `LangouAssistant.Core`：可跨平台测试的协议、隐私、API 与更新验证。
 - `\\.\pipe\Langou.Ime.v1`：同一用户命名管道，版本化 JSON；只允许
   `commit_text` 和固定枚举的 `set_theme`。
-- `LangouInstaller`：Windows 10/11 x64、per-machine MSI。
+- `LangouInstaller`：历史 WiX 构建资产；v1.0.0 公开版改为 NSIS EXE 安装器。
 
 ## 构建
 
@@ -34,11 +34,11 @@ Git 历史；“懒狗助手”负责本地上下文识别、PP-OCRv6、AI 建�
 1. 固定 Boost 1.84.0 和 librime 1.13.1。
 2. 编译 x86/x64 TSF、RIME 和原生命名管道测试。
 3. 运行 .NET 安全/契约测试并发布 self-contained x64 助手。
-4. 从白名单文件组成干净 payload，再生成 MSI。
+4. 从白名单文件组成干净 payload，再生成公开 EXE 安装器。
 5. 内部 CI 产物名称包含 `UNSIGNED-INTERNAL`，保留 7 天，禁止公开发布。
 
 公开版必须经过 [签名策略](CODE_SIGNING_POLICY.md) 中的 SignPath 或 OV
-Authenticode 流程；未签名 MSI 不进入 GitHub Release、服务器或官网。
+Authenticode 流程；未签名 EXE 不进入 GitHub Release、服务器或官网。
 
 ## Code signing policy
 
@@ -62,7 +62,7 @@ Windows 公开安装包的来源、深度签名范围、人工批准角色和发
 - OpenVINO：Apache-2.0
 - OpenCvSharp：Apache-2.0
 - Bouncy Castle：MIT
-- WiX Toolset 5.0.2：Microsoft Reciprocal License；仅用于隔离 CI 中生成
-  MSI，不进入最终安装包
+- WiX Toolset 5.0.2：Microsoft Reciprocal License；仅作为历史构建资产保留，
+  不作为 v1.0.0 公开安装包链路
 
 完整许可证文本随源码和安装包提供。

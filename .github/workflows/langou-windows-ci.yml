@@ -69,7 +69,7 @@ jobs:
           --nologo
 
   package:
-    name: Native TSF and internal unsigned MSI
+    name: Native TSF and internal unsigned EXE
     needs: managed
     runs-on: windows-2022
     steps:
@@ -118,6 +118,12 @@ jobs:
         shell: pwsh
         run: .\get-rime.ps1 -tag 1.13.1 -use dev
 
+      - name: Install NSIS
+        shell: cmd
+        run: |
+          call install_nsis.bat
+          if errorlevel 1 exit /b 1
+
       - name: Compile native bridge parser test
         shell: cmd
         run: |
@@ -137,7 +143,7 @@ jobs:
           call build.bat release
           if errorlevel 1 exit /b 1
 
-      - name: Build internal unsigned MSI
+      - name: Build internal unsigned EXE
         shell: pwsh
         run: >
           .\scripts\Build-LangouPackage.ps1
@@ -157,7 +163,7 @@ jobs:
         with:
           name: UNSIGNED-INTERNAL-langou-ime-windows-x64-v1.0.0
           path: |
-            artifacts/langou/installer/**/langou-ime-windows-x64-v1.0.0.msi
-            artifacts/langou/langou-ime-windows-x64-v1.0.0.msi.sha256
+            artifacts/langou/installer/**/langou-ime-windows-x64-v1.0.0.exe
+            artifacts/langou/langou-ime-windows-x64-v1.0.0.exe.sha256
           if-no-files-found: error
           retention-days: 7

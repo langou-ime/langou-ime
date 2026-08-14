@@ -22,7 +22,7 @@ public sealed class WindowsReleaseWorkflowContractTests
     }
 
     [Fact]
-    public void Public_release_never_falls_back_to_an_unsigned_msi()
+    public void Public_release_never_falls_back_to_an_unsigned_exe()
     {
         var workflow = File.ReadAllText(SourcePath());
 
@@ -47,9 +47,10 @@ public sealed class WindowsReleaseWorkflowContractTests
         var ci = File.ReadAllText(CiSourcePath());
 
         Assert.Contains(
-            "langou-ime-windows-x64-v1.0.0.msi",
+            "langou-ime-windows-x64-v1.0.0.exe",
             release,
             StringComparison.Ordinal);
+        Assert.DoesNotContain("langou-ime-windows-x64-v1.0.0.msi", release, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("LangouIME-1.0.0-x64.msi", release, StringComparison.Ordinal);
         Assert.Contains(
             "RELEASE_PUBLIC_KEY_BASE64: " +

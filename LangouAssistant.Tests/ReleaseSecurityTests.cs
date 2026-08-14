@@ -14,10 +14,10 @@ public sealed class ReleaseSecurityTests
             "1.2.3",
             "1.0.0",
             false,
-            "https://download.langou.tech/langou.msi",
+            "https://download.langou.tech/langou-ime-windows-x64-v1.2.3.exe",
             42_000_000,
             new string('a', 64),
-            "yzFBH7h0Wr1bmL9jlgfrnKh4siXMIycbmmccgpl4xJblnBcj5xyP1osQsFxO+EbYuk6Lnf5yd2Yg95EeA9kcDg==",
+            "BDXNac50hH4BcUSx8V/GwpX5IvKXrs4va5aca5CJ5qt+ESLZvsp0Yc7U5xoK7YaTeQkhOZronIWKaigF+AWqBw==",
             "2026-07-26T12:00:00Z");
 
         Assert.True(ReleaseSignatureVerifier.Verify(manifest, publicKey));
@@ -41,7 +41,7 @@ public sealed class ReleaseSecurityTests
             latest,
             minimum,
             mandatory,
-            "https://download.langou.tech/langou.msi",
+            "https://download.langou.tech/langou-ime-windows-x64-v1.2.3.exe",
             42,
             new string('a', 64),
             "signature",

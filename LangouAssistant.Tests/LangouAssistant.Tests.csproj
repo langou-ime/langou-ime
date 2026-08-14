@@ -38,8 +38,8 @@
     <None Include="..\.github\workflows\langou-windows-ci.yml"
           Link="Workflows\langou-windows-ci.yml"
           CopyToOutputDirectory="PreserveNewest" />
-    <None Include="..\.signpath\artifact-configurations\langou-windows-msi.xml"
-          Link="SignPath\langou-windows-msi.xml"
+    <None Include="..\.signpath\artifact-configurations\langou-windows-exe.xml"
+          Link="SignPath\langou-windows-exe.xml"
           CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\WeaselServer\WeaselServerApp.cpp"
           Link="Native\WeaselServerApp.cpp"

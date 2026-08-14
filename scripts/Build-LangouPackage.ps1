@@ -13,6 +13,7 @@ $artifactRoot = Join-Path $repoRoot "artifacts\langou"
 $payload = Join-Path $artifactRoot "payload"
 $assistantPublish = Join-Path $artifactRoot "assistant"
 $installerOutput = Join-Path $artifactRoot "installer"
+$nsisRuntime = Join-Path $repoRoot "output\assistant-runtime"
 
 if ((Split-Path -Leaf $artifactRoot) -ne "langou" -or
     -not $artifactRoot.StartsWith($repoRoot, [StringComparison]::OrdinalIgnoreCase)) {
@@ -25,6 +26,7 @@ if (Test-Path $artifactRoot) {
 New-Item $payload -ItemType Directory -Force | Out-Null
 New-Item $assistantPublish -ItemType Directory -Force | Out-Null
 New-Item $installerOutput -ItemType Directory -Force | Out-Null
+New-Item $nsisRuntime -ItemType Directory -Force | Out-Null
 
 $requiredNativeFiles = @(
     "WeaselServer.exe",
@@ -89,41 +91,39 @@ if ($LASTEXITCODE -ne 0) {
     throw "Assistant publish failed."
 }
 Copy-Item (Join-Path $assistantPublish "*") $payload -Recurse -Force
+Copy-Item (Join-Path $assistantPublish "*") $nsisRuntime -Recurse -Force
 
 if (Get-ChildItem $payload -Recurse -File |
     Where-Object { $_.Name -like "*WinSparkle*" }) {
     throw "Retired WinSparkle files must never enter the Langou payload."
 }
-
-dotnet restore (Join-Path $repoRoot "LangouInstaller\LangouInstaller.wixproj") `
-    --locked-mode `
-    --nologo
-if ($LASTEXITCODE -ne 0) {
-    throw "Installer dependency restore failed."
-}
-dotnet build (Join-Path $repoRoot "LangouInstaller\LangouInstaller.wixproj") `
-    --configuration $Configuration `
-    -p:PayloadDir=$payload `
-    -p:OutputPath=$installerOutput `
-    --no-restore `
-    --nologo
-if ($LASTEXITCODE -ne 0) {
-    throw "MSI build failed."
+if (-not (Test-Path (Join-Path $nsisRuntime "LangouAssistant.exe") -PathType Leaf)) {
+    throw "Assistant runtime was not staged for NSIS packaging."
 }
 
-$msi = Get-ChildItem $installerOutput `
-    -Filter "langou-ime-windows-x64-v1.0.0.msi" `
+& "$env:ProgramFiles(x86)\NSIS\Bin\makensis.exe" `
+    /DWEASEL_VERSION=1.0.0 `
+    /DWEASEL_BUILD=0 `
+    /DPRODUCT_VERSION=1.0.0.0 `
+    (Join-Path $repoRoot "output\install.nsi")
+if ($LASTEXITCODE -ne 0) {
+    throw "EXE installer build failed."
+}
+
+$exe = Get-ChildItem (Join-Path $repoRoot "output\archives") `
+    -Filter "langou-ime-windows-x64-v1.0.0.exe" `
     -Recurse |
     Select-Object -First 1
-if ($null -eq $msi) {
-    throw "Expected MSI was not produced."
+if ($null -eq $exe) {
+    throw "Expected EXE installer was not produced."
 }
 
-$hash = Get-FileHash $msi.FullName -Algorithm SHA256
-$hashLine = "$($hash.Hash.ToLowerInvariant())  $($msi.Name)"
-Set-Content (Join-Path $artifactRoot "$($msi.Name).sha256") `
+$hash = Get-FileHash $exe.FullName -Algorithm SHA256
+$hashLine = "$($hash.Hash.ToLowerInvariant())  $($exe.Name)"
+Set-Content (Join-Path $artifactRoot "$($exe.Name).sha256") `
     $hashLine `
     -Encoding ascii
+Copy-Item $exe.FullName $installerOutput -Force
 
-Write-Host "Internal unsigned RC: $($msi.FullName)"
+Write-Host "Internal unsigned RC: $($exe.FullName)"
 Write-Host "SHA-256: $($hash.Hash.ToLowerInvariant())"

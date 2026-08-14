@@ -131,6 +131,12 @@ jobs:
           call build.bat release
           if errorlevel 1 exit /b 1
 
+      - name: Install NSIS
+        shell: cmd
+        run: |
+          call install_nsis.bat
+          if errorlevel 1 exit /b 1
+
       - name: Build unsigned signing input
         shell: pwsh
         run: |
@@ -138,21 +144,21 @@ jobs:
             -ReleasePublicKeyBase64 "${{ env.RELEASE_PUBLIC_KEY_BASE64 }}"
           $unsigned = @(
             Get-ChildItem .\artifacts\langou\installer `
-              -Filter "langou-ime-windows-x64-v1.0.0.msi" -Recurse -File
+              -Filter "langou-ime-windows-x64-v1.0.0.exe" -Recurse -File
           )
           if ($unsigned.Count -ne 1) {
             throw "Expected exactly one unsigned signing input, found $($unsigned.Count)."
           }
           New-Item .\artifacts\langou\signing-input -ItemType Directory -Force | Out-Null
           Copy-Item $unsigned[0].FullName `
-            .\artifacts\langou\signing-input\langou-ime-windows-x64-v1.0.0.msi
+            .\artifacts\langou\signing-input\langou-ime-windows-x64-v1.0.0.exe
 
-      - name: Upload unsigned MSI for trusted signing
+      - name: Upload unsigned EXE for trusted signing
         id: upload-unsigned-artifact
         uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
         with:
           name: langou-windows-v1.0.0-signing-input
-          path: artifacts/langou/signing-input/langou-ime-windows-x64-v1.0.0.msi
+          path: artifacts/langou/signing-input/langou-ime-windows-x64-v1.0.0.exe
           if-no-files-found: error
           retention-days: 1
 
@@ -173,15 +179,15 @@ jobs:
             version: "1.0.0"
 
       - name: Require a valid Authenticode signature
-        id: verify-signed-msi
+        id: verify-signed-exe
         shell: pwsh
         run: |
           $signed = @(
             Get-ChildItem .\artifacts\langou\signed `
-              -Filter "langou-ime-windows-x64-v1.0.0.msi" -Recurse -File
+              -Filter "langou-ime-windows-x64-v1.0.0.exe" -Recurse -File
           )
           if ($signed.Count -ne 1) {
-            throw "Expected exactly one signed Langou MSI, found $($signed.Count)."
+            throw "Expected exactly one signed Langou EXE, found $($signed.Count)."
           }
           $signature = Get-AuthenticodeSignature $signed[0].FullName
           if ($signature.Status -ne "Valid" -or $null -eq $signature.SignerCertificate) {
@@ -189,9 +195,9 @@ jobs:
           }
           $hash = Get-FileHash $signed[0].FullName -Algorithm SHA256
           $hashPath = Join-Path $signed[0].DirectoryName `
-            "langou-ime-windows-x64-v1.0.0.msi.sha256"
+            "langou-ime-windows-x64-v1.0.0.exe.sha256"
           Set-Content $hashPath "$($hash.Hash.ToLowerInvariant())  $($signed[0].Name)" -Encoding ascii
-          "msi=$($signed[0].FullName)" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
+          "exe=$($signed[0].FullName)" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
           "sha256=$hashPath" | Out-File $env:GITHUB_OUTPUT -Append -Encoding utf8
 
       - name: Upload verified signed release evidence
@@ -199,7 +205,7 @@ jobs:
         with:
           name: langou-windows-v1.0.0-SIGNED
           path: |
-            ${{ steps.verify-signed-msi.outputs.msi }}
-            ${{ steps.verify-signed-msi.outputs.sha256 }}
+            ${{ steps.verify-signed-exe.outputs.exe }}
+            ${{ steps.verify-signed-exe.outputs.sha256 }}
           if-no-files-found: error
           retention-days: 30

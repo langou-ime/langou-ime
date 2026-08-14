@@ -26,9 +26,9 @@ Free code signing provided by SignPath.io, certificate by SignPath Foundation.
 - Workflow 固定源码提交、Git submodule、NuGet lock file、Boost 和 librime
   版本；发布构建不接受来自 fork 的 secret。
 - SignPath GitHub App 校验 workflow 来源，签名策略需要项目 approver 人工批准。
-- 使用仓库内 `.signpath/artifact-configurations/langou-windows-msi.xml`
-  进行深度签名：SignPath 先签 MSI 内明确列出的第一方 EXE/DLL/IME，重新封装后
-  再签 MSI；所有签名使用 SHA-256 和可信时间戳。
+- 使用仓库内 `.signpath/artifact-configurations/langou-windows-exe.xml`
+  进行深度签名：SignPath 先签 EXE 安装包内明确列出的第一方 EXE/DLL/IME，再对公开
+  EXE 安装包本体完成 Authenticode 签名；所有签名使用 SHA-256 和可信时间戳。
 - `rime.dll`、OpenVINO、OpenCV、Microsoft Runtime 等第三方组件不得冒充
   懒狗输入法发布者；SignPath 配置只允许签明确列出的第一方文件。
 
@@ -37,7 +37,7 @@ Free code signing provided by SignPath.io, certificate by SignPath Foundation.
 公开发布前必须同时满足：
 
 1. Authenticode 状态为 `Valid`，证书主体符合已批准的 SignPath/OV 身份。
-2. MSI SHA-256 与后端签名发布清单、GitHub Release、官网下载区完全一致。
+2. EXE SHA-256 与后端签名发布清单、GitHub Release、官网下载区完全一致。
 3. 安装、升级、卸载和更新回滚在 Windows 10/11 x64 真机通过。
 4. 未签名或签名失效的产物只能作为短期内部 RC，名称必须包含
    `UNSIGNED-INTERNAL`，不得公开下载。

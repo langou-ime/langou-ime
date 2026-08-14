@@ -22,17 +22,17 @@ Unicode true
 !define REG_UNINST_KEY "Software\Microsoft\Windows\CurrentVersion\Uninstall\Weasel"
 
 ; The name of the installer
-Name "小狼毫 ${WEASEL_VERSION}"
+Name "懒狗输入法 ${WEASEL_VERSION}"
 
 ; The file to write
-OutFile "archives\weasel-${PRODUCT_VERSION}-installer.exe"
+OutFile "archives\langou-ime-windows-x64-v${WEASEL_VERSION}.exe"
 
 VIProductVersion "${WEASEL_VERSION}.${WEASEL_BUILD}"
-VIAddVersionKey /LANG=2052 "ProductName" "小狼毫"
+VIAddVersionKey /LANG=2052 "ProductName" "懒狗输入法"
 VIAddVersionKey /LANG=2052 "Comments" "Powered by RIME | 中州韻輸入法引擎"
-VIAddVersionKey /LANG=2052 "CompanyName" "式恕堂"
+VIAddVersionKey /LANG=2052 "CompanyName" "Langou IME"
 VIAddVersionKey /LANG=2052 "LegalCopyright" "Copyleft RIME Developers"
-VIAddVersionKey /LANG=2052 "FileDescription" "小狼毫輸入法"
+VIAddVersionKey /LANG=2052 "FileDescription" "懒狗输入法安装器"
 VIAddVersionKey /LANG=2052 "FileVersion" "${WEASEL_VERSION}"
 
 !define MUI_ICON ..\resource\weasel.ico
@@ -260,17 +260,14 @@ program_files:
       File "WeaselDeployer.exe"
       File "WeaselServer.exe"
       File "rime.dll"
-      File "WinSparkle.dll"
     ${ElseIf} ${IsNativeAMD64}
       File "WeaselDeployer.exe"
       File "WeaselServer.exe"
       File "rime.dll"
-      File "WinSparkle.dll"
     ${Else}
       File "Win32\WeaselDeployer.exe"
       File "Win32\WeaselServer.exe"
       File "Win32\rime.dll"
-      File "Win32\WinSparkle.dll"
     ${Endif}
   ; install x64 build for NativeAMD64_BELLOW_WINDOWS11
   ${Else} ; Windows 10 or bellow
@@ -278,16 +275,15 @@ program_files:
       File "WeaselDeployer.exe"
       File "WeaselServer.exe"
       File "rime.dll"
-      File "WinSparkle.dll"
     ${Else}
       File "Win32\WeaselDeployer.exe"
       File "Win32\WeaselServer.exe"
       File "Win32\rime.dll"
-      File "Win32\WinSparkle.dll"
     ${Endif}
   ${Endif}
 
   File "WeaselSetup.exe"
+  File /r "assistant-runtime\*"
   ; shared data files
   SetOutPath $INSTDIR\data
   File "data\*.yaml"
