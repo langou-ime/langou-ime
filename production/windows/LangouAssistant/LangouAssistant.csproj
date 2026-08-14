@@ -1,0 +1,49 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows10.0.19041.0</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <ApplicationIcon>Assets\Langou.ico</ApplicationIcon>
+    <AssemblyName>LangouAssistant</AssemblyName>
+    <RootNamespace>LangouAssistant</RootNamespace>
+    <Version>1.0.0</Version>
+    <FileVersion>1.0.0.0</FileVersion>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PlatformTarget>x64</PlatformTarget>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>false</PublishSingleFile>
+    <LangouReleasePublicKeyBase64 Condition="'$(LANGOU_RELEASE_PUBLIC_KEY_BASE64)' != ''">$(LANGOU_RELEASE_PUBLIC_KEY_BASE64)</LangouReleasePublicKeyBase64>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\LangouAssistant.Core\LangouAssistant.Core.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Sdcb.OpenVINO.PaddleOCR" Version="0.8.1" />
+    <PackageReference Include="Sdcb.OpenVINO.runtime.win-x64" Version="2026.2.0" />
+    <PackageReference Include="Sdcb.OpenCvSharp4.mini.runtime.win-x64" Version="4.13.0.45" />
+    <PackageReference Include="System.Security.Cryptography.ProtectedData" Version="8.0.0" />
+    <PackageReference Include="System.Drawing.Common" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\Mascot.png" />
+    <Content Include="Models\**\*">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <AssemblyMetadata Include="LangouReleasePublicKey" Value="$(LangouReleasePublicKeyBase64)" />
+  </ItemGroup>
+
+  <Target Name="ValidateLangouReleaseKey" BeforeTargets="Build"
+          Condition="'$(Configuration)' == 'Release' and '$(LangouReleasePublicKeyBase64)' == ''">
+    <Error Text="Release build requires LANGOU_RELEASE_PUBLIC_KEY_BASE64." />
+  </Target>
+</Project>

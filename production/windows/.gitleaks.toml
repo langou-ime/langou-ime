@@ -1,0 +1,12 @@
+title = "Langou Windows secret scanning"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated managed, native, package, and dependency outputs"
+paths = [
+  '''(^|/)\.git/''',
+  '''(^|/)(bin|obj|artifacts|build|deps|msbuild|output)/''',
+  '''(^|/)\.vs/''',
+]

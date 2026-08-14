@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2026 Langou Input Method contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+patch:
+  __patch:
+    - emoji_suggestion:/patch
+  speller/algebra:
+    __patch:
+      - pinyin:/zh_z_bufen
+      - pinyin:/n_l_bufen
+      - pinyin:/en_eng_bufen
+      - pinyin:/abbreviation
+      - pinyin:/spelling_correction
+      - pinyin:/key_correction

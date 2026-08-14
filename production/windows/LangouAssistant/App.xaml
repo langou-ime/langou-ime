@@ -1,0 +1,48 @@
+<Application x:Class="LangouAssistant.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             ShutdownMode="OnExplicitShutdown">
+  <Application.Resources>
+    <SolidColorBrush x:Key="CreamBrush" Color="#FFF9EF" />
+    <SolidColorBrush x:Key="PeachBrush" Color="#FFFFAFC5" />
+    <SolidColorBrush x:Key="PeachDarkBrush" Color="#FFE97E9F" />
+    <SolidColorBrush x:Key="LavenderBrush" Color="#FFE9DFFF" />
+    <SolidColorBrush x:Key="InkBrush" Color="#FF513E49" />
+    <SolidColorBrush x:Key="MutedInkBrush" Color="#FF8D7782" />
+
+    <Style x:Key="RoundButton" TargetType="Button">
+      <Setter Property="Foreground" Value="{StaticResource InkBrush}" />
+      <Setter Property="Background" Value="White" />
+      <Setter Property="BorderBrush" Value="#22E97E9F" />
+      <Setter Property="BorderThickness" Value="1" />
+      <Setter Property="Padding" Value="14,10" />
+      <Setter Property="HorizontalContentAlignment" Value="Left" />
+      <Setter Property="Cursor" Value="Hand" />
+      <Setter Property="FontSize" Value="14" />
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Border x:Name="Card"
+                    Background="{TemplateBinding Background}"
+                    BorderBrush="{TemplateBinding BorderBrush}"
+                    BorderThickness="{TemplateBinding BorderThickness}"
+                    CornerRadius="16"
+                    Padding="{TemplateBinding Padding}">
+              <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                VerticalAlignment="Center" />
+            </Border>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Card" Property="Background" Value="#FFFFEDF2" />
+                <Setter TargetName="Card" Property="BorderBrush" Value="#66E97E9F" />
+              </Trigger>
+              <Trigger Property="IsPressed" Value="True">
+                <Setter TargetName="Card" Property="Background" Value="#FFFFDCE7" />
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Application.Resources>
+</Application>

@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<artifact-configuration xmlns="http://signpath.io/artifact-configuration/v1">
+  <parameters>
+    <parameter name="version" required="true" />
+  </parameters>
+
+  <zip-file>
+    <pe-file
+        path="langou-ime-windows-x64-v${version}.exe"
+        subject="懒狗输入法 ${version}（Windows 10/11 x64）"
+        author="懒狗输入法">
+      <pe-file-set>
+        <include path="LangouAssistant.exe" />
+        <include path="LangouAssistant.dll" />
+        <include path="LangouAssistant.Core.dll" />
+        <include path="WeaselServer.exe" />
+        <include path="WeaselSetup.exe" />
+        <include path="WeaselDeployer.exe" />
+        <include path="weasel.dll" />
+        <include path="weaselx64.dll" />
+        <include path="weasel.ime" />
+        <include path="weaselx64.ime" />
+        <for-each>
+          <authenticode-sign />
+        </for-each>
+      </pe-file-set>
+
+      <authenticode-sign />
+    </pe-file>
+  </zip-file>
+</artifact-configuration>

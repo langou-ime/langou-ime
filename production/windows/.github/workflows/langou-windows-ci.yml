@@ -1,0 +1,169 @@
+name: Langou Windows CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    tags-ignore:
+      - "v*"
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: langou-windows-ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  BOOST_VERSION: "1.84.0"
+  BOOST_ROOT: "${{ github.workspace }}\\deps\\boost_1_84_0"
+  INTERNAL_RELEASE_PUBLIC_KEY_BASE64: "NL+5JaOJjU8FhrLZueXoqi7XNagy6K0xe9etWtUvPQY="
+
+jobs:
+  managed:
+    name: Assistant tests and build
+    runs-on: windows-2022
+    steps:
+      - name: Check out exact source and submodules
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install .NET 8
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: "8.0.x"
+          cache: true
+          cache-dependency-path: |
+            LangouAssistant.Core/packages.lock.json
+            LangouAssistant.Tests/packages.lock.json
+            LangouAssistant/packages.lock.json
+            LangouInstaller/packages.lock.json
+
+      - name: Restore fixed managed dependencies
+        shell: pwsh
+        run: |
+          dotnet restore .\LangouAssistant.Tests\LangouAssistant.Tests.csproj --locked-mode --nologo
+          dotnet restore .\LangouAssistant\LangouAssistant.csproj --locked-mode --nologo
+
+      - name: Test managed security and installer contracts
+        shell: pwsh
+        run: >
+          dotnet test
+          .\LangouAssistant.Tests\LangouAssistant.Tests.csproj
+          --configuration Debug
+          --no-restore
+          --nologo
+
+      - name: Build Windows assistant
+        shell: pwsh
+        run: >
+          dotnet build
+          .\LangouAssistant\LangouAssistant.csproj
+          --configuration Debug
+          --no-restore
+          --nologo
+
+  package:
+    name: Native TSF and internal unsigned EXE
+    needs: managed
+    runs-on: windows-2022
+    steps:
+      - name: Check out exact source and submodules
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Install .NET 8
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: "8.0.x"
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2
+
+      - name: Configure Visual Studio 2022 native build
+        shell: pwsh
+        run: |
+          Copy-Item .\env.vs2022.bat .\env.bat
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vsDevCmd = & $vswhere -latest -products "*" `
+            -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+            -find "Common7\Tools\VsDevCmd.bat"
+          if (-not $vsDevCmd) {
+            throw "Visual C++ x64 toolchain was not found."
+          }
+          "VSDEVCMD=$vsDevCmd" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Cache fixed Boost source and libraries
+        id: boost-cache
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
+        with:
+          path: "${{ env.BOOST_ROOT }}"
+          key: "windows-2022-boost-${{ env.BOOST_VERSION }}-win10-v1"
+
+      - name: Install and build Boost
+        if: steps.boost-cache.outputs.cache-hit != 'true'
+        shell: cmd
+        run: |
+          call install_boost.bat
+          if errorlevel 1 exit /b 1
+
+      - name: Fetch pinned librime 1.13.1 binaries
+        shell: pwsh
+        run: .\get-rime.ps1 -tag 1.13.1 -use dev
+
+      - name: Install NSIS
+        shell: cmd
+        run: |
+          call install_nsis.bat
+          if errorlevel 1 exit /b 1
+
+      - name: Compile native bridge parser test
+        shell: cmd
+        run: |
+          call "%VSDEVCMD%" -arch=x64 -host_arch=x64
+          if errorlevel 1 exit /b 1
+          cl /nologo /std:c++17 /EHsc /utf-8 /I"%BOOST_ROOT%" /I"WeaselServer" test\LangouBridgeProtocolTest.cpp WeaselServer\LangouBridgeProtocol.cpp /Fe:LangouBridgeProtocolTest.exe
+          if errorlevel 1 exit /b 1
+          LangouBridgeProtocolTest.exe
+          if errorlevel 1 exit /b 1
+
+      - name: Build Weasel TSF and RIME binaries
+        shell: cmd
+        env:
+          RELEASE_BUILD: "1"
+        run: |
+          xcopy /E /I /Y rime-data output\data
+          call build.bat release
+          if errorlevel 1 exit /b 1
+
+      - name: Build internal unsigned EXE
+        shell: pwsh
+        run: >
+          .\scripts\Build-LangouPackage.ps1
+          -ReleasePublicKeyBase64 "${{ env.INTERNAL_RELEASE_PUBLIC_KEY_BASE64 }}"
+
+      - name: Assert retired updater is absent
+        shell: pwsh
+        run: |
+          $retired = Get-ChildItem .\artifacts\langou\payload -Recurse -File |
+            Where-Object Name -Like "*WinSparkle*"
+          if ($retired) {
+            throw "Retired WinSparkle files were staged."
+          }
+
+      - name: Upload internal RC only
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7
+        with:
+          name: UNSIGNED-INTERNAL-langou-ime-windows-x64-v1.0.0
+          path: |
+            artifacts/langou/installer/**/langou-ime-windows-x64-v1.0.0.exe
+            artifacts/langou/langou-ime-windows-x64-v1.0.0.exe.sha256
+          if-no-files-found: error
+          retention-days: 7
