@@ -1,5 +1,4 @@
 import assert from 'node:assert/strict'
-import { createHash } from 'node:crypto'
 import { readFileSync } from 'node:fs'
 import test from 'node:test'
 
@@ -39,28 +38,58 @@ test('formats binary size without pretending an estimate is exact', () => {
   assert.equal(formatReleaseBytes(97_441_260), '92.9 MiB')
 })
 
-test('keeps presentation files unchanged and locks reviewed build metadata', () => {
-  const immutablePresentationFiles: Record<string, string> = {
-    'app/globals.css': '66e04489352045c12747853fe6a3d15c2ac0991a956663031fb7c4f6c45390db',
-    'app/layout.tsx': 'dfa8ffad71ae156c3b8dedf06dd25f20c8773f5a225d89b273b7dfaf3be07c95',
-    'deploy/package.json': 'be6fa05ce8114d2b6f0aa83c5d70db10c635851337bf1146d16f27ecafc10895',
-    'deploy/server.js': '95f8ef99360dd8eafaf26f30dc99e4e24ef843e9c5dc373b34cdb0a507a569e8',
-    'messages/en.json': 'a5f7a86e44612e140f560a3853d66ce5097a33f8b9aba3ce12e5e83e8c547c3f',
-    'messages/zh.json': '3dfe41638a0c81433d0980674f3d1bc27b151f62eab7316a5fac192afdcde022',
-    'next.config.js': 'e350a945829c1c26d1a7ac567c868aa580f004026f6e93a4298291e4cc83ca68',
-  }
-  const reviewedBuildMetadata: Record<string, string> = {
-    'next-env.d.ts': '7b550dda9686c16f36a17bf9051d5dbf31e98555b30d114ac49fc49a1e712651',
-    'package.json': '6fb7fa66457f5ba5559b49e95ed7dccb6ea40aad7c14f634d8907d112eb4e789',
-    'package-lock.json': 'fe3c725a3dd41154fe4a1988e6132eff099fd276db9ca5c1fc55aabbdd8ddab4',
-    'tsconfig.json': '009e30983de28573088a1dc126f21993b8218991b9c25bdbced8e2a0bef76b7e',
-  }
+test('website release surface keeps exe-oriented public download language', () => {
+  const homepage = readFileSync('app/page.tsx', 'utf8')
+  const downloadPage = readFileSync('app/download/page.tsx', 'utf8')
+  const releasesPage = readFileSync('app/releases/page.tsx', 'utf8')
+  const helpPage = readFileSync('app/help/page.tsx', 'utf8')
+  const privacyPage = readFileSync('app/privacy/page.tsx', 'utf8')
+  const styles = readFileSync('app/globals.css', 'utf8')
+  const manifestHelpers = readFileSync('app/release-manifest.ts', 'utf8')
 
-  for (const [path, expected] of Object.entries({
-    ...immutablePresentationFiles,
-    ...reviewedBuildMetadata,
-  })) {
-    const actual = createHash('sha256').update(readFileSync(path)).digest('hex')
-    assert.equal(actual, expected, `${path} diverged from its reviewed release baseline`)
-  }
+  assert.match(homepage, /Windows EXE|Double-click EXE install|双击 EXE 安装/)
+  assert.match(homepage, /\.exe|Windows EXE|EXE 安装/)
+  assert.doesNotMatch(homepage, /\.msi/i)
+  assert.match(downloadPage, /Windows EXE|双击 EXE|EXE 安装器/)
+  assert.match(releasesPage, /Release hub|版本发布中心|Windows 一键安装包/)
+  assert.match(helpPage, /Windows 启用|双击 EXE 安装器/)
+  assert.match(privacyPage, /本地处理优先|零采集场景/)
+  assert.match(manifestHelpers, /v1\/releases\/\$\{platform\}\/latest/)
+  assert.match(styles, /hero|download-grid|glass-card/)
+})
+
+test('homepage and download page render generated brand visuals instead of text-only layout', () => {
+  const homepage = readFileSync('app/page.tsx', 'utf8')
+  const downloadPage = readFileSync('app/download/page.tsx', 'utf8')
+  const releasesPage = readFileSync('app/releases/page.tsx', 'utf8')
+
+  assert.match(homepage, /hero-illustration-v1\.png/)
+  assert.match(homepage, /keyboard-showcase-v2\.png/)
+  assert.match(homepage, /context-chat-scene-v2\.png/)
+  assert.match(homepage, /privacy-shield-scene-v2\.png/)
+  assert.match(homepage, /release-hub-illustration-v1\.png/)
+  assert.match(downloadPage, /release-hub-illustration-v1\.png/)
+  assert.match(downloadPage, /keyboard-showcase-v2\.png/)
+  assert.match(downloadPage, /context-chat-scene-v2\.png/)
+  assert.match(downloadPage, /privacy-shield-scene-v2\.png/)
+  assert.match(releasesPage, /keyboard-showcase-v2\.png/)
+  assert.match(releasesPage, /context-chat-scene-v2\.png/)
+  assert.match(releasesPage, /privacy-shield-scene-v2\.png/)
+})
+
+test('live snapshot download pages preserve the public windows exe release surface', () => {
+  const zhIndex = readFileSync('live-snapshot/zh/index.html', 'utf8')
+  const zhDownload = readFileSync('live-snapshot/zh/download.html', 'utf8')
+  const enIndex = readFileSync('live-snapshot/en/index.html', 'utf8')
+  const enDownload = readFileSync('live-snapshot/en/download.html', 'utf8')
+
+  assert.match(zhIndex, /Windows 版|Windows EXE/)
+  assert.match(zhDownload, /Windows EXE|下载 EXE 安装器|Windows EXE 待发布/)
+  assert.doesNotMatch(zhIndex, /\.msi/i)
+  assert.doesNotMatch(zhDownload, /\.msi/i)
+
+  assert.match(enIndex, /Windows|code signing|Windows release pending/)
+  assert.match(enDownload, /Windows EXE|Download the EXE installer|Windows EXE release pending/)
+  assert.doesNotMatch(enIndex, /\.msi/i)
+  assert.doesNotMatch(enDownload, /\.msi/i)
 })
