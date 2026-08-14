@@ -49,6 +49,23 @@ test('mobile hero stacks the copy and artwork instead of overlapping them', () =
   assert.match(css, /@media\(max-width:900px\)[\s\S]*?\.hero\{[^}]*flex-direction:column/)
 })
 
+test('the rejected Android build cannot remain on a public download surface', () => {
+  const rejectedSha256 =
+    'dd500206c9b245bd2310c9dcdbd4b1b02af9372213563461b69ef0a65bea9033'
+
+  for (const root of ['static-site', 'live-snapshot']) {
+    for (const page of ['zh/index.html', 'zh/download.html', 'en/index.html', 'en/download.html']) {
+      const html = readFileSync(join(root, page), 'utf8')
+      assert.doesNotMatch(html, new RegExp(rejectedSha256))
+      assert.doesNotMatch(
+        html,
+        /href="\/downloads\/langou-ime-android-v1\.0\.0\.apk"/,
+      )
+      assert.match(html, /新版验收中|New release candidate under validation/)
+    }
+  }
+})
+
 test('all localized pages use valid internal page and asset links', () => {
   for (const locale of ['zh', 'en'] as const) {
     for (const page of localizedPages(locale)) {
