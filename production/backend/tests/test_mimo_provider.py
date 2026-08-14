@@ -37,8 +37,10 @@ async def test_mimo_provider_ignores_terminal_usage_event_with_empty_choices() -
             headers={"content-type": "text/event-stream"},
             stream=FragmentedOpenAiStream(
                 [
+                    'data: {"choices":[{"delta":{"content":null}}]}\n\n',
                     'data: {"choices":[{"delta":{"content":'
-                    '"natural\\t好呀\\ngentle\\t可以呀～\\nboundary\\t我先看看时间"}}]}\n\n',
+                    '"natural<TAB>好呀\\ngentle<TAB>可以呀～\\n'
+                    'boundary<TAB>我先看看时间"}}]}\n\n',
                     'data: {"choices":[],"usage":{"total_tokens":42}}\n\n',
                     "data: [DONE]\n\n",
                 ]
