@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparison - Langou vs Other IMEs - Langou Input Method</title>
+<meta name="description" content="Compare Langou Input Method with other IMEs including Gboard, Sogou, Microsoft IME. Features, privacy, and AI capabilities comparison.">
+<link rel="stylesheet" href="../css/style.css?v=2"></head>
+<body class="en"><canvas id="particles-canvas"></canvas>
+<nav class="navbar" id="navbar">
+  <a href="/en/" class="nav-brand">🐶 Langou IME</a>
+  <ul class="nav-links">
+    <li><a href="/en/">Home</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="usecases.html">Use Cases</a></li>
+    <li><a href="download.html">Download</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li></li>
+    <li></li>
+
+    <li><a href="community.html">Community</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <button class="lang-btn">中文</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+<div class="page-header"><h1>📊 Comparison: Langou vs Other IMEs</h1><p>See how Langou stacks up against the competition</p></div>
+
+<!-- SVG Radar Chart -->
+<div class="section" style="padding-top:0">
+  <div class="feature-detail fade-up" style="justify-content:center;padding:2rem 0">
+    <svg viewBox="0 0 700 600" style="width:100%;max-width:680px;height:auto" xmlns="http://www.w3.org/2000/svg" aria-label="Langou vs Traditional IME Radar Chart">
+      <defs>
+        <filter id="radarGlowCyanEn"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#FF8C42" flood-opacity="0.5"/></filter>
+        <filter id="radarGlowGrayEn"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#A08670" flood-opacity="0.3"/></filter>
+      </defs>
+
+      <text x="350" y="30" text-anchor="middle" fill="#FF8C42" font-size="16" font-weight="700" filter="url(#radarGlowCyanEn)">📊 Radar: Langou vs Traditional IME</text>
+
+      <g transform="translate(350,330)">
+        <!-- Hexagon grid -->
+        <polygon points="0,-220 190.5,-110 190.5,110 0,220 -190.5,110 -190.5,-110" fill="none" stroke="#FFE4CC" stroke-width="1"/>
+        <polygon points="0,-165 143,-82.5 143,82.5 0,165 -143,82.5 -143,-82.5" fill="none" stroke="#FFE4CC" stroke-width="0.8"/>
+        <polygon points="0,-110 95.3,-55 95.3,55 0,110 -95.3,55 -95.3,-55" fill="none" stroke="rgba(0,210,255,0.06)" stroke-width="0.6"/>
+        <polygon points="0,-55 47.6,-27.5 47.6,27.5 0,55 -47.6,27.5 -47.6,-27.5" fill="none" stroke="rgba(0,210,255,0.04)" stroke-width="0.4"/>
+
+        <!-- Axes -->
+        <line x1="0" y1="0" x2="0" y2="-220" stroke="#FFE4CC" stroke-width="1"/>
+        <line x1="0" y1="0" x2="190.5" y2="-110" stroke="#FFE4CC" stroke-width="1"/>
+        <line x1="0" y1="0" x2="190.5" y2="110" stroke="#FFE4CC" stroke-width="1"/>
+        <line x1="0" y1="0" x2="0" y2="220" stroke="#FFE4CC" stroke-width="1"/>
+        <line x1="0" y1="0" x2="-190.5" y2="110" stroke="#FFE4CC" stroke-width="1"/>
+        <line x1="0" y1="0" x2="-190.5" y2="-110" stroke="#FFE4CC" stroke-width="1"/>
+
+        <!-- Dimension labels -->
+        <text x="0" y="-235" text-anchor="middle" fill="#A08670" font-size="12" font-weight="600">AI Capability</text>
+        <text x="210" y="-112" text-anchor="start" fill="#A08670" font-size="12" font-weight="600">Privacy</text>
+        <text x="220" y="118" text-anchor="start" fill="#A08670" font-size="12" font-weight="600">Speed</text>
+        <text x="0" y="248" text-anchor="middle" fill="#A08670" font-size="12" font-weight="600">Multi-Lang</text>
+        <text x="-220" y="118" text-anchor="end" fill="#A08670" font-size="12" font-weight="600">Customize</text>
+        <text x="-220" y="-112" text-anchor="end" fill="#A08670" font-size="12" font-weight="600">Free Tier</text>
+
+        <!-- Scale marks -->
+        <text x="0" y="-180" text-anchor="end" fill="#A08670" font-size="9">2</text>
+        <text x="0" y="-125" text-anchor="end" fill="#A08670" font-size="9">4</text>
+        <text x="0" y="-70" text-anchor="end" fill="#A08670" font-size="9">6</text>
+        <text x="0" y="-15" text-anchor="end" fill="#A08670" font-size="9">8</text>
+        <text x="0" y="-198" text-anchor="end" fill="#A08670" font-size="9">0</text>
+
+        <!-- Traditional IME polygon (lower scores) -->
+        <!-- AI:2, Privacy:3, Speed:7, Multi-Lang:6, Customize:6, Free:8 -->
+        <polygon points="0,-44 95.3,-33 133,77 0,132 -95.3,66 -143,-55"
+                 fill="rgba(102,102,128,0.2)" stroke="#A08670" stroke-width="2" stroke-dasharray="5,3" filter="url(#radarGlowGrayEn)"/>
+
+        <!-- Langou IME polygon (high scores) -->
+        <!-- AI:9, Privacy:9, Speed:7, Multi-Lang:5, Customize:4, Free:9 -->
+        <polygon points="0,-198 0,-198 171.5,-99 152.5,-88 95.3,99 0,198 0,198 -95.3,99 -76.2,-44 0,-88"
+                 fill="#FFE4CC" stroke="#FF8C42" stroke-width="2.5" filter="url(#radarGlowCyanEn)"/>
+
+        <!-- Data points -->
+        <circle cx="0" cy="-198" r="5" fill="#FF8C42"/>
+        <circle cx="0" cy="-198" r="2" fill="#0D0D1A"/>
+        <circle cx="152.5" cy="-88" r="5" fill="#FF8C42"/>
+        <circle cx="152.5" cy="-88" r="2" fill="#0D0D1A"/>
+        <circle cx="95.3" cy="99" r="5" fill="#FF8C42"/>
+        <circle cx="95.3" cy="99" r="2" fill="#0D0D1A"/>
+        <circle cx="0" cy="198" r="5" fill="#FF8C42"/>
+        <circle cx="0" cy="198" r="2" fill="#0D0D1A"/>
+        <circle cx="-76.2" cy="-44" r="5" fill="#FF8C42"/>
+        <circle cx="-76.2" cy="-44" r="2" fill="#0D0D1A"/>
+        <circle cx="0" cy="-88" r="5" fill="#FF8C42"/>
+        <circle cx="0" cy="-88" r="2" fill="#0D0D1A"/>
+      </g>
+
+      <!-- Legend -->
+      <g transform="translate(480,480)">
+        <line x1="0" y1="0" x2="30" y2="0" stroke="#FF8C42" stroke-width="2.5"/>
+        <circle cx="30" cy="0" r="4" fill="#FF8C42"/>
+        <text x="40" y="5" fill="#FF8C42" font-size="11">Langou IME</text>
+
+        <line x1="160" y1="0" x2="190" y2="0" stroke="#A08670" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="200" y="5" fill="#A08670" font-size="11">Traditional IME</text>
+      </g>
+
+      <text x="350" y="530" text-anchor="middle" fill="#A08670" font-size="10">Scores 0-10 · Based on public data and user feedback</text>
+    </svg>
+  </div>
+</div>
+
+<section class="section" id="main">
+<div class="privacy-content">
+
+<h2>How Langou Compares</h2>
+<p>Langou is a fundamentally different product from traditional IMEs. While most IMEs focus on improving <em>how you type</em>, Langou offers an alternative to <em>typing altogether</em>. Below is a comprehensive comparison with the most popular input methods.</p>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🤖</div>
+<div class="fd-content">
+<h3>AI Capabilities</h3>
+<p><strong>Langou:</strong> Context-aware AI reply generation in 6 styles. Powered by 420B-parameter MiMo model. Prompt optimizer for other AI tools. Emotion and intent analysis built in.</p>
+<p><strong>Gboard:</strong> Smart Compose offers basic reply suggestions in limited apps (mainly Gmail, Messages). No context awareness. No style selection. No prompt optimization.</p>
+<p><strong>Sogou IME:</strong> AI writing assistant available but limited to specific scenarios. Less accurate context capture. No multi-style system.</p>
+<p><strong>Microsoft IME:</strong> No AI reply generation. Pure input method with basic text prediction.</p>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🔤</div>
+<div class="fd-content">
+<h3>Chinese Input Engine</h3>
+<p><strong>Langou:</strong> Full RIME-based engine (Zhongzhou). Full pinyin, double pinyin, abbreviated pinyin, handwriting, voice. Million-word dictionary. Custom schemas. Import/export .dict.yaml.</p>
+<p><strong>Gboard:</strong> Good pinyin input but limited customization. No double pinyin or schema support. Smaller dictionary.</p>
+<p><strong>Sogou IME:</strong> Excellent Chinese input with cloud-based predictions. Massive dictionary. However, cloud dependency raises privacy concerns. No RIME compatibility.</p>
+<p><strong>Microsoft IME:</strong> Basic pinyin and handwriting. Limited dictionary. No double pinyin or schema customization.</p>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🔒</div>
+<div class="fd-content">
+<h3>Privacy &amp; Data Collection</h3>
+<p><strong>Langou:</strong> On-device OCR and NLP. Ephemeral context capture (max 10 messages, immediately discarded). E2E encrypted sync. No data sold. No ads. No training on user data.</p>
+<p><strong>Gboard:</strong> Uses voice and typing data for model improvement. Sends some data to Google servers. Privacy depends on Google's data policies.</p>
+<p><strong>Sogou IME:</strong> Known for aggressive data collection. Cloud-based predictions require sending typing data to servers. Has faced privacy controversies in the past.</p>
+<p><strong>Microsoft IME:</strong> Basic telemetry. No cloud AI features. Better privacy baseline but limited functionality.</p>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🎨</div>
+<div class="fd-content">
+<h3>Customization &amp; Themes</h3>
+<p><strong>Langou:</strong> 3 built-in themes with granular customization (fonts, colors, sounds, key shapes). Theme gallery with community creations. Material You support on Android. Cloud sync for themes.</p>
+<p><strong>Gboard:</strong> Extensive theme support including custom images, colors. No cloud sync for themes across devices.</p>
+<p><strong>Sogou IME:</strong> Rich theme ecosystem with thousands of community themes. Very customizable.</p>
+<p><strong>Microsoft IME:</strong> Minimal customization options. Basic dark/light theme only.</p>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">💲</div>
+<div class="fd-content">
+<h3>Pricing Model</h3>
+<p><strong>Langou:</strong> Completely free. All features, unlimited AI replies, no ads, no hidden costs.</p>
+<p><strong>Gboard:</strong> Free. Revenue comes from Google's data collection ecosystem.</p>
+<p><strong>Sogou IME:</strong> Free with ads.</p>
+<p><strong>Microsoft IME:</strong> Free. Bundled with Windows.</p>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">📱</div>
+<div class="fd-content">
+<h3>Platform Support</h3>
+<p><strong>Langou:</strong> Android (IME + Trime-based). Windows (floating overlay). iOS, macOS, HarmonyOS under development (2027 target).</p>
+<p><strong>Gboard:</strong> Android, iOS. No desktop version (Windows/Mac).</p>
+<p><strong>Sogou IME:</strong> Android, iOS, Windows, Mac. Extensive multi-platform support.</p>
+<p><strong>Microsoft IME:</strong> Windows only. No mobile or Mac support.</p>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🌍</div>
+<div class="fd-content">
+<h3>Multi-Language Support</h3>
+<p><strong>Langou:</strong> Chinese (simplified/traditional) and English. AI replies auto-detect and match conversation language. Japanese and Korean in development.</p>
+<p><strong>Gboard:</strong> 500+ languages. Best-in-class multilingual support with auto-detection.</p>
+<p><strong>Sogou IME:</strong> Primarily Chinese-focused. Basic English support. Limited other languages.</p>
+<p><strong>Microsoft IME:</strong> Chinese, Japanese, Korean. Strong East Asian language support but limited elsewhere.</p>
+</div>
+</div>
+
+<p class="cta-text">Want to try what makes Langou different? <a href="download.html">Download now</a> or see our <a href="features.html">Features</a> page for a detailed overview. Read about our <a href="security.html">Security & Privacy</a> architecture for more on data protection.</p>
+
+</div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} Langou Input Method. All rights reserved.</p>
+  {TAGLINE}>Langou Input — Free Your Hands 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body></html>

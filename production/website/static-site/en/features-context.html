@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Smart Context Awareness Engine - Langou Input Method</title>
+<meta name="description" content="Deep dive into Langou IME's Smart Context Awareness Engine. How AI understands chat scenarios, detects emotion, and intelligently captures the right context.">
+<link rel="stylesheet" href="../css/style.css?v=2"></head>
+<body class="en"><canvas id="particles-canvas"></canvas>
+<nav class="navbar" id="navbar">
+  <a href="/en/" class="nav-brand">🐶 Langou IME</a>
+  <ul class="nav-links">
+    <li><a href="/en/">Home</a></li>
+    <li><a href="features.html" class="active">Features</a></li>
+    <li><a href="usecases.html">Use Cases</a></li>
+    <li><a href="download.html">Download</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li></li>
+    <li></li>
+
+    <li><a href="community.html">Community</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <button class="lang-btn">中文</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+<div class="page-header"><h1>🧠 Smart Context Awareness Engine</h1><p>How Langou understands your conversations</p></div>
+
+<section class="section" id="main">
+<div class="privacy-content">
+
+<h2>What Makes Context Awareness "Smart"?</h2>
+<p>Most AI keyboards generate replies based on the latest message alone. Langou's Context Awareness Engine goes far deeper — it reads the <strong>entire visible conversation</strong>, analyzes the <strong>emotional arc</strong>, detects <strong>participant relationships</strong>, and identifies the <strong>underlying intent</strong> behind every message. This multi-dimensional understanding is what makes Langou's suggestions feel natural, not robotic.</p>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">📡</div>
+<div class="fd-content">
+<h3>Multi-Layer Context Capture</h3>
+<p>When you open a chat input field in WhatsApp, Telegram, WeChat, or any supported app, Langou activates its capture pipeline:</p>
+<ul>
+<li><strong>Layer 1 — UI Automation (Primary):</strong> On Android, this uses Accessibility Service to extract visible text from chat bubbles. On Windows, UI Automation reads the active window's text content. This is instant, silent, and consumes minimal battery.</li>
+<li><strong>Layer 2 — OCR Fallback:</strong> If UI Automation fails (some apps use custom rendering), Langou takes a screenshot of the visible area and runs <strong>PaddleOCR</strong> on-device. All OCR processing happens locally — no data ever leaves your device.</li>
+<li><strong>Layer 3 — Smart Filter:</strong> Raw extracted text often contains noise — timestamps, system notifications, contact names. The engine runs a lightweight NLP model to identify and remove non-message elements, keeping only the actual conversation.</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🎭</div>
+<div class="fd-content">
+<h3>Emotion &amp; Sentiment Analysis</h3>
+<p>Each captured message is tagged with an <strong>emotion vector</strong> across these dimensions:</p>
+<ul>
+<li><strong>Valence:</strong> Positive, neutral, or negative — from angry rants to joyful exclamations</li>
+<li><strong>Intensity:</strong> How strongly the emotion is expressed (mild, moderate, intense)</li>
+<li><strong>Specific Emotions:</strong> Happiness, sadness, anger, surprise, fear, disgust, trust, anticipation</li>
+<li><strong>Social Signals:</strong> Sarcasm, formality, urgency, playfulness</li>
+</ul>
+<p>The engine also tracks <strong>emotion trajectory</strong> — is the conversation escalating? Cooling down? This helps generate replies that match the emotional flow rather than clashing with it.</p>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🎯</div>
+<div class="fd-content">
+<h3>Intent Classification</h3>
+<p>Beyond surface-level text, the engine asks: <em>"What is this person actually trying to do?"</em></p>
+<ul>
+<li><strong>Question:</strong> Seeking information, opinion, or clarification</li>
+<li><strong>Share:</strong> Announcing news, sharing an experience, showing something</li>
+<li><strong>Request:</strong> Asking for help, a favor, or an action</li>
+<li><strong>Vent:</strong> Expressing frustration (often needs empathy, not solutions)</li>
+<li><strong>Joke:</strong> Playful or humorous intent</li>
+<li><strong>Plan:</strong> Coordinating logistics, making arrangements</li>
+<li><strong>Compliment:</strong> Praise or appreciation</li>
+<li><strong>Apology:</strong> Regret or reconciliation</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🔒</div>
+<div class="fd-content">
+<h3>Privacy-First Architecture</h3>
+<p>Context awareness power comes with strong privacy guarantees:</p>
+<ul>
+<li><strong>Limit:</strong> Maximum 10 most recent messages are captured per context — no full chat history scraping</li>
+<li><strong>Ephemeral:</strong> Context is processed and immediately released from memory. No conversation data is stored on disk.</li>
+<li><strong>On-device:</strong> OCR and initial NLP classification run entirely on your device. Cloud AI only receives anonymized prompt content.</li>
+<li><strong>Auditable:</strong> The context viewer (accessible from the settings) shows exactly what was captured before any AI processing.</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🔄</div>
+<div class="fd-content">
+<h3>Continuous Learning (Pro Feature)</h3>
+<p>The Pro plan adds a subtle but powerful layer: the engine learns your personal communication patterns over time. If you tend to use more emojis with certain contacts, or prefer more formal language with colleagues, the engine adjusts its suggestions accordingly. This learning is stored <strong>encrypted</strong> and synced through your Langou account if you enable cloud sync.</p>
+</div>
+</div>
+
+<p class="cta-text">Want to see context awareness in action? Explore our <a href="usecases.html">Use Cases</a> or check out the <a href="comparison.html">Comparison</a> page to see how we stack up against other IMEs.</p>
+
+</div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} Langou Input Method. All rights reserved.</p>
+  {TAGLINE}>Langou Input — Free Your Hands 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body></html>

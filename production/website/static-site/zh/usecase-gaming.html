@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>游戏社交场景 - 懒狗输入法</title>
+<meta name="description" content="懒狗输入法游戏社交场景详解：Discord游戏聊天、快速回复、组队沟通。打游戏也能秒回消息。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 懒狗输入法</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">首页</a></li>
+    <li><a href="features.html">功能</a></li>
+    <li><a href="usecases.html" class="active">场景</a></li>
+    <li><a href="download.html">下载</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li></li>
+
+    <li><a href="community.html">社区</a></li>
+    <li><a href="about.html">关于</a></li>
+  </ul>
+  <button class="lang-btn">English</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+
+<div class="page-header">
+  <h1>🎮 游戏社交场景</h1>
+  <p>打游戏不耽误聊天，AI 帮你秒回</p>
+</div>
+
+<section class="section">
+  <div class="privacy-content">
+
+    <p class="fade-up" style="color:var(--gray);line-height:1.9;margin-bottom:2rem">打游戏时队友在 Discord 里疯狂 call 你，你正在操作腾不出手？懒狗快速生成简短回复，一键发送不耽误操作。支持 Discord、QQ 语音、微信语音等游戏社交场景。游戏用语自动适配，无需切换输入法。</p>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">🎯</div>
+      <div class="fd-content">
+        <h4>场景 1：MOBA 游戏组队（LOL/Dota2/王者荣耀）</h4>
+        <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+          <div style="max-width:450px;font-size:0.85rem">
+            <div style="background:#F5F0EB;color:#4A3728;padding:6px 12px;border-radius:12px 12px 12px 4px;display:inline-block;margin-bottom:0.5rem;max-width:80%">快来中路团！对面五个人都在！</div>
+            <div style="margin-top:0.5rem;color:var(--gray2);font-size:0.8rem">🤖 AI 建议（简洁风格·游戏用语）：</div>
+            <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--gray)">"马上到！等我两秒"</div>
+            <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--gray)">"先打龙！他们少人"</div>
+            <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--gray)">"来了来了，直接开！"</div>
+          </div>
+          <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+            <span class="tag" style="background:var(--cyan);color:var(--bg);font-size:0.7rem">简洁风格</span>
+            <span class="tag" style="background:var(--green);color:var(--bg);font-size:0.7rem">MOBA</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">🔫</div>
+      <div class="fd-content">
+        <h4>场景 2：FPS 游戏（守望先锋/CS2/Valorant）</h4>
+        <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+          <div style="max-width:450px;font-size:0.85rem">
+            <div style="background:#F5F0EB;color:#4A3728;padding:6px 12px;border-radius:12px 12px 12px 4px;display:inline-block;margin-bottom:0.5rem;max-width:80%">B点有人！至少两个！需要支援</div>
+            <div style="margin-top:0.5rem;color:var(--gray2);font-size:0.8rem">🤖 AI 建议（简洁风格）：</div>
+            <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--gray)">"收到，我从 A 绕过去"</div>
+            <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--gray)">"顶住！我复活马上到"</div>
+            <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--gray)">"我丢闪光弹，冲！"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">🎲</div>
+      <div class="fd-content">
+        <h4>场景 3：派对游戏/休闲游戏（Among Us/Risk/大富翁）</h4>
+        <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+          <div style="max-width:450px;font-size:0.85rem">
+            <div style="background:#F5F0EB;color:#4A3728;padding:6px 12px;border-radius:12px 12px 12px 4px;display:inline-block;margin-bottom:0.5rem;max-width:80%">你刚才在武器库和红色待了那么久，你俩干啥了？🤨</div>
+            <div style="margin-top:0.5rem;color:var(--gray2);font-size:0.8rem">🤖 AI 建议（幽默风格）：</div>
+            <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--orange)">"我们在讨论哲学问题，你信吗？反正我是内鬼🤣"</div>
+            <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--orange)">"我在教红色怎么做任务，真的！别投我😭"</div>
+            <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--orange)">"我觉得紫色很可疑，他在餐厅晃悠半天了👀"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">📢</div>
+      <div class="fd-content">
+        <h4>场景 4：游戏社区 Discord 群聊</h4>
+        <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+          <div style="max-width:450px;font-size:0.85rem">
+            <div style="background:#F5F0EB;color:#4A3728;padding:6px 12px;border-radius:12px 12px 12px 4px;display:inline-block;margin-bottom:0.5rem;max-width:80%">今晚有人打排位吗？我钻石2，求组队</div>
+            <div style="margin-top:0.5rem;color:var(--gray2);font-size:0.8rem">🤖 AI 建议（随和风格）：</div>
+            <div style="background:rgba(0,210,255,0.05);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--gray)">"我我我！我钻1，正好一起冲大师！你主玩什么位置？"</div>
+            <div style="background:rgba(0,210,255,0.05);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--gray)">"加我一个！我补位，什么都能打😎 今晚几点开？"</div>
+            <div style="background:rgba(0,210,255,0.05);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--gray)">"钻石局我来了！不过我最近掉到钻3了，求带飞🤣"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">😤</div>
+      <div class="fd-content">
+        <h4>场景 5：遇到坑队友/争吵时</h4>
+        <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+          <div style="max-width:450px;font-size:0.85rem">
+            <div style="background:#F5F0EB;color:#4A3728;padding:6px 12px;border-radius:12px 12px 12px 4px;display:inline-block;margin-bottom:0.5rem;max-width:80%">中路会不会玩？送了10个人头了！</div>
+            <div style="margin-top:0.5rem;color:var(--gray2);font-size:0.8rem">🤖 AI 建议（缓和气氛）：</div>
+            <div style="background:#FFE4CC;border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--cyan)">"别急别急，后期能打的，稳住心态🙏"</div>
+            <div style="background:#FFE4CC;border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--cyan)">"没事兄弟，跟紧团队走，我们保你打"</div>
+            <div style="background:#FFE4CC;border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--cyan)">"大家别吵了，集中精力打团还有机会！"</div>
+          </div>
+          <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+            <span class="tag" style="background:var(--green);color:var(--bg);font-size:0.7rem">缓和气氛</span>
+            <span class="tag" style="background:var(--orange);color:var(--bg);font-size:0.7rem">团队协作</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">💡</div>
+      <div class="fd-content">
+        <h3>游戏场景使用技巧</h3>
+        <ul>
+          <li><strong>默认使用「简洁风格」：</strong>游戏中打字越快越好，「简洁风格」生成的短回复最合适。设置好后 AI 建议默认只有 5-15 个字。</li>
+          <li><strong>一键发送不耽误操作：</strong>开启「直接发送模式」后，点击建议即刻发送，全程不需要离开游戏画面。</li>
+          <li><strong>游戏用语自动识别：</strong>AI 如果检测到聊天内容涉及游戏术语（Gank、Push、Ace、Buff 等），会使用对应的游戏用词。</li>
+          <li><strong>Discord 语音配合：</strong>在 Discord 语音频道中不方便打字时，懒狗在聊天框内的回复建议可以让队友看到你的文字回复。</li>
+          <li><strong>不要用 AI 骂人：</strong>AI 不会生成辱骂、人身攻击性的内容。对抗性游戏中请保持基本的礼貌和体育精神。</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section" style="text-align:center;padding-top:1rem">
+  <p style="color:var(--gray);margin-bottom:1.5rem">查看更多应用场景：</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+    <a href="usecase-love.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">情侣聊天 →</a>
+    <a href="usecase-social.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">社交群聊 →</a>
+    <a href="usecase-global.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">跨国社交 →</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">隐私政策</a>
+    <a href="terms.html">使用条款</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} 懒狗输入法 懒狗输入法. All rights reserved.</p>
+  {TAGLINE}>懒狗输入法，解放你的双手 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body>
+</html>

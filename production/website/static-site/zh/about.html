@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>关于我们 - 懒狗输入法</title>
+<meta name="description" content="了解懒狗输入法的团队、愿景和故事。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+<style>
+.about-wrap{max-width:800px;margin:0 auto}
+.about-wrap h2{font-size:1.5rem;color:var(--brown);margin:2rem 0 1rem;font-weight:700}
+.about-wrap h2::before{content:'🐾 '}
+.about-wrap p{color:var(--dark);font-size:1rem;line-height:2;margin-bottom:1rem}
+.about-wrap strong{color:var(--primary)}
+.value-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.2rem;margin:2rem 0}
+.value-card{background:#FFF;border:2px solid #FFE4CC;border-radius:16px;padding:1.5rem;transition:all 0.3s ease}
+.value-card:hover{border-color:var(--primary);transform:translateY(-3px);box-shadow:0 4px 15px rgba(255,140,66,0.1)}
+.value-card .vc-icon{font-size:2rem;margin-bottom:0.6rem}
+.value-card h3{color:var(--brown);font-size:1.05rem;margin-bottom:0.4rem}
+.value-card p{color:var(--muted);font-size:0.85rem;line-height:1.6}
+.timeline{padding:1.5rem 0;position:relative}
+.timeline::before{content:'';position:absolute;left:20px;top:0;bottom:0;width:3px;background:var(--primary);border-radius:2px;opacity:0.3}
+.tl-item{position:relative;padding-left:50px;margin-bottom:1.5rem}
+.tl-dot{position:absolute;left:13px;top:4px;width:17px;height:17px;border-radius:50%;background:var(--primary);border:3px solid #FFF;box-shadow:0 0 0 3px var(--primary)}
+.tl-date{font-size:0.8rem;color:var(--primary);font-weight:700;margin-bottom:0.2rem}
+.tl-text{color:var(--dark);font-size:0.9rem}
+.contact-grid{display:flex;gap:1rem;flex-wrap:wrap;margin:1.5rem 0}
+.ct-card{background:#FFF;border:2px solid #FFE4CC;border-radius:16px;padding:1.3rem;flex:1;min-width:160px;text-align:center;transition:all 0.3s ease}
+.ct-card:hover{border-color:var(--primary);transform:translateY(-3px)}
+.ct-card .ct-icon{font-size:1.8rem;margin-bottom:0.5rem}
+.ct-card h4{color:var(--brown);font-size:0.9rem;margin-bottom:0.2rem}
+.ct-card p{color:var(--muted);font-size:0.8rem}
+@media(max-width:768px){.value-grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 懒狗输入法</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">首页</a></li>
+    <li><a href="features.html">功能</a></li>
+    <li><a href="usecases.html">场景</a></li>
+    <li><a href="download.html">下载</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li><a href="community.html">社区</a></li>
+    <li><a href="about.html" class="active">关于</a></li>
+  </ul>
+  <button class="lang-btn">English</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+
+<div class="page-header">
+  <h1>关于我们</h1>
+  <p>一群想让打字更轻松的人 🐶</p>
+</div>
+
+<section class="section">
+  <div class="about-wrap fade-up">
+    <h2>我们的故事</h2>
+    <p>2026年初，团队在日常聊天中发现一个普遍的痛点：<strong>明明知道想说什么，但就是不想打字</strong>。在手机上单手打字又慢又累，语音又不方便在公共场合使用。</p>
+    <p>于是我们开始思考：既然AI已经能理解上下文、生成自然语言，为什么不能让它<strong>替我们打字</strong>？不是更好的打字工具——而是<strong>代替打字的工具</strong>。</p>
+    <p>于是「懒狗」诞生了。我们把大语言模型注入输入法，让它自动理解聊天内容，一键生成合适的回复。你只需要点一下，剩下的交给懒狗。</p>
+    <p>「懒狗」这个名字，来自我们的产品哲学：<strong>用技术让人类偷懒，把时间花在更重要的事上</strong>。不是懒惰，是聪明的偷懒。</p>
+
+    <h2>我们的愿景</h2>
+    <p style="font-size:1.3rem;color:var(--primary);font-weight:700;text-align:center;padding:1.5rem;background:#FFF8F0;border-radius:20px;border:2px solid var(--primary)">
+      🐶 让每个人都拥有一个AI聊天助手
+    </p>
+    <p>我们相信未来的输入不应该是一个字一个字地敲。AI应该理解你的意图，帮你组织语言，让你专注于「聊什么」而不是「怎么打字」。</p>
+
+    <h2>核心价值观</h2>
+  </div>
+  <div class="value-grid">
+    <div class="value-card fade-up"><div class="vc-icon">🐶</div><h3>AI 优先</h3><p>AI不是附加功能，而是核心体验。我们围绕AI重新设计输入法的每一个环节。</p></div>
+    <div class="value-card fade-up"><div class="vc-icon">🔒</div><h3>隐私至上</h3><p>用户数据是信任的托付。遵循数据最小化原则，绝不滥用用户隐私。</p></div>
+    <div class="value-card fade-up"><div class="vc-icon">⚡</div><h3>极致效率</h3><p>从识别到发送，全流程不超过3秒。每一个环节都经过极致优化。</p></div>
+    <div class="value-card fade-up"><div class="vc-icon">🌍</div><h3>开放透明</h3><p>基于开源项目构建，尊重开源协议。架构透明，接受社区监督。</p></div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0">
+  <div class="about-wrap fade-up">
+    <h2>发展历程</h2>
+  </div>
+  <div class="timeline" style="max-width:700px;margin:0 auto">
+    <div class="tl-item fade-up"><div class="tl-dot"></div><div class="tl-date">2026年1月</div><div class="tl-text">项目启动，研究AI+输入法的技术可行性</div></div>
+    <div class="tl-item fade-up"><div class="tl-dot"></div><div class="tl-date">2026年3月</div><div class="tl-text">完成原型验证，确定MiMo大模型+RIME引擎技术路线</div></div>
+    <div class="tl-item fade-up"><div class="tl-dot"></div><div class="tl-date">2026年5月</div><div class="tl-text">Android版内测，邀请100名测试用户</div></div>
+    <div class="tl-item fade-up"><div class="tl-dot"></div><div class="tl-date">2026年6月</div><div class="tl-text">Windows版内测，跨平台同步功能完成</div></div>
+    <div class="tl-item fade-up"><div class="tl-dot"></div><div class="tl-date">2026年7月</div><div class="tl-text">v1.0.0-alpha 公开测试版发布</div></div>
+    <div class="tl-item fade-up"><div class="tl-dot" style="border:3px solid #FFE4CC;box-shadow:0 0 0 3px #FFE4CC"></div><div class="tl-date" style="color:var(--muted)">2027年</div><div class="tl-text" style="color:var(--muted)">iOS / macOS 版本计划发布</div></div>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0">
+  <div class="about-wrap fade-up">
+    <h2>联系我们</h2>
+    <p>有任何问题、建议或合作意向，欢迎联系我们：</p>
+  </div>
+  <div class="contact-grid" style="max-width:700px;margin:1rem auto">
+    <div class="ct-card fade-up"><div class="ct-icon">📧</div><h4>通用咨询</h4><p>hello@langou.tech</p></div>
+    <div class="ct-card fade-up"><div class="ct-icon">🔐</div><h4>隐私安全</h4><p>privacy@langou.tech</p></div>
+    <div class="ct-card fade-up"><div class="ct-icon">💼</div><h4>商务合作</h4><p>sales@langou.tech</p></div>
+    <div class="ct-card fade-up"><div class="ct-icon">🐛</div><h4>Bug反馈</h4><p>社区发帖</p></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links"><a href="privacy.html">隐私政策</a><a href="terms.html">使用条款</a></div>
+  <p>© 2026 懒狗输入法 Langou Input Method. All rights reserved.</p>
+  <p class="tagline">🐶 懒狗输入法，解放你的双手</p>
+</footer>
+<script src="../js/particles.js?v=2"></script><script src="../js/main.js?v=2"></script>
+</body></html>

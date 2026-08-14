@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>对比其他输入法 - 懒狗输入法</title>
+<meta name="description" content="懒狗输入法与搜狗、百度、Gboard、讯飞输入法全面对比。AI差异化优势突出。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+<style>
+.comp-table{width:100%;border-collapse:collapse;margin-top:2rem}
+.comp-table th,.comp-table td{padding:0.8rem 1rem;text-align:center;border-bottom:1px solid rgba(0,210,255,0.06);font-size:0.9rem}
+.comp-table th{color:var(--cyan);font-weight:600;font-size:0.85rem;background:rgba(0,210,255,0.05)}
+.comp-table td{color:var(--gray)}
+.comp-table td:first-child{text-align:left;color:var(--white);font-weight:500;min-width:160px}
+.comp-table tr:hover{background:rgba(0,210,255,0.03)}
+.comp-table .highlight{color:var(--green);font-weight:700}
+.comp-table .na{color:var(--gray2)}
+</style>
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 懒狗输入法</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">首页</a></li>
+    <li><a href="features.html">功能</a></li>
+    <li><a href="usecases.html">场景</a></li>
+    <li><a href="download.html">下载</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li></li>
+
+    <li><a href="community.html">社区</a></li>
+    <li><a href="about.html">关于</a></li>
+  </ul>
+  <button class="lang-btn">English</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+<div class="page-header"><h1>对比其他输入法</h1><p>为什么选择懒狗？看看真实对比</p></div>
+
+<!-- SVG 雷达对比图 -->
+<div class="section" style="padding-top:0">
+  <div class="feature-detail fade-up" style="justify-content:center;padding:2rem 0">
+    <svg viewBox="0 0 700 600" style="width:100%;max-width:680px;height:auto" xmlns="http://www.w3.org/2000/svg" aria-label="懒狗输入法 vs 传统输入法雷达对比图">
+      <defs>
+        <filter id="radarGlowCyan"><feDropShadow dx="0" dy="0" stdDeviation="4" flood-color="#FF8C42" flood-opacity="0.5"/></filter>
+        <filter id="radarGlowGray"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#A08670" flood-opacity="0.3"/></filter>
+      </defs>
+
+      <text x="350" y="30" text-anchor="middle" fill="#FF8C42" font-size="16" font-weight="700" filter="url(#radarGlowCyan)">📊 能力雷达图：懒狗 vs 传统输入法</text>
+
+      <g transform="translate(350,330)">
+        <!-- 六边形网格 -->
+        <polygon points="0,-220 190.5,-110 190.5,110 0,220 -190.5,110 -190.5,-110" fill="none" stroke="#FFE4CC" stroke-width="1"/>
+        <polygon points="0,-165 143,-82.5 143,82.5 0,165 -143,82.5 -143,-82.5" fill="none" stroke="#FFE4CC" stroke-width="0.8"/>
+        <polygon points="0,-110 95.3,-55 95.3,55 0,110 -95.3,55 -95.3,-55" fill="none" stroke="rgba(0,210,255,0.06)" stroke-width="0.6"/>
+        <polygon points="0,-55 47.6,-27.5 47.6,27.5 0,55 -47.6,27.5 -47.6,-27.5" fill="none" stroke="rgba(0,210,255,0.04)" stroke-width="0.4"/>
+
+        <!-- 轴线 -->
+        <line x1="0" y1="0" x2="0" y2="-220" stroke="#FFE4CC" stroke-width="1"/>
+        <line x1="0" y1="0" x2="190.5" y2="-110" stroke="#FFE4CC" stroke-width="1"/>
+        <line x1="0" y1="0" x2="190.5" y2="110" stroke="#FFE4CC" stroke-width="1"/>
+        <line x1="0" y1="0" x2="0" y2="220" stroke="#FFE4CC" stroke-width="1"/>
+        <line x1="0" y1="0" x2="-190.5" y2="110" stroke="#FFE4CC" stroke-width="1"/>
+        <line x1="0" y1="0" x2="-190.5" y2="-110" stroke="#FFE4CC" stroke-width="1"/>
+
+        <!-- 维度标签 -->
+        <text x="0" y="-235" text-anchor="middle" fill="#A08670" font-size="12" font-weight="600">AI 能力</text>
+        <text x="210" y="-112" text-anchor="start" fill="#A08670" font-size="12" font-weight="600">隐私保护</text>
+        <text x="220" y="118" text-anchor="start" fill="#A08670" font-size="12" font-weight="600">输入速度</text>
+        <text x="0" y="248" text-anchor="middle" fill="#A08670" font-size="12" font-weight="600">多语言</text>
+        <text x="-220" y="118" text-anchor="end" fill="#A08670" font-size="12" font-weight="600">自定义</text>
+        <text x="-220" y="-112" text-anchor="end" fill="#A08670" font-size="12" font-weight="600">免费使用</text>
+
+        <!-- 刻度标记 -->
+        <text x="0" y="-180" text-anchor="end" fill="#A08670" font-size="9">2</text>
+        <text x="0" y="-125" text-anchor="end" fill="#A08670" font-size="9">4</text>
+        <text x="0" y="-70" text-anchor="end" fill="#A08670" font-size="9">6</text>
+        <text x="0" y="-15" text-anchor="end" fill="#A08670" font-size="9">8</text>
+        <text x="0" y="-198" text-anchor="end" fill="#A08670" font-size="9">0</text>
+
+        <!-- 传统输入法 多边形 (较低分) -->
+        <!-- AI:2, 隐私:3, 速度:7, 多语言:6, 自定义:6, 免费:8 -->
+        <polygon points="0,-44 95.3,-33 133,77 0,132 -95.3,66 -143,-55"
+                 fill="rgba(102,102,128,0.2)" stroke="#A08670" stroke-width="2" stroke-dasharray="5,3" filter="url(#radarGlowGray)"/>
+
+        <!-- 懒狗输入法 多边形 (高分) -->
+        <!-- AI:9, 隐私:9, 速度:7, 多语言:5, 自定义:4, 免费:9 -->
+        <polygon points="0,-198 0,-198 171.5,-99 152.5,-88 95.3,99 0,198 0,198 -95.3,99 -76.2,-44 0,-88"
+                 fill="#FFE4CC" stroke="#FF8C42" stroke-width="2.5" filter="url(#radarGlowCyan)"/>
+
+        <!-- 数据点 -->
+        <circle cx="0" cy="-198" r="5" fill="#FF8C42"/>
+        <circle cx="0" cy="-198" r="2" fill="#0D0D1A"/>
+        <circle cx="152.5" cy="-88" r="5" fill="#FF8C42"/>
+        <circle cx="152.5" cy="-88" r="2" fill="#0D0D1A"/>
+        <circle cx="95.3" cy="99" r="5" fill="#FF8C42"/>
+        <circle cx="95.3" cy="99" r="2" fill="#0D0D1A"/>
+        <circle cx="0" cy="198" r="5" fill="#FF8C42"/>
+        <circle cx="0" cy="198" r="2" fill="#0D0D1A"/>
+        <circle cx="-76.2" cy="-44" r="5" fill="#FF8C42"/>
+        <circle cx="-76.2" cy="-44" r="2" fill="#0D0D1A"/>
+        <circle cx="0" cy="-88" r="5" fill="#FF8C42"/>
+        <circle cx="0" cy="-88" r="2" fill="#0D0D1A"/>
+      </g>
+
+      <!-- 图例 -->
+      <g transform="translate(480,480)">
+        <line x1="0" y1="0" x2="30" y2="0" stroke="#FF8C42" stroke-width="2.5"/>
+        <circle cx="30" cy="0" r="4" fill="#FF8C42"/>
+        <text x="40" y="5" fill="#FF8C42" font-size="11">懒狗输入法</text>
+
+        <line x1="160" y1="0" x2="190" y2="0" stroke="#A08670" stroke-width="2" stroke-dasharray="5,3"/>
+        <text x="200" y="5" fill="#A08670" font-size="11">传统输入法</text>
+      </g>
+
+      <!-- 脚注 -->
+      <text x="350" y="530" text-anchor="middle" fill="#A08670" font-size="10">评分范围 0-10 · 基于公开数据和用户反馈综合评估</text>
+    </svg>
+  </div>
+</div>
+
+<section class="section"><div class="privacy-content">
+<p style="color:var(--gray);line-height:1.9;margin-bottom:1.5rem">懒狗输入法与其他主流中文输入法相比，最大的差异化优势在于 AI Agent 的深度集成。传统输入法只是「打字工具」，而懒狗输入法是「沟通助手」——它不只是帮你把字打出来，而是帮你思考"该说什么"。以下是与搜狗输入法、百度输入法、Gboard（Google 键盘）和讯飞输入法的详细对比。</p>
+
+<div style="overflow-x:auto">
+<table class="comp-table">
+<thead><tr><th style="text-align:left">功能维度</th><th>懒狗输入法 🐶</th><th>搜狗输入法</th><th>百度输入法</th><th>Gboard</th><th>讯飞输入法</th></tr></thead>
+<tbody>
+<tr><td>AI 回复建议生成</td><td class="highlight">✅ 核心功能</td><td class="na">✗</td><td class="na">✗</td><td class="na">✗</td><td class="na">✗</td></tr>
+<tr><td>上下文自动感知</td><td class="highlight">✅ 自动识别</td><td class="na">✗</td><td class="na">✗</td><td class="na">✗</td><td class="na">✗</td></tr>
+<tr><td>情绪/意图分析</td><td class="highlight">✅ 12种情绪</td><td class="na">✗</td><td class="na">✗</td><td class="na">✗</td><td class="na">✗</td></tr>
+<tr><td>多风格回复</td><td class="highlight">✅ 6种风格</td><td class="na">✗</td><td class="na">✗</td><td class="na">✗</td><td class="na">✗</td></tr>
+<tr><td>一键发送</td><td class="highlight">✅ 直接发送</td><td class="na">✗</td><td class="na">✗</td><td class="na">✗</td><td class="na">✗</td></tr>
+<tr><td>提示词优化</td><td class="highlight">✅</td><td class="na">✗</td><td class="na">✗</td><td class="na">✗</td><td class="na">✗</td></tr>
+<tr><td>全拼输入</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>双拼输入</td><td>✅（多种方案）</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>手写输入</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>语音输入</td><td>✅（系统引擎）</td><td>✅</td><td>✅</td><td>✅</td><td class="highlight">✅ 自研引擎</td></tr>
+<tr><td>云同步</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>自定义主题</td><td>✅ 3套+自定义</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>跨平台支持</td><td>Android+Win</td><td>Android+iOS+Win+Mac</td><td>Android+iOS+Win</td><td>Android+iOS</td><td>Android+iOS+Win</td></tr>
+<tr><td>广告</td><td class="highlight">✅ 无广告</td><td class="na">有广告</td><td class="na">有广告</td><td class="highlight">✅ 无广告</td><td class="na">有广告</td></tr>
+<tr><td>离线可用</td><td>基础输入可离线</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>隐私保护</td><td class="highlight">端到端加密</td><td>标准</td><td>标准</td><td class="highlight">端到端加密</td><td>标准</td></tr>
+<tr><td>开源</td><td>部分开源</td><td class="na">✗</td><td class="na">✗</td><td class="highlight">✅ 开源</td><td class="na">✗</td></tr>
+<tr><td>RIME 引擎</td><td class="highlight">✅ 基于RIME</td><td class="na">自研</td><td class="na">自研</td><td class="na">自研</td><td class="na">自研</td></tr>
+</tbody></table></div>
+
+<div class="feature-detail fade-up" style="margin-top:2rem;border-top:1px solid rgba(0,210,255,0.06);padding-top:2rem">
+<div class="fd-icon">🏆</div><div class="fd-content"><h3>懒狗输入法的核心差异化优势</h3>
+<ul><li><strong>AI Agent 驱动：</strong>懒狗不是"打字工具"，而是"沟通助手"。它理解你正在聊什么、对方是什么情绪、你应该用什么语气回复。</li>
+<li><strong>一键发送：</strong>看到 AI 建议后点一下就能发送完毕，无需复制粘贴、无需手动点发送。其他输入法没有这个能力。</li>
+<li><strong>六种风格：</strong>不是只有一种 AI 回复——甜蜜、幽默、温暖、专业、简洁、随和，适配不同场景和对象。</li>
+<li><strong>提示词优化：</strong>在用 ChatGPT 等 AI 工具时，帮你写出更精准的 Prompt，获得更好的 AI 回答质量。</li>
+<li><strong>隐私优先：</strong>数据最小化采集、端到端加密、内存即焚。在提供 AI 能力的同时最大限度保护用户隐私。</li></ul></div></div>
+</div></section>
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">隐私政策</a>
+    <a href="terms.html">使用条款</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} 懒狗输入法 懒狗输入法. All rights reserved.</p>
+  {TAGLINE}>懒狗输入法，解放你的双手 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body>
+</html>

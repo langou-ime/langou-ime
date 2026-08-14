@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>中文输入引擎 - 懒狗输入法</title>
+<meta name="description" content="懒狗输入法中文输入引擎详解：RIME开源引擎、全拼双拼简拼、百万级词库、手写语音输入、多种输入方案。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 懒狗输入法</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">首页</a></li>
+    <li><a href="features.html" class="active">功能</a></li>
+    <li><a href="usecases.html">场景</a></li>
+    <li><a href="download.html">下载</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li></li>
+
+    <li><a href="community.html">社区</a></li>
+    <li><a href="about.html">关于</a></li>
+  </ul>
+  <button class="lang-btn">English</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+
+<div class="page-header">
+  <h1>🔤 中文输入引擎</h1>
+  <p>基于 RIME 开源引擎，专业级中文输入体验</p>
+</div>
+
+<section class="section">
+  <div class="privacy-content">
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">⚙️</div>
+      <div class="fd-content">
+        <h3>RIME（中州韻）开源引擎</h3>
+        <p>懒狗输入法底层采用 RIME（中州韻）开源输入引擎。RIME 是业界公认的最优秀的中文输入引擎之一，以其强大的可定制性、出色的词库管理和跨平台能力著称。在 RIME 的基础上，懒狗输入法进行了深度优化和改造：</p>
+        <ul>
+          <li><strong>性能优化：</strong>增加了即时响应缓存层，将首字候选延迟从平均 50ms 降低到 15ms 以内。</li>
+          <li><strong>词库扩展：</strong>整合了百万级现代汉语词库，覆盖日常用语、专业术语、网络热词、地名、人名等。</li>
+          <li><strong>AI 融合：</strong>在 RIME 候选排序基础上引入了 AI 预测引擎，根据上下文预测下一个要输入的词。</li>
+          <li><strong>同步增强：</strong>在 RIME 原生同步基础上，增加了云端词库同步功能。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">⌨️</div>
+      <div class="fd-content">
+        <h3>支持的输入方案</h3>
+
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-top:1rem">
+          <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+            <h4 style="color:var(--cyan);font-size:0.95rem;margin-bottom:0.5rem">🔤 全拼输入</h4>
+            <p style="font-size:0.85rem;color:var(--gray)">标准的拼音输入，支持简拼混输。例如输入"woainiyyds"可得到"我爱你永远的神"。内置智能模糊音（平翘舌、前后鼻音），适合拼写不太准确的用户。</p>
+          </div>
+          <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+            <h4 style="color:var(--cyan);font-size:0.95rem;margin-bottom:0.5rem">🔤 双拼输入</h4>
+            <p style="font-size:0.85rem;color:var(--gray)">支持自然码双拼、小鹤双拼、微软双拼、搜狗双拼等主流双拼方案。击键效率比全拼提升约 40%，每字平均击键从 3 次降到 1.8 次。切换零成本，所有词库通用。</p>
+          </div>
+          <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+            <h4 style="color:var(--cyan);font-size:0.95rem;margin-bottom:0.5rem">✂️ 简拼输入</h4>
+            <p style="font-size:0.85rem;color:var(--gray)">仅输入声母即可联想完整词语。"tql"→"太强了"、"yyds"→"永远的神"、"zl"→"资料/这里/找了"。与全拼自然混输，无需切换模式。</p>
+          </div>
+          <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+            <h4 style="color:var(--cyan);font-size:0.95rem;margin-bottom:0.5rem">✍️ 手写输入</h4>
+            <p style="font-size:0.85rem;color:var(--gray)">集成系统手写引擎，支持正楷连写。生僻字、拼音不确定的字直接手写识别。识别准确率超过 98%，支持中英混写。</p>
+          </div>
+          <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+            <h4 style="color:var(--cyan);font-size:0.95rem;margin-bottom:0.5rem">🎤 语音输入</h4>
+            <p style="font-size:0.85rem;color:var(--gray)">调用系统语音识别引擎，支持普通话、粤语、英语语音输入。长文本语音输入准确率超过 95%，自动添加标点符号。适合开车、做家务等不方便打字的场景。</p>
+          </div>
+          <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+            <h4 style="color:var(--cyan);font-size:0.95rem;margin-bottom:0.5rem">🌐 中英混输</h4>
+            <p style="font-size:0.85rem;color:var(--gray)">无需切换输入模式即可中英文混输。输入"python教程"得到"Python 教程"，输入"myiphone"得到"我的 iPhone"。AI 自动识别上下文判断是否需要切换。</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">📚</div>
+      <div class="fd-content">
+        <h3>词库详解</h3>
+        <p>懒狗输入法内置了精心构建的多层词库体系：</p>
+        <ul>
+          <li><strong>基础词库：</strong>约 50 万常用词，覆盖日常生活、工作学习中的所有常用词汇。</li>
+          <li><strong>专业词库：</strong>约 30 万专业术语，覆盖 IT、法律、医学、金融、工程等 20+ 行业领域。</li>
+          <li><strong>网络词库：</strong>约 10 万网络热词和流行语，每周自动更新。"yyds、绝绝子、破防了、emo 了"等都能准确打出。</li>
+          <li><strong>人名词库：</strong>约 10 万常见中文姓名和英文名，无需逐个造词。</li>
+          <li><strong>地点词库：</strong>全国省市区县地名、主要街道、标志性建筑。</li>
+          <li><strong>学习词库：</strong>系统根据你的输入习惯自动学习的新词，存储在本地并可选同步到云端。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">📈</div>
+      <div class="fd-content">
+        <h3>智能候选排序</h3>
+        <p>懒狗输入法的候选排序不仅仅是基于词频，而是结合了多重因素：</p>
+        <ul>
+          <li><strong>基础词频：</strong>基于大规模语料统计的词频数据。</li>
+          <li><strong>个人词频：</strong>根据你自己的输入习惯动态调整——你经常打的词会排得更靠前。</li>
+          <li><strong>上下文预测：</strong>根据已输入的内容，预测下一个最可能的词。输入"今天天"后，"气"自动排在候选第一位。</li>
+          <li><strong>场景适配：</strong>在聊天场景中，高频口语词优先级提升；在工作场景中，正式表达优先级提升。</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section" style="text-align:center;padding-top:1rem">
+  <p style="color:var(--gray);margin-bottom:1.5rem">查看更多功能详解：</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+    <a href="features-themes.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">主题与个性化 →</a>
+    <a href="features-sync.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">云端同步 →</a>
+    <a href="features-prompt.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">提示词优化器 →</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">隐私政策</a>
+    <a href="terms.html">使用条款</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} 懒狗输入法 懒狗输入法. All rights reserved.</p>
+  {TAGLINE}>懒狗输入法，解放你的双手 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Android Version - Langou Input Method</title>
+<meta name="description" content="Langou IME Android version features. System keyboard integration, Accessibility Service, on-device AI, and full RIME-based Chinese input engine.">
+<link rel="stylesheet" href="../css/style.css?v=2"></head>
+<body class="en"><canvas id="particles-canvas"></canvas>
+<nav class="navbar" id="navbar">
+  <a href="/en/" class="nav-brand">🐶 Langou IME</a>
+  <ul class="nav-links">
+    <li><a href="/en/">Home</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="usecases.html">Use Cases</a></li>
+    <li><a href="download.html">Download</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li></li>
+    <li></li>
+
+    <li><a href="community.html">Community</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <button class="lang-btn">中文</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+<div class="page-header"><h1>📱 Android Version</h1><p>Full-featured system keyboard for Android</p></div>
+
+<section class="section" id="main">
+<div class="privacy-content">
+
+<h2>Langou on Android: Your System Keyboard</h2>
+<p>The Android version of Langou is built on the foundation of <strong>Trime</strong> (同文输入法), a powerful open-source keyboard project. Langou extends Trime with AI capabilities while maintaining full compatibility with the Android keyboard ecosystem. It replaces your default system keyboard, giving you AI-powered suggestions in every app.</p>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">⌨️</div>
+<div class="fd-content">
+<h3>System Keyboard Integration</h3>
+<p>Langou registers as a standard Android Input Method Editor (IME). This means:</p>
+<ul>
+<li><strong>Works everywhere:</strong> WhatsApp, WeChat, Telegram, Messenger, Discord, Slack, email apps, browsers — any app with a text input field</li>
+<li><strong>Google compatibility:</strong> Works alongside Google Voice Typing, Gboard clipboard, and other Android input features</li>
+<li><strong>Edge-to-edge:</strong> Supports modern Android edge-to-edge display with proper insets handling</li>
+<li><strong>Gesture typing:</strong> Full swipe-to-type support (Glide Typing) on supported keyboards</li>
+<li><strong>Split keyboard:</strong> Tablet and foldable device support with split keyboard layout</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">♿</div>
+<div class="fd-content">
+<h3>Accessibility Service</h3>
+<p>To read chat context for AI suggestions, Langou uses Android's Accessibility Service. This is how it works:</p>
+<ul>
+<li><strong>Read-only:</strong> The service only reads text visible on screen — it cannot modify or interact with other apps</li>
+<li><strong>Context-aware:</strong> Only triggers when the Langou keyboard is active and a chat input field is detected</li>
+<li><strong>Privacy filter:</strong> Configurable to exclude certain apps from context capture</li>
+<li><strong>Transparent:</strong> The context viewer (in settings) shows exactly what data was captured</li>
+<li><strong>Revocable:</strong> Can be disabled at any time, though AI suggestions will be less contextually relevant</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🧠</div>
+<div class="fd-content">
+<h3>On-Device AI Processing</h3>
+<p>Android devices benefit from significant on-device processing:</p>
+<ul>
+<li><strong>OCR Engine:</strong> PaddleOCR runs entirely on-device using the GPU (via NNAPI/OpenCL). No screenshots are sent to servers.</li>
+<li><strong>NLP Classifiers:</strong> Emotion analysis and intent classification run locally using TensorFlow Lite</li>
+<li><strong>Voice Recognition:</strong> On-device speech-to-text using Android's SpeechRecognizer API or offline model</li>
+<li><strong>Cached models:</strong> AI models are cached locally for faster response times on repeated use</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">⚡</div>
+<div class="fd-content">
+<h3>Performance Optimization</h3>
+<p>We've optimized Langou for a wide range of Android hardware:</p>
+<ul>
+<li><strong>Minimum requirements:</strong> Android 8.0 (API 26), 3GB RAM, 200MB storage</li>
+<li><strong>Recommended:</strong> Android 11+, 6GB RAM, Snapdragon 865 or equivalent</li>
+<li><strong>Battery impact:</strong> &lt;2% additional battery usage per hour of typing</li>
+<li><strong>Memory footprint:</strong> ~80MB in active use, minimal background memory usage</li>
+<li><strong>Startup time:</strong> Cold start &lt;500ms, warm start &lt;200ms</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🌙</div>
+<div class="fd-content">
+<h3>Android-Specific Features</h3>
+<ul>
+<li><strong>Material You:</strong> Dynamic theming support on Android 12+ — keyboard colors adapt to your wallpaper</li>
+<li><strong>Notification access:</strong> Optional — used to detect incoming chat notifications for proactive suggestions</li>
+<li><strong>Picture-in-picture:</strong> AI suggestion panel can appear as a small overlay even with keyboard dismissed</li>
+<li><strong>Shortcuts:</strong> Quick Settings tile to toggle AI mode, home screen widgets</li>
+<li><strong>Google Play compatibility:</strong> Available via direct APK download (Play Store integration planned)</li>
+</ul>
+</div>
+</div>
+
+<p class="cta-text">Download Langou for Android on our <a href="download.html">Download page</a>. Compare with the <a href="platform-windows.html">Windows version</a> for cross-platform features.</p>
+
+</div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} Langou Input Method. All rights reserved.</p>
+  {TAGLINE}>Langou Input — Free Your Hands 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body></html>

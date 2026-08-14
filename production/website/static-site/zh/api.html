@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>开发者 API - 懒狗输入法</title>
+<meta name="description" content="懒狗输入法开发者API文档：认证方式、端点列表、示例代码。集成AI回复能力到你的应用。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+<style>
+.api-table{width:100%;border-collapse:collapse;margin:1.5rem 0}
+.api-table th,.api-table td{padding:0.8rem 1rem;border-bottom:1px solid rgba(0,210,255,0.06);font-size:0.9rem;text-align:left}
+.api-table th{color:var(--cyan);font-weight:600;font-size:0.85rem;background:rgba(0,210,255,0.05)}
+.api-table td{color:var(--gray)}
+pre{background:var(--bg2);border:1px solid #FFE4CC;border-radius:12px;padding:1.2rem;overflow-x:auto;font-size:0.85rem;color:var(--cyan);line-height:1.7;margin:1rem 0}
+code{font-family:'JetBrains Mono','Fira Code','Consolas',monospace;font-size:0.85rem}
+</style>
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 懒狗输入法</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">首页</a></li>
+    <li><a href="features.html">功能</a></li>
+    <li><a href="usecases.html">场景</a></li>
+    <li><a href="download.html">下载</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li></li>
+
+    <li><a href="community.html">社区</a></li>
+    <li><a href="about.html">关于</a></li>
+  </ul>
+  <button class="lang-btn">English</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+<div class="page-header"><h1>🔌 开发者 API</h1><p>将懒狗输入法的 AI 回复能力集成到你的应用中</p></div>
+<section class="section"><div class="privacy-content">
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">📖</div><div class="fd-content"><h3>API 概览</h3><p>懒狗输入法提供 RESTful API，供第三方开发者将 AI 回复生成能力集成到自己的应用中。目前 API 处于 Beta 阶段，面向受邀开发者开放。主要功能包括：根据对话上下文生成 AI 回复建议、分析对话情绪和意图、优化提示词。API 采用标准的 HTTP/HTTPS 协议，响应格式为 JSON。</p></div></div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🔑</div><div class="fd-content"><h3>认证方式</h3><p>所有 API 请求需要在 Header 中携带 API Key：</p>
+<pre>Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json</pre>
+<p>API Key 通过开发者后台申请。每个 Key 绑定一个应用标识，用于调用量统计。Beta 期间不限调用次数。</p></div></div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">📡</div><div class="fd-content"><h3>端点列表</h3>
+<table class="api-table">
+<thead><tr><th>方法</th><th>端点</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><span style="color:var(--green)">POST</span></td><td><code>/v1/chat/reply</code></td><td>生成 AI 回复建议</td></tr>
+<tr><td><span style="color:var(--green)">POST</span></td><td><code>/v1/chat/analyze</code></td><td>分析对话情绪和意图</td></tr>
+<tr><td><span style="color:var(--green)">POST</span></td><td><code>/v1/prompt/optimize</code></td><td>优化提示词</td></tr>
+<tr><td><span style="color:var(--blue)">GET</span></td><td><code>/v1/user/quota</code></td><td>查询 API 调用状态</td></tr>
+</tbody></table></div></div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">📝</div><div class="fd-content"><h3>示例代码：生成 AI 回复</h3>
+<pre><span style="color:var(--gray2)">// 请求示例</span>
+POST /v1/chat/reply
+Authorization: Bearer YOUR_API_KEY
+Content-Type: application/json
+
+{
+  "context": [
+    {"role": "other", "content": "今天好累啊，加班到现在😩"},
+    {"role": "me", "content": "辛苦了，还没下班吗？"},
+    {"role": "other", "content": "还在公司，估计还要一小时😭"}
+  ],
+  "style": "warm",
+  "max_suggestions": 3,
+  "language": "zh-CN"
+}
+
+<span style="color:var(--gray2)">// 响应示例</span>
+{
+  "success": true,
+  "data": {
+    "suggestions": [
+      "那你别太辛苦了，做完早点回去休息，路上注意安全🥺",
+      "心疼死了😢 我帮你点个宵夜送到公司吧，想吃什么？",
+      "坚持住！做完这单周末好好犒劳自己💪 需要我陪你聊会儿吗？"
+    ],
+    "analysis": {
+      "emotion": "tired",
+      "intent": "venting"
+    }
+  },
+  "request_id": "req_abc123"
+}</pre>
+</div></div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">💡</div><div class="fd-content"><h3>参数说明</h3>
+<table class="api-table">
+<thead><tr><th>参数</th><th>类型</th><th>必填</th><th>说明</th></tr></thead>
+<tbody>
+<tr><td><code>context</code></td><td>array</td><td>是</td><td>对话上下文消息数组，最多 10 条。每条包含 role（other/me）和 content</td></tr>
+<tr><td><code>style</code></td><td>string</td><td>否</td><td>回复风格：sweet/humor/warm/pro/concise/casual。默认 warm</td></tr>
+<tr><td><code>max_suggestions</code></td><td>int</td><td>否</td><td>返回建议数量 1-5，默认 3</td></tr>
+<tr><td><code>language</code></td><td>string</td><td>否</td><td>语言：zh-CN/en/ja/ko。默认自动检测</td></tr>
+</tbody></table></div></div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">📊</div><div class="fd-content"><h3>速率限制</h3>
+<ul><li>免费开发者：每分钟 60 次请求</li>
+<li>认证合作伙伴：每分钟 600 次请求</li>
+<li>超出限制返回 429 Too Many Requests 错误码</li>
+<li>建议实现指数退避（Exponential Backoff）重试策略</li></ul></div></div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">📧</div><div class="fd-content"><h3>申请开发者访问</h3><p>API Beta 阶段面向受邀开发者开放。如需申请开发者访问权限，请发送邮件至 api@langou.tech，邮件中请包含：您的应用名称、应用简介、预计调用量、使用场景。我们将在 5 个工作日内回复。</p></div></div>
+
+</div></section>
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">隐私政策</a>
+    <a href="terms.html">使用条款</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} 懒狗输入法 懒狗输入法. All rights reserved.</p>
+  {TAGLINE}>懒狗输入法，解放你的双手 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body>
+</html>

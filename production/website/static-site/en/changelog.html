@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Changelog - Langou Input Method</title>
+<link rel="stylesheet" href="../css/style.css?v=2">
+<style>
+  .timeline{position:relative;padding:2rem 0}
+  .timeline::before{content:'';position:absolute;left:24px;top:0;bottom:0;width:2px;background:#FFE4CC}
+  .tl-item{position:relative;padding-left:60px;margin-bottom:3rem}
+  .tl-dot{position:absolute;left:16px;top:6px;width:18px;height:18px;border-radius:50%;background:var(--bg);border:3px solid var(--cyan);z-index:1}
+  .tl-dot.alpha{border-color:var(--magenta)}
+  .tl-date{font-size:0.85rem;color:var(--cyan);font-weight:600;margin-bottom:0.3rem;letter-spacing:1px}
+  .tl-date.alpha{color:var(--magenta)}
+  .tl-title{font-size:1.3rem;color:var(--white);margin-bottom:0.5rem;font-weight:700}
+  .tl-tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:0.7rem;font-weight:700;margin-right:0.5rem}
+  .tl-tag.alpha{background:rgba(255,181,194,0.2);color:var(--magenta)}
+  .tl-content{background:var(--glass);border:1px solid #FFE4CC;border-radius:12px;padding:1.5rem;backdrop-filter:blur(20px)}
+  .tl-content h4{color:var(--cyan);font-size:0.95rem;margin:1rem 0 0.5rem}
+  .tl-content h4:first-child{margin-top:0}
+  .tl-content ul{padding-left:1.2rem}
+  .tl-content ul li{color:var(--gray);font-size:0.9rem;margin-bottom:0.3rem;position:relative;padding-left:0.5rem}
+  .tl-content ul li::before{content:'▸';color:var(--cyan);position:absolute;left:-0.7rem}
+</style>
+</head>
+<body class="en">
+<canvas id="particles-canvas"></canvas>
+<nav class="navbar" id="navbar">
+  <a href="/en/" class="nav-brand">🐶 Langou IME</a>
+  <ul class="nav-links">
+    <li><a href="/en/">Home</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="usecases.html">Use Cases</a></li>
+    <li><a href="download.html">Download</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li></li>
+    <li></li>
+
+    <li><a href="community.html">Community</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <button class="lang-btn">中文</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+
+<div class="page-header"><h1>Changelog</h1><p>Every version, transparently documented</p></div>
+
+<section class="section"><div class="timeline">
+  <div class="tl-item fade-up">
+    <div class="tl-dot alpha"></div>
+    <div class="tl-date alpha">July 10, 2026</div>
+    <div class="tl-title">v1.0.0-alpha · First Public Release</div>
+    <span class="tl-tag alpha">Alpha</span>
+    <div class="tl-content">
+      <h4>🎉 New Features</h4>
+      <ul><li>Android public alpha release</li><li>Windows public alpha release</li><li>AI multi-style reply generation (6 styles: sweet/humorous/warm/professional/concise/casual)</li><li>Smart context awareness (Accessibility + OCR dual channel)</li><li>One-tap select & send</li><li>Prompt optimizer (ChatGPT/DeepSeek/Claude)</li><li>RIME-based Chinese input (full/double/abbreviated pinyin)</li><li>Cloud sync (dictionary, settings, data)</li><li>3 built-in themes (Cyberpunk/Dark/Minimal)</li><li>20+ chat apps supported</li></ul>
+      <h4>⚠️ Known Issues</h4>
+      <ul><li>Some Android 14 devices auto-disable Accessibility Service</li><li>Windows high-DPI scaling occasionally glitchy</li><li>OCR accuracy drops in low-light conditions</li><li>First launch config loading may take 3-5s</li></ul>
+    </div>
+  </div>
+  <div class="tl-item fade-up">
+    <div class="tl-dot" style="border-color:var(--gray)"></div>
+    <div class="tl-date" style="color:var(--gray)">Planned</div>
+    <div class="tl-title">v2.0.0 · iOS & macOS</div>
+    <span class="tl-tag" style="background:rgba(160,160,176,0.15);color:var(--gray)">Future</span>
+    <div class="tl-content"><h4>📱 Planned</h4><ul><li>iOS Beta (manual text input trigger)</li><li>macOS Beta (experience close to Windows)</li><li>Cross-platform unified experience</li></ul></div>
+  </div>
+</div></section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} Langou Input Method. All rights reserved.</p>
+  {TAGLINE}>Langou Input — Free Your Hands 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body></html>

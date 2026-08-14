@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windows Version - Langou Input Method</title>
+<meta name="description" content="Langou IME Windows version. Floating overlay, UI Automation context capture, clipboard integration, and full Chinese input engine customization.">
+<link rel="stylesheet" href="../css/style.css?v=2"></head>
+<body class="en"><canvas id="particles-canvas"></canvas>
+<nav class="navbar" id="navbar">
+  <a href="/en/" class="nav-brand">🐶 Langou IME</a>
+  <ul class="nav-links">
+    <li><a href="/en/">Home</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="usecases.html">Use Cases</a></li>
+    <li><a href="download.html">Download</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li></li>
+    <li></li>
+
+    <li><a href="community.html">Community</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <button class="lang-btn">中文</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+<div class="page-header"><h1>🖥️ Windows Version</h1><p>Desktop-grade AI input for Windows 10/11</p></div>
+
+<section class="section" id="main">
+<div class="privacy-content">
+
+<h2>Langou on Windows: Smart Overlay</h2>
+<p>The Windows version of Langou takes a different approach than the Android version. Rather than replacing your system keyboard, Langou runs as a <strong>smart floating overlay</strong> that integrates with any chat or text app. This means you keep your existing keyboard preferences while gaining AI superpowers. Built with C# and WPF for native Windows performance.</p>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🪟</div>
+<div class="fd-content">
+<h3>Floating Overlay</h3>
+<p>Langou for Windows appears as a sleek, draggable overlay when you click into a text input field:</p>
+<ul>
+<li><strong>Auto-detect:</strong> Detects when you're in a chat app (WhatsApp Desktop, Telegram, WeChat, Discord, Slack, etc.) and activates automatically</li>
+<li><strong>Draggable:</strong> Move the overlay anywhere on screen — always stays on top without blocking your view</li>
+<li><strong>Transparency:</strong> Windows 11 Mica/acrylic blur support for a native-feeling transparent UI</li>
+<li><strong>Three modes:</strong> Compact (suggestions only), Standard (suggestions + style picker), Full (all controls)</li>
+<li><strong>Dark/Light:</strong> Automatically follows Windows theme or can be set independently</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">📋</div>
+<div class="fd-content">
+<h3>UI Automation Context Capture</h3>
+<p>On Windows, Langou uses the powerful <strong>UI Automation API</strong> to read chat context:</p>
+<ul>
+<li><strong>Active window reading:</strong> Reads text elements from the active chat window — message bubbles, input fields, usernames</li>
+<li><strong>No screenshot needed:</strong> Unlike OCR-based solutions, UI Automation works with text directly for instant, accurate capture</li>
+<li><strong>Multi-app support:</strong> Works with Electron apps (Discord, Slack, WhatsApp Desktop), native apps (WeChat, QQ), and browsers (Web WhatsApp)</li>
+<li><strong>OCR fallback:</strong> For apps with custom rendering, Langou falls back to screenshot + PaddleOCR (same as Android)</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">💻</div>
+<div class="fd-content">
+<h3>Desktop-Grade Chinese Input</h3>
+<p>The Windows version includes RIME's full desktop implementation:</p>
+<ul>
+<li><strong>Full keyboard customization:</strong> Custom key bindings, macros, and input schemas through YAML configuration files</li>
+<li><strong>Multi-schema switching:</strong> Switch between pinyin, double pinyin, Wubi, Cangjie, and custom schemas on the fly</li>
+<li><strong>Direct dictionary editing:</strong> Edit your user dictionary as plain text — import/export .dict.yaml files</li>
+<li><strong>System-wide input:</strong> Unlike the overlay, the IME component works in every Windows app including games, IDEs, and terminals</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🔌</div>
+<div class="fd-content">
+<h3>Integration Features</h3>
+<ul>
+<li><strong>Clipboard integration:</strong> AI suggestions can be sent directly to clipboard for apps that don't support automation</li>
+<li><strong>Auto-send:</strong> Direct Send mode simulates Ctrl+Enter or Enter key in supported apps</li>
+<li><strong>Global hotkeys:</strong> Customizable shortcuts to trigger AI generation, switch styles, toggle the overlay</li>
+<li><strong>Startup with Windows:</strong> Optional auto-start for always-available AI</li>
+<li><strong>System tray:</strong> Minimal tray icon with quick-access menu</li>
+<li><strong>Multi-monitor:</strong> Properly handles multi-monitor setups with DPI scaling</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">⚙️</div>
+<div class="fd-content">
+<h3>System Requirements</h3>
+<ul>
+<li><strong>OS:</strong> Windows 10 20H2+ or Windows 11 (all versions)</li>
+<li><strong>RAM:</strong> Minimum 4GB, recommended 8GB</li>
+<li><strong>Storage:</strong> 300MB for application + AI models</li>
+<li><strong>.NET:</strong> Built-in with Windows, no additional runtime needed</li>
+<li><strong>GPU:</strong> Not required. GPU acceleration for OCR processing (optional)</li>
+</ul>
+</div>
+</div>
+
+<p class="cta-text">Download Langou for Windows from our <a href="download.html">Download page</a>. See the <a href="keyboard-shortcuts.html">Keyboard Shortcuts</a> reference for desktop productivity tips.</p>
+
+</div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} Langou Input Method. All rights reserved.</p>
+  {TAGLINE}>Langou Input — Free Your Hands 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body></html>

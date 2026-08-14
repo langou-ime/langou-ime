@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>安全与隐私 - 懒狗输入法</title>
+<meta name="description" content="懒狗输入法安全与隐私政策详解：加密机制、数据处理流程、权限说明、合规认证、安全审计。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 懒狗输入法</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">首页</a></li>
+    <li><a href="features.html">功能</a></li>
+    <li><a href="usecases.html">场景</a></li>
+    <li><a href="download.html">下载</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li></li>
+
+    <li><a href="community.html">社区</a></li>
+    <li><a href="about.html">关于</a></li>
+  </ul>
+  <button class="lang-btn">English</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+<div class="page-header"><h1>🔒 安全与隐私</h1><p>你的数据安全，是我们最优先的考量</p></div>
+
+<!-- SVG 安全层级同心圆图 -->
+<div class="section" style="padding-top:0">
+  <div class="feature-detail fade-up" style="justify-content:center;padding:2rem 0">
+    <svg viewBox="0 0 560 520" style="width:100%;max-width:540px;height:auto" xmlns="http://www.w3.org/2000/svg" aria-label="懒狗输入法安全层级图">
+      <defs>
+        <radialGradient id="coreGlow" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FF8C42" stop-opacity="0.3"/><stop offset="100%" stop-color="#FF8C42" stop-opacity="0"/></radialGradient>
+        <filter id="shieldGlow"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#FF8C42" flood-opacity="0.5"/></filter>
+      </defs>
+
+      <circle cx="280" cy="260" r="240" fill="none" stroke="#FF8C42" stroke-width="1" stroke-dasharray="4,4" opacity="0.2"/>
+
+      <!-- 最外层：传输加密 -->
+      <circle cx="280" cy="260" r="220" fill="none" stroke="#FF8C42" stroke-width="2" stroke-dasharray="6,4" opacity="0.6"/>
+      <text x="280" y="44" text-anchor="middle" fill="#FF8C42" font-size="14" font-weight="700">🔐 传输加密</text>
+      <text x="280" y="62" text-anchor="middle" fill="#A08670" font-size="10">HTTPS / TLS 1.3 · 端到端加密同步</text>
+      <text x="280" y="76" text-anchor="middle" fill="#A08670" font-size="10">完美前向保密 · 防中间人攻击</text>
+
+      <!-- 中层：内存级处理 -->
+      <circle cx="280" cy="260" r="155" fill="none" stroke="#FFB5C2" stroke-width="2" stroke-dasharray="5,3" opacity="0.6"/>
+      <text x="105" y="260" text-anchor="middle" fill="#FFB5C2" font-size="13" font-weight="700">💾 内存级处理</text>
+      <text x="105" y="278" text-anchor="middle" fill="#A08670" font-size="10">对话文本仅内存处理</text>
+      <text x="105" y="294" text-anchor="middle" fill="#A08670" font-size="10">处理完成立即释放</text>
+      <text x="105" y="310" text-anchor="middle" fill="#A08670" font-size="10">不写入磁盘/日志</text>
+
+      <!-- 内层：数据最小化 -->
+      <circle cx="280" cy="260" r="95" fill="none" stroke="#4CAF50" stroke-width="2" stroke-dasharray="4,3" opacity="0.6"/>
+      <text x="390" y="185" text-anchor="middle" fill="#4CAF50" font-size="12" font-weight="700">📋 数据最小化</text>
+      <text x="390" y="202" text-anchor="middle" fill="#A08670" font-size="10">仅采集AI必需文本</text>
+      <text x="390" y="218" text-anchor="middle" fill="#A08670" font-size="10">不采集GPS/通讯录</text>
+
+      <!-- 核心：用户隐私 -->
+      <circle cx="280" cy="260" r="45" fill="url(#coreGlow)" stroke="#FF8C42" stroke-width="2.5" filter="url(#shieldGlow)"/>
+      <text x="280" y="255" text-anchor="middle" fill="#FF8C42" font-size="11" font-weight="700">🛡️</text>
+      <text x="280" y="272" text-anchor="middle" fill="#FF8C42" font-size="10" font-weight="600">用户隐私</text>
+
+      <!-- 底部标注 -->
+      <text x="280" y="500" text-anchor="middle" fill="#A08670" font-size="10">多层防护架构 · 隐私安全层层加固</text>
+    </svg>
+  </div>
+</div>
+
+<section class="section"><div class="privacy-content">
+
+<div class="feature-detail fade-up"><div class="fd-icon">🔐</div><div class="fd-content"><h3>加密机制</h3><p>懒狗输入法在数据传输和存储的各个环节采用了多层加密：<ul><li><strong>传输加密：</strong>所有与服务器的通信使用 HTTPS/TLS 1.3 协议，这是目前最安全的网络传输协议。任何第三方都无法窃听或篡改传输中的数据。</li>
+<li><strong>端到端加密：</strong>用户的词库和设置在同步到云端前会经过 AES-256 加密。加密密钥绑定账户密码，服务器也无法解密用户词库内容。</li>
+<li><strong>静态加密：</strong>服务器上的用户数据使用 AES-256 进行静态加密，密钥由专业密钥管理系统（KMS）管理。数据库启用透明数据加密（TDE）。</li>
+<li><strong>日志脱敏：</strong>服务器日志中不会记录用户对话内容。所有 AI 调用日志中的对话文本部分在记录前进行脱敏处理。</li></ul></p></div></div>
+
+<div class="feature-detail fade-up"><div class="fd-icon">📊</div><div class="fd-content"><h3>数据处理流程</h3><p>一次 AI 回复建议的完整数据处理流程：<ol style="color:var(--gray);padding-left:1.2rem">
+<li style="margin-bottom:0.5rem;font-size:0.9rem"><strong>本地采集：</strong>无障碍服务/UIA 读取屏幕上的聊天文本（最多 10 条消息），完全在本地内存中完成。</li>
+<li style="margin-bottom:0.5rem;font-size:0.9rem"><strong>本地过滤：</strong>过滤掉非聊天内容的广告、通知、时间戳等无关文本。</li>
+<li style="margin-bottom:0.5rem;font-size:0.9rem"><strong>加密传输：</strong>文本经过 HTTPS/TLS 1.3 加密后发送到 AI 服务器。整个过程不超过 200ms。</li>
+<li style="margin-bottom:0.5rem;font-size:0.9rem"><strong>AI 处理：</strong>MiMo-V2.5-Pro 模型在服务器内存中处理文本，生成回复建议。处理完成后对话文本从内存中删除。</li>
+<li style="margin-bottom:0.5rem;font-size:0.9rem"><strong>返回结果：</strong>AI 生成的回复建议加密后传回用户设备，在屏幕上展示。</li>
+<li style="margin-bottom:0.5rem;font-size:0.9rem"><strong>内存释放：</strong>回复建议展示后，所有相关数据从设备内存中释放。不写入设备磁盘，不写入服务器日志。</li></ol></p></div></div>
+
+<div class="feature-detail fade-up"><div class="fd-icon">📱</div><div class="fd-content"><h3>权限说明</h3><p>懒狗输入法遵循「最小权限原则」——只请求实现功能所必需的权限：<ul><li><strong>无障碍服务（Android）/ UI Automation（Windows）：</strong>读取屏幕上聊天文本的核心权限。不会读取密码输入框、支付密码等敏感字段。</li>
+<li><strong>麦克风权限：</strong>仅用于语音输入功能，点击语音按钮时才激活。</li>
+<li><strong>存储权限：</strong>用于词库的导入导出。</li>
+<li><strong>通知权限：</strong>用于在通知栏展示 AI 建议的便捷入口。</li></ul><p><strong>我们从不请求：</strong>GPS 位置、通讯录、通话记录、短信/彩信、相册/相机、浏览历史。</p></div></div>
+
+<div class="feature-detail fade-up"><div class="fd-icon">✅</div><div class="fd-content"><h3>合规与认证</h3><ul><li><strong>中国《个人信息保护法》（PIPL）</strong>——完全合规，遵循数据最小化、目的限制、知情同意等原则。</li>
+<li><strong>欧盟《通用数据保护条例》（GDPR）</strong>——通过数据保护影响评估（DPIA），支持数据访问、删除、导出等用户权利。</li>
+<li><strong>ISO 27001 信息安全管理体系</strong>——认证流程已启动，预计 2027 年 Q1 获取。</li>
+<li><strong>等保三级</strong>——已通过中国网络安全等级保护三级测评。</li></ul></div></div>
+
+<div class="feature-detail fade-up"><div class="fd-icon">🔍</div><div class="fd-content"><h3>安全审计</h3><p>懒狗输入法采用以下安全审计措施：<ul><li><strong>第三方安全审计：</strong>每年委托独立第三方安全公司进行全面渗透测试和代码审计。</li>
+<li><strong>漏洞奖励计划：</strong>通过 HackerOne 平台运行漏洞奖励计划，邀请全球安全研究人员提交漏洞。</li>
+<li><strong>SDLC 安全流程：</strong>软件开发生命周期中嵌入安全审查——需求阶段做威胁建模，编码后做 SAST 扫描，发布前做 DAST 测试。</li>
+<li><strong>安全更新：</strong>关键安全漏洞 72 小时内修复并发布更新。</li></ul></div></div>
+
+<div class="feature-detail fade-up"><div class="fd-icon">🛡️</div><div class="fd-content"><h3>数据生命周期</h3><ul><li><strong>创建：</strong>用户主动提供或 AI 功能必需的数据才被收集。</li>
+<li><strong>存储：</strong>账户基本信息存储在加密数据库中（阿里云上海节点），对话内容和截图不存储。</li>
+<li><strong>使用：</strong>仅用于生成 AI 回复建议和产品改进。</li>
+<li><strong>共享：</strong>不与任何第三方共享用户个人数据。AI 服务使用的 MiMo API 仅接收聊天文本，不包含用户身份信息。</li>
+<li><strong>删除：</strong>用户可在设置中一键删除所有云端数据。账户注销后 30 天内所有数据完全清除。</li></ul></div></div>
+
+</div></section>
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">隐私政策</a>
+    <a href="terms.html">使用条款</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} 懒狗输入法 懒狗输入法. All rights reserved.</p>
+  {TAGLINE}>懒狗输入法，解放你的双手 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body>
+</html>

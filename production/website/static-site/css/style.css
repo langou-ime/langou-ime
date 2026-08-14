@@ -1,0 +1,328 @@
+/* ============================================
+ * 懒狗输入法官网 - 二次元可爱狗狗风 v8
+ * 🐶 暖色调 · 圆角 · 可爱 · 简洁
+ * ============================================ */
+
+/* === Reset === */
+*, *::before, *::after { margin:0; padding:0; box-sizing:border-box }
+html { scroll-behavior:smooth; font-size:16px; -webkit-text-size-adjust:100% }
+body { font-family:'PingFang SC','Microsoft YaHei','Hiragino Sans GB','Noto Sans CJK SC','WenQuanYi Micro Hei',sans-serif; background:#FFF8F0; color:#4A3728; line-height:1.7; overflow-x:hidden; min-height:100vh }
+body.en { font-family:'Segoe UI','SF Pro Display',-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif }
+a { color:inherit; text-decoration:none }
+img { max-width:100%; height:auto }
+ul,ol { list-style:none }
+
+/* === CSS Variables === */
+:root {
+  --bg: #FFF8F0; --bg2: #FFF0E0; --bg3: #FFE4CC;
+  --primary: #FF8C42; --secondary: #FFB347; --pink: #FFB5C2;
+  --brown: #8B5E3C; --dark: #4A3728; --muted: #A08670;
+  --white: #FFFFFF; --card: #FFFFFF; --shadow: 0 4px 20px rgba(255,140,66,0.12);
+  --radius: 20px; --radius-sm: 12px;
+  --transition: 0.3s cubic-bezier(0.4,0,0.2,1);
+}
+
+/* === No particles canvas on non-home pages - hide it === */
+#particles-canvas { display:none }
+
+/* === Navigation === */
+.navbar { position:fixed; top:0; left:0; right:0; z-index:1000; height:64px; display:flex; align-items:center; justify-content:space-between; padding:0 1.5rem; background:rgba(255,248,240,0.95); backdrop-filter:blur(10px); border-bottom:2px solid #FFE4CC; transition:var(--transition) }
+.navbar.scrolled { background:#FFFFFF; box-shadow:0 2px 20px rgba(255,140,66,0.1) }
+.nav-brand { font-size:1.2rem; font-weight:700; color:var(--primary); display:flex; align-items:center; gap:0.5rem; letter-spacing:1px }
+.nav-links { display:flex; gap:1.5rem; align-items:center }
+.nav-links a { color:var(--muted); font-size:0.95rem; transition:color var(--transition); position:relative; font-weight:500 }
+.nav-links a:hover,.nav-links a.active { color:var(--primary) }
+.nav-links a::after { content:''; position:absolute; bottom:-4px; left:50%; transform:translateX(-50%); width:0; height:3px; background:var(--primary); border-radius:2px; transition:width var(--transition) }
+.nav-links a:hover::after,.nav-links a.active::after { width:60% }
+.lang-btn { background:var(--bg2); border:2px solid var(--primary); color:var(--primary); padding:0.4rem 1rem; border-radius:25px; cursor:pointer; font-size:0.85rem; transition:var(--transition); font-family:inherit; font-weight:600 }
+.lang-btn:hover { background:var(--primary); color:#FFF; transform:translateY(-1px) }
+.mobile-menu { display:none; background:none; border:none; color:var(--primary); font-size:1.5rem; cursor:pointer }
+
+/* === Hero === */
+.hero { position:relative; z-index:1; min-height:100vh; display:flex; align-items:center; justify-content:center; text-align:center; padding:4rem 1.5rem 3rem; background:linear-gradient(180deg, #FFF8F0 0%, #FFF0E0 50%, #FFE4CC 100%) }
+.hero-inner { max-width:800px; position:relative; z-index:10 }
+.hero-badge { display:inline-block; padding:0.5rem 1.5rem; background:var(--primary); color:#FFF; border-radius:25px; font-size:0.95rem; margin-bottom:1.5rem; font-weight:600; letter-spacing:1px; box-shadow:0 4px 15px rgba(255,140,66,0.3) }
+.hero h1 { font-size:clamp(2.5rem,5vw,4.5rem); font-weight:900; color:var(--brown); margin-bottom:0.5rem; letter-spacing:2px }
+.hero h1 .en { display:block; font-size:clamp(1.2rem,2.5vw,1.8rem); margin-top:0.5rem; color:var(--primary); font-weight:600 }
+.hero .slogan { font-size:clamp(1.3rem,2.5vw,1.8rem); font-weight:600; color:var(--primary); margin-bottom:0.5rem; letter-spacing:2px }
+.hero .slogan-en { font-size:1rem; color:var(--muted); margin-bottom:1.2rem }
+.hero .subtitle { font-size:1rem; color:var(--muted); margin-bottom:2.5rem; max-width:650px; margin-left:auto; margin-right:auto; line-height:1.9 }
+
+/* === Buttons === */
+.btn { display:inline-flex; align-items:center; justify-content:center; padding:0.9rem 2.5rem; border-radius:30px; font-size:1.05rem; font-weight:700; cursor:pointer; transition:var(--transition); letter-spacing:1px; font-family:inherit; border:none }
+.btn-primary { background:var(--primary); color:#FFF; box-shadow:0 4px 20px rgba(255,140,66,0.35) }
+.btn-primary:hover { transform:translateY(-2px); box-shadow:0 8px 30px rgba(255,140,66,0.45); background:#FF7A2E }
+.btn-outline { background:transparent; border:2px solid var(--primary); color:var(--primary) }
+.btn-outline:hover { background:var(--primary); color:#FFF; transform:translateY(-2px) }
+.btn-group { display:flex; gap:1rem; justify-content:center; flex-wrap:wrap }
+
+/* === Sections === */
+.section { position:relative; z-index:1; padding:3rem 1.5rem; max-width:1200px; margin:0 auto }
+.section-alt { background:var(--bg2); border-top:2px solid #FFE4CC; border-bottom:2px solid #FFE4CC }
+.section-alt .section { max-width:1200px; padding:3rem 1.5rem }
+.section-title { font-size:clamp(1.8rem,3vw,2.5rem); font-weight:700; text-align:center; margin-bottom:0.5rem; color:var(--brown) }
+.section-subtitle { text-align:center; color:var(--muted); margin-bottom:3rem; font-size:1.05rem }
+
+/* === Value Cards === */
+.cards-3 { display:grid; grid-template-columns:repeat(3,1fr); gap:1.5rem; margin-top:2rem }
+.card { background:var(--card); border:2px solid #FFE4CC; border-radius:var(--radius); padding:2rem 1.8rem; text-align:center; transition:var(--transition); position:relative; overflow:hidden }
+.card::before { content:''; position:absolute; top:0; left:0; right:0; height:4px; background:linear-gradient(90deg,var(--primary),var(--pink)); opacity:0; transition:opacity var(--transition) }
+.card:hover { transform:translateY(-6px); border-color:var(--primary); box-shadow:var(--shadow) }
+.card:hover::before { opacity:1 }
+.card-icon { font-size:2.5rem; margin-bottom:0.8rem }
+.card h3 { font-size:1.2rem; margin-bottom:0.6rem; color:var(--brown) }
+.card p { color:var(--muted); font-size:0.95rem; line-height:1.8 }
+
+/* === Feature Items === */
+.feature { display:flex; align-items:center; gap:3rem; padding:2.5rem 0; max-width:1200px; margin:0 auto; border-bottom:2px solid #FFE4CC }
+.feature:last-child { border-bottom:none }
+.feature:nth-child(even) { flex-direction:row-reverse }
+.feature-visual { flex:1; display:flex; justify-content:center }
+.feature-phone { width:220px; height:400px; background:var(--card); border:2px solid #FFE4CC; border-radius:30px; position:relative; overflow:hidden; box-shadow:var(--shadow) }
+.feature-screen { position:absolute; inset:10px; bottom:60px; background:var(--bg); border-radius:20px; display:flex; align-items:center; justify-content:center; flex-direction:column; padding:12px }
+.feature-info { flex:1 }
+.feature-no { font-size:0.8rem; color:var(--primary); text-transform:uppercase; letter-spacing:2px; margin-bottom:0.5rem; font-weight:700 }
+.feature-info h3 { font-size:1.8rem; margin-bottom:0.8rem; font-weight:700; color:var(--brown) }
+.feature-info p { color:var(--muted); font-size:1rem; line-height:1.9 }
+
+/* === Platform Cards === */
+.platforms { display:flex; justify-content:center; gap:1.5rem; flex-wrap:wrap; margin-top:2rem }
+.p-card { text-align:center; padding:1.8rem 1.5rem; border-radius:var(--radius); min-width:120px; transition:var(--transition); background:var(--card) }
+.p-card.available { border:2px solid #4CAF50; box-shadow:0 0 20px rgba(76,175,80,0.1) }
+.p-card.available:hover { box-shadow:0 0 30px rgba(76,175,80,0.2); transform:translateY(-4px) }
+.p-card.coming { border:2px solid #FFE4CC; opacity:0.6 }
+.p-icon { font-size:2rem; margin-bottom:0.5rem }
+.p-name { font-size:0.9rem; color:var(--dark) }
+.p-status { font-size:0.7rem; margin-top:0.3rem; font-weight:600 }
+.p-status.avail { color:#4CAF50 }
+.p-status.csoon { color:var(--muted) }
+
+/* === Download Cards === */
+.dl-cards { display:flex; justify-content:center; gap:2rem; flex-wrap:wrap; margin-top:2rem }
+.dl-card { background:var(--card); border:2px solid #FFE4CC; border-radius:20px; padding:2rem 1.8rem; min-width:260px; transition:var(--transition); box-shadow:var(--shadow) }
+.dl-card:hover { border-color:var(--primary); transform:translateY(-4px) }
+.dl-icon { font-size:2.5rem; margin-bottom:0.8rem; text-align:center }
+.dl-card h3 { font-size:1.2rem; margin-bottom:0.3rem; text-align:center; color:var(--brown) }
+.dl-ver { color:var(--muted); font-size:0.85rem; text-align:center; margin-bottom:0.2rem }
+.dl-size { color:var(--muted); font-size:0.8rem; text-align:center; margin-bottom:1.2rem }
+.dl-req { font-size:0.75rem; color:var(--muted); margin-top:1rem; text-align:left }
+
+/* === FAQ === */
+.faq { max-width:750px; margin:2rem auto 0 }
+.faq-item { border-bottom:2px solid #FFE4CC; padding:1.2rem 0 }
+.faq-q { font-size:1.1rem; color:var(--brown); cursor:pointer; font-weight:600; display:flex; justify-content:space-between; align-items:center }
+.faq-q::after { content:'🐾'; font-size:1.2rem; transition:var(--transition) }
+.faq-q.open::after { content:'🐶' }
+.faq-a { color:var(--muted); font-size:0.95rem; margin-top:0.8rem; line-height:1.8; display:none }
+.faq-q.open+.faq-a { display:block }
+
+/* === Footer === */
+.footer { position:relative; z-index:1; padding:2.5rem 1.5rem; border-top:2px solid #FFE4CC; text-align:center; background:var(--bg) }
+.footer-links { display:flex; justify-content:center; gap:2rem; flex-wrap:wrap; margin-bottom:1.5rem }
+.footer-links a { color:var(--muted); font-size:0.9rem; transition:color var(--transition); font-weight:500 }
+.footer-links a:hover { color:var(--primary) }
+.footer p { color:var(--muted); font-size:0.8rem }
+.footer .tagline { color:var(--primary); font-size:0.75rem; margin-top:0.5rem }
+
+/* === Page Header === */
+.page-header { position:relative; z-index:1; padding:7rem 2rem 2rem; text-align:center }
+.page-header h1 { font-size:2.5rem; color:var(--brown); margin-bottom:0.5rem }
+.page-header p { color:var(--muted); font-size:1.1rem }
+
+/* === Feature Detail (for sub-pages) === */
+.feature-detail { display:flex; gap:2rem; align-items:flex-start; padding:2rem 0; border-bottom:2px solid #FFE4CC }
+.feature-detail:last-child { border-bottom:none }
+.fd-icon { font-size:2.2rem; min-width:60px; text-align:center }
+.fd-content h3 { font-size:1.2rem; color:var(--brown); margin-bottom:0.5rem }
+.fd-content p { color:var(--muted); font-size:0.9rem; line-height:1.8 }
+.fd-content ul { margin-top:0.8rem; padding-left:1.2rem }
+.fd-content ul li { color:var(--muted); font-size:0.85rem; margin-bottom:0.3rem; position:relative; padding-left:1rem }
+.fd-content ul li::before { content:'🐾'; color:var(--primary); position:absolute; left:0; font-size:0.7rem }
+
+/* === Usecase hero === */
+.usecase-hero{display:flex;align-items:center;gap:3rem;padding:2rem 0;border-bottom:2px solid #FFE4CC}
+.usecase-hero:last-child{border-bottom:none}
+@media(max-width:768px){.usecase-hero{flex-direction:column!important;text-align:center}.usecase-hero>div{flex:1!important;min-width:100%!important}}
+
+/* === Privacy / Content pages === */
+.privacy-content { max-width:800px; margin:0 auto }
+.privacy-content h2 { font-size:1.4rem; color:var(--brown); margin:2rem 0 0.8rem }
+.privacy-content p { color:var(--muted); font-size:0.95rem; line-height:1.9; margin-bottom:0.8rem }
+.privacy-content ul { padding-left:1.5rem; margin-bottom:1rem }
+.privacy-content ul li { color:var(--muted); font-size:0.9rem; margin-bottom:0.3rem }
+
+/* === Chat Bubbles === */
+.chat-bubble { padding:8px 14px; border-radius:14px; font-size:11px; margin:3px 0; max-width:85% }
+.chat-bubble.other { background:#F5F0EB; color:var(--dark); border-bottom-left-radius:4px; align-self:flex-start }
+.chat-bubble.me { background:var(--primary); color:#FFF; border-bottom-right-radius:4px; align-self:flex-end }
+
+/* === Tags === */
+.tag { display:inline-block; padding:3px 10px; border-radius:12px; font-size:10px; font-weight:700 }
+.tag-cyan, .tag-primary { background:rgba(255,140,66,0.15); color:var(--primary) }
+.tag-green { background:rgba(76,175,80,0.15); color:#4CAF50 }
+.tag-magenta, .tag-pink { background:rgba(255,181,194,0.3); color:#E8607A }
+
+/* === Animations === */
+@keyframes fadeInUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+.fade-up { opacity:1; transform:translateY(0); transition:all 0.7s cubic-bezier(0.4,0,0.2,1) }
+.fade-up.animate { opacity:0; transform:translateY(30px) }
+.fade-up.visible { opacity:1; transform:translateY(0) }
+
+/* === Responsive === */
+@media(max-width:1024px) { .cards-3{grid-template-columns:repeat(2,1fr)} .feature{flex-direction:column!important;text-align:center} .feature-visual{margin-bottom:2rem} }
+@media(max-width:768px) { .nav-links{display:none} .mobile-menu{display:block} .nav-links.open{display:flex;flex-direction:column;position:absolute;top:64px;left:0;right:0;background:#FFF;padding:1.5rem;gap:1rem;border-bottom:2px solid #FFE4CC;box-shadow:0 10px 30px rgba(0,0,0,0.05)} .cards-3{grid-template-columns:1fr} .hero{min-height:auto;padding:5rem 1rem 1.5rem} .hero h1{font-size:2rem} .hero .subtitle{font-size:0.9rem;line-height:1.7;margin-bottom:1.5rem} .hero .slogan{font-size:1.3rem} .hero .slogan-en{font-size:0.9rem;margin-bottom:0.8rem} .hero-badge{font-size:0.85rem;padding:0.4rem 1rem;margin-bottom:1rem} .btn-group .btn{padding:0.8rem 2rem;font-size:0.95rem;width:100%;max-width:300px} .dl-cards{flex-direction:column;align-items:center} .platforms{gap:0.8rem} .section{padding:2rem 1rem} .page-header{padding:5rem 1rem 2rem} .feature-detail{flex-direction:column;text-align:center} }
+@media(max-width:480px) { .navbar{padding:0 1rem} .hero{padding:4.5rem 0.8rem 2rem} .card{padding:1.5rem 1rem} body{overflow-x:hidden} }
+
+/* === 狗狗装饰 === */
+.section::after{content:'🐾 🐾 🐾';display:block;text-align:center;font-size:1.2rem;opacity:0.3;margin-top:2rem;letter-spacing:1rem}
+.footer::before{content:'🐶';display:block;text-align:center;font-size:2rem;margin-bottom:1rem;animation:bounceDog 2s ease-in-out infinite}
+@keyframes bounceDog{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.page-header::after{content:'🐾';display:block;text-align:center;font-size:1.5rem;opacity:0.4;margin-top:0.5rem}
+
+/* === 🐶 二次元装饰系统 === */
+
+/* 卡片悬停喵爪效果 */
+.card { position:relative; overflow:hidden }
+.card::after{content:'';position:absolute;bottom:-20px;right:-20px;width:60px;height:60px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 60 60'%3E%3Ctext y='45' x='5' font-size='45'%3E🐾%3C/text%3E%3C/svg%3E") no-repeat;opacity:0;transition:all 0.3s ease;transform:rotate(-15deg)}
+.card:hover::after{opacity:0.15;bottom:0;right:0}
+
+/* 区块标题左侧小狗 */
+.section-title{position:relative;display:inline-block;left:50%;transform:translateX(-50%)}
+.section-title::before{content:'🐶';position:absolute;left:-2.5rem;top:50%;transform:translateY(-50%);font-size:1.8rem;animation:bounceDog 1.5s ease-in-out infinite}
+.section-title::after{content:'';position:absolute;right:-2.5rem;top:50%;transform:translateY(-50%);font-size:1.8rem}
+
+/* 底部爪印装饰行 */
+.section:nth-child(odd)::after{content:'🐾  🐶  🐾  🦴  🐾  🐶  🐾';display:block;text-align:center;font-size:1.1rem;opacity:0.3;margin-top:1.5rem;letter-spacing:0.8rem}
+
+/* 卡片标题小骨头 */
+.card h3::before{content:'🦴 ';font-size:0.9rem}
+
+/* 导航栏底部装饰 */
+.navbar::after{content:'';position:absolute;bottom:0;left:0;right:0;height:3px;background:linear-gradient(90deg,var(--primary),var(--pink),var(--primary));border-radius:0 0 2px 2px;opacity:0.5}
+
+/* 按钮悬浮小狗 */
+.btn-primary{position:relative}
+.btn-primary::after{content:'🐶';position:absolute;right:-5px;top:-5px;font-size:1rem;opacity:0;transition:all 0.3s ease}
+.btn-primary:hover::after{opacity:1;right:8px}
+
+/* 页面header装饰 */
+.page-header{position:relative}
+.page-header::before{content:'';position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:80px;height:4px;background:var(--primary);border-radius:2px}
+.page-header::after{content:'🐾';display:block;text-align:center;font-size:1.5rem;opacity:0.3;margin-top:0.5rem}
+
+/* 交替背景狗狗图案 */
+.section-alt{position:relative}
+.section-alt::before{content:'🐶';position:absolute;right:2rem;top:2rem;font-size:5rem;opacity:0.04;pointer-events:none;animation:bounceDog 3s ease-in-out infinite}
+
+/* feature-detail 前的小狗标记 */
+.feature-detail .fd-icon::before{content:''}
+.feature-detail:nth-child(odd)::before{content:'🐾';position:absolute;left:-0.5rem;top:50%;font-size:1.5rem;opacity:0.2;pointer-events:none}
+
+/* 移动端适配 */
+@media(max-width:768px){
+  .section-title::before,.section-title::after{display:none}
+  .section::after{font-size:0.7rem;letter-spacing:0.3rem}
+}
+
+/* === 奶油懒狗品牌壳 v10：同一套视觉覆盖 82 个中英文页面 === */
+:root{
+  --cream:#fffaf4;--cream-deep:#fff1e7;--peach:#ff9f9f;--peach-strong:#ff778f;
+  --lilac:#c8b8ff;--lilac-soft:#eee8ff;--cocoa:#5b4037;--ink:#403237;
+  --glass:rgba(255,255,255,.82);--brand-shadow:0 24px 70px rgba(118,83,104,.14)
+}
+body{
+  color:var(--ink);
+  background:
+    radial-gradient(circle at 8% 12%,rgba(255,183,195,.32),transparent 24rem),
+    radial-gradient(circle at 92% 32%,rgba(200,184,255,.35),transparent 25rem),
+    linear-gradient(180deg,var(--cream) 0%,#fff7f7 48%,var(--lilac-soft) 100%);
+}
+body::before{
+  content:'';position:fixed;z-index:-1;inset:0;pointer-events:none;opacity:.22;
+  background-image:radial-gradient(circle,rgba(255,119,143,.22) 1.5px,transparent 1.5px);
+  background-size:28px 28px;mask-image:linear-gradient(to bottom,#000,transparent 78%);
+}
+.navbar{
+  height:72px;padding:0 max(1.25rem,calc((100vw - 1180px)/2));
+  background:rgba(255,250,244,.84);border-bottom:1px solid rgba(255,119,143,.2);
+  box-shadow:0 12px 38px rgba(91,64,55,.06)
+}
+.nav-brand{color:var(--cocoa);font-weight:900}.nav-links a:hover,.nav-links a.active{color:var(--peach-strong)}
+.lang-btn{border-color:var(--peach-strong);color:var(--peach-strong);background:#fff}.lang-btn:hover{background:var(--peach-strong)}
+.hero{
+  min-height:760px;text-align:left;justify-content:flex-start;overflow:hidden;
+  background:linear-gradient(115deg,rgba(255,250,244,.98) 0 47%,rgba(255,239,243,.76) 67%,rgba(231,224,255,.86) 100%)
+}
+.hero-inner{width:min(1160px,100%);max-width:1160px;margin:0 auto;padding-right:52%;z-index:2}
+.hero .btn-group{justify-content:flex-start}.hero h1{color:var(--cocoa)}
+.hero::after{
+  content:'';position:absolute;z-index:1;right:max(1rem,calc((100vw - 1200px)/2));top:112px;
+  width:min(49vw,650px);aspect-ratio:1/1;background:url('../assets/brand/generated/hero-illustration-v1.png') center/contain no-repeat;
+  filter:drop-shadow(0 30px 46px rgba(117,82,102,.18));animation:brandFloat 6s ease-in-out infinite
+}
+.hero-badge{background:linear-gradient(135deg,var(--peach-strong),#ffad92);box-shadow:0 12px 30px rgba(255,119,143,.28)}
+.page-header{
+  min-height:390px;padding:8.5rem max(1.5rem,calc((100vw - 1120px)/2 + 430px)) 3.5rem max(1.5rem,calc((100vw - 1120px)/2));
+  display:flex;flex-direction:column;justify-content:center;align-items:flex-start;text-align:left;overflow:hidden;
+  background:linear-gradient(118deg,rgba(255,250,244,.98),rgba(255,231,238,.86) 58%,rgba(230,224,255,.9));
+  border-bottom:1px solid rgba(255,119,143,.14)
+}
+.page-header h1{color:var(--cocoa);font-size:clamp(2.3rem,5vw,4.2rem);line-height:1.08;position:relative;z-index:2}
+.page-header p{max-width:650px;color:#7e6570;position:relative;z-index:2}
+.page-header::before{left:max(1.5rem,calc((100vw - 1120px)/2));transform:none;width:88px;background:linear-gradient(90deg,var(--peach-strong),var(--lilac))}
+.page-header::after{
+  content:'';display:block;position:absolute;right:max(1rem,calc((100vw - 1120px)/2));top:86px;margin:0;
+  width:min(38vw,430px);height:290px;opacity:1;background:url('../assets/brand/generated/context-chat-scene-v2.png') center/contain no-repeat;
+  filter:drop-shadow(0 24px 40px rgba(91,64,55,.16));animation:brandFloat 6s ease-in-out infinite
+}
+.section{margin:1.75rem auto;padding:3.25rem clamp(1rem,3vw,2.25rem);border-radius:32px}
+.section:not(.section-alt){background:rgba(255,255,255,.58);border:1px solid rgba(255,255,255,.88);box-shadow:var(--brand-shadow)}
+.section-alt{background:rgba(238,232,255,.64);border-color:rgba(200,184,255,.32)}
+.card,.dl-card,.p-card,.value-card,.ct-card,.release-product-card{
+  border:1px solid rgba(255,151,167,.24)!important;background:var(--glass)!important;
+  box-shadow:0 18px 44px rgba(91,64,55,.09);backdrop-filter:blur(14px)
+}
+.card:hover,.dl-card:hover,.p-card:hover,.value-card:hover,.ct-card:hover,.release-product-card:hover{
+  border-color:rgba(255,119,143,.7)!important;transform:translateY(-7px);box-shadow:0 26px 55px rgba(132,83,111,.17)
+}
+.btn-primary{background:linear-gradient(135deg,var(--peach-strong),#ffad86);box-shadow:0 12px 28px rgba(255,119,143,.3)}
+.btn-outline{border-color:var(--lilac);color:#7b62ce;background:rgba(255,255,255,.7)}
+.btn-outline:hover{background:var(--lilac);border-color:var(--lilac)}
+.feature-phone{border-color:rgba(200,184,255,.5);background:#fff url('../assets/brand/generated/keyboard-showcase-v2.png') center/cover no-repeat}
+.feature-screen{background:rgba(255,250,244,.72);backdrop-filter:blur(4px)}
+.privacy-content::before{
+  content:'';display:block;width:min(100%,620px);height:260px;margin:0 auto 2rem;
+  background:url('../assets/brand/generated/privacy-shield-scene-v2.png') center/contain no-repeat
+}
+.section::after{
+  content:'';width:82px;height:82px;margin:2rem auto 0;opacity:.9;letter-spacing:0;
+  background:url('../assets/brand/langou-mascot-master.png') center/contain no-repeat
+}
+.footer{background:rgba(255,250,244,.88);border-color:rgba(255,119,143,.16)}
+.footer::before{
+  content:'';width:96px;height:96px;margin:0 auto .75rem;background:url('../assets/brand/langou-mascot-master.png') center/contain no-repeat;
+  animation:brandFloat 4s ease-in-out infinite
+}
+.release-page-header::after{background-image:url('../assets/brand/generated/release-hub-illustration-v1.png')}
+.release-page-header .hero-badge{position:relative;z-index:2;margin-bottom:1rem}
+.release-center{max-width:1120px}.release-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:1.5rem}
+.release-product-card{padding:2rem;border-radius:26px;transition:var(--transition)}
+.release-product-card h2{margin:1.25rem 0 .65rem;color:var(--cocoa)}
+.release-product-card p{color:#806b73;min-height:3.8rem}.release-product-card strong{display:block;margin-top:1rem;font-size:.82rem;word-break:break-all;color:#755e68}
+.release-platform{font-weight:900;color:#765ccd}.release-state{float:right;padding:.35rem .75rem;border-radius:999px;font-size:.72rem;font-weight:800}
+.release-state.pending{background:#fff0d5;color:#a56b14}.release-trust-panel{margin-top:1.5rem;padding:2rem;border-radius:26px;background:linear-gradient(135deg,#fff4f7,#eee9ff);text-align:center}
+.release-trust-panel h2{color:var(--cocoa)}.release-trust-panel p{margin:1rem 0 1.5rem;color:#806b73}
+.trust-pills{display:flex;justify-content:center;flex-wrap:wrap;gap:.65rem;margin:1.25rem 0}
+.trust-pills span{padding:.55rem .9rem;border-radius:999px;background:#fff;color:#67536a;box-shadow:0 8px 24px rgba(91,64,55,.08);font-size:.82rem;font-weight:800}
+@keyframes brandFloat{0%,100%{transform:translateY(0) rotate(-1deg)}50%{transform:translateY(-12px) rotate(1deg)}}
+@media(max-width:900px){
+  .hero{min-height:auto;text-align:center;padding-top:7rem;flex-direction:column}.hero-inner{padding-right:0}.hero .btn-group{justify-content:center}
+  .hero::after{position:relative;display:block;right:auto;top:auto;width:min(92vw,520px);margin:2rem auto 0}
+  .page-header{min-height:520px;padding:7rem 1.25rem 290px;align-items:center;text-align:center}
+  .page-header::after{top:auto;bottom:20px;right:50%;transform:translateX(50%);width:min(88vw,410px);height:270px;animation:none}
+  .page-header::before{left:50%;transform:translateX(-50%)}.release-grid{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .section{margin:1rem .65rem;border-radius:24px}.release-product-card{padding:1.4rem}.navbar{height:64px}
+  .page-header h1{font-size:2.25rem}.page-header{padding-top:6rem}.privacy-content::before{height:190px}
+}

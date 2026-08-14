@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>更新日志 - 懒狗输入法</title>
+<meta name="description" content="懒狗输入法更新日志，查看每个版本的新功能、优化和修复。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+<style>
+  .timeline{position:relative;padding:2rem 0}
+  .timeline::before{content:'';position:absolute;left:24px;top:0;bottom:0;width:2px;background:#FFE4CC}
+  .tl-item{position:relative;padding-left:60px;margin-bottom:3rem}
+  .tl-dot{position:absolute;left:16px;top:6px;width:18px;height:18px;border-radius:50%;background:var(--bg);border:3px solid var(--cyan);z-index:1}
+  .tl-dot.beta{border-color:var(--orange)}
+  .tl-dot.alpha{border-color:var(--magenta)}
+  .tl-date{font-size:0.85rem;color:var(--cyan);font-weight:600;margin-bottom:0.3rem;letter-spacing:1px}
+  .tl-date.beta{color:var(--orange)}
+  .tl-date.alpha{color:var(--magenta)}
+  .tl-title{font-size:1.3rem;color:var(--white);margin-bottom:0.5rem;font-weight:700}
+  .tl-tag{display:inline-block;padding:2px 10px;border-radius:12px;font-size:0.7rem;font-weight:700;margin-right:0.5rem}
+  .tl-tag.stable{background:rgba(76,175,80,0.15);color:var(--green)}
+  .tl-tag.beta{background:rgba(255,136,0,0.15);color:var(--orange)}
+  .tl-tag.alpha{background:rgba(255,181,194,0.2);color:var(--magenta)}
+  .tl-content{background:var(--glass);border:1px solid #FFE4CC;border-radius:12px;padding:1.5rem;backdrop-filter:blur(20px)}
+  .tl-content h4{color:var(--cyan);font-size:0.95rem;margin:1rem 0 0.5rem}
+  .tl-content h4:first-child{margin-top:0}
+  .tl-content ul{padding-left:1.2rem}
+  .tl-content ul li{color:var(--gray);font-size:0.9rem;margin-bottom:0.3rem;position:relative;padding-left:0.5rem}
+  .tl-content ul li::before{content:'▸';color:var(--cyan);position:absolute;left:-0.7rem}
+</style>
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 懒狗输入法</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">首页</a></li>
+    <li><a href="features.html">功能</a></li>
+    <li><a href="usecases.html">场景</a></li>
+    <li><a href="download.html">下载</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li></li>
+
+    <li><a href="community.html">社区</a></li>
+    <li><a href="about.html">关于</a></li>
+  </ul>
+  <button class="lang-btn">English</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+
+<div class="page-header">
+  <h1>更新日志</h1>
+  <p>每个版本的变更记录，透明公开</p>
+</div>
+
+<section class="section">
+  <div class="timeline">
+
+    <div class="tl-item fade-up">
+      <div class="tl-dot alpha"></div>
+      <div class="tl-date alpha">2026年7月10日</div>
+      <div class="tl-title">v1.0.0-alpha · 首个公开测试版</div>
+      <span class="tl-tag alpha">Alpha</span>
+      <div class="tl-content">
+        <h4>🎉 新功能</h4>
+        <ul>
+          <li>Android版首个公开测试版发布</li>
+          <li>Windows版首个公开测试版发布</li>
+          <li>AI多风格回复生成（甜蜜/幽默/温暖/专业/简洁/随和 6种风格）</li>
+          <li>智能上下文感知引擎（无障碍服务 + OCR双通道）</li>
+          <li>一键选用即时发送功能</li>
+          <li>提示词优化器（支持ChatGPT/DeepSeek/Claude）</li>
+          <li>基于RIME引擎的中文输入（全拼/双拼/简拼）</li>
+          <li>云端同步（个人词库/偏好设置/AI数据）</li>
+          <li>三套内置主题（赛博朋克/暗夜模式/极简白）</li>
+          <li>支持微信、QQ、WhatsApp、Telegram等20+聊天应用</li>
+        </ul>
+        <h4>⚠️ 已知问题</h4>
+        <ul>
+          <li>部分Android 14设备上无障碍服务可能被系统自动关闭</li>
+          <li>Windows版在高DPI屏幕上偶发UI缩放异常</li>
+          <li>OCR识别在低光环境下准确率下降</li>
+          <li>首次启动时加载模型配置可能需要3-5秒</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tl-item fade-up">
+      <div class="tl-dot"></div>
+      <div class="tl-date" style="color:var(--gray)">规划中</div>
+      <div class="tl-title">v1.0.1 · 首个维护更新</div>
+      <span class="tl-tag" style="background:rgba(160,160,176,0.15);color:var(--gray)">计划中</span>
+      <div class="tl-content">
+        <h4>🔧 计划优化</h4>
+        <ul>
+          <li>修复Android 14无障碍服务被系统关闭的问题</li>
+          <li>优化高DPI屏幕下的UI显示</li>
+          <li>提升OCR在低光环境下的识别准确率</li>
+          <li>减少首次启动的加载时间</li>
+          <li>优化内存占用，减少后台电量消耗</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tl-item fade-up">
+      <div class="tl-dot"></div>
+      <div class="tl-date" style="color:var(--gray)">规划中</div>
+      <div class="tl-title">v1.1.0 · 功能增强</div>
+      <span class="tl-tag" style="background:rgba(160,160,176,0.15);color:var(--gray)">计划中</span>
+      <div class="tl-content">
+        <h4>✨ 计划新功能</h4>
+        <ul>
+          <li>新增「自定义回复风格」功能，用户可训练专属风格</li>
+          <li>支持语音消息转文字 + AI回复建议</li>
+          <li>新增「群聊模式」，可同时分析多人对话上下文</li>
+          <li>支持自定义快捷短语和模板</li>
+          <li>新增「AI对话助手」模式，独立于输入法运行</li>
+          <li>支持更多语言（日语、韩语）</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="tl-item fade-up">
+      <div class="tl-dot"></div>
+      <div class="tl-date" style="color:var(--gray)">2027年</div>
+      <div class="tl-title">v2.0.0 · iOS & macOS 版本</div>
+      <span class="tl-tag" style="background:rgba(160,160,176,0.15);color:var(--gray)">远期规划</span>
+      <div class="tl-content">
+        <h4>📱 计划发布</h4>
+        <ul>
+          <li>iOS版Beta发布（需手动复制文本触发AI建议）</li>
+          <li>macOS版Beta发布（体验接近Windows版）</li>
+          <li>跨平台统一体验设计</li>
+          <li>支持Apple Silicon原生运行</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">隐私政策</a>
+    <a href="terms.html">使用条款</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} 懒狗输入法 懒狗输入法. All rights reserved.</p>
+  {TAGLINE}>懒狗输入法，解放你的双手 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body>
+</html>

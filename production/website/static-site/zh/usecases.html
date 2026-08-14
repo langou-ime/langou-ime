@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>应用场景 - 懒狗输入法</title>
+<meta name="description" content="懒狗输入法应用场景：情侣聊天、职场沟通、社交破冰、AI提词优化、客服回复、群聊活跃等全覆盖。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+<style>
+.usecase-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;width:100%}
+.uc-card{background:#FFF;border:2px solid #FFE4CC;border-radius:14px;padding:1.2rem;text-align:center;transition:all 0.3s ease}
+.uc-card:hover{transform:translateY(-4px);box-shadow:0 6px 20px rgba(255,140,66,0.1)}
+.uc-card h4{font-size:0.95rem;margin-bottom:0.3rem}
+.uc-card p{font-size:0.8rem;line-height:1.5;color:var(--muted)}
+.chat-demo{background:#FFF;border-radius:24px;padding:1.8rem;box-shadow:0 6px 30px rgba(255,140,66,0.06);max-width:650px;margin-left:auto;margin-right:auto}
+.chat-demo .ch-msg-from{display:flex;align-items:flex-start;gap:0.6rem;margin-bottom:1rem}
+.chat-demo .ch-avatar{width:38px;height:38px;border-radius:50%;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:1.2rem;flex-shrink:0}
+.chat-demo .ch-bubble{background:var(--bg2);padding:10px 16px;border-radius:18px 18px 18px 4px;font-size:0.9rem;color:var(--dark);max-width:280px}
+.chat-demo .ch-ai-bar{border-top:2px dashed #FFE4CC;border-bottom:2px dashed #FFE4CC;padding:0.8rem 0;margin:1rem 0;text-align:center}
+.chat-demo .ch-ai-bar p{color:var(--primary);font-weight:600;font-size:0.85rem;margin:0}
+.chat-demo .ch-suggestions{display:flex;flex-direction:column;gap:0.4rem}
+.chat-demo .ch-sugg{border-radius:14px;padding:9px 14px;font-size:0.88rem;display:flex;justify-content:space-between;align-items:center;background:#FFF;border:2px solid #FFE4CC;color:var(--dark)}
+.chat-demo .ch-sugg.selected{background:#FFF8F0;border-color:var(--primary)}
+.chat-demo .ch-badge{border-radius:12px;padding:2px 10px;font-size:0.7rem;color:#FFF;flex-shrink:0}
+.chat-demo .ch-sent{display:flex;align-items:flex-end;justify-content:flex-end;gap:0.6rem;margin-top:1rem}
+.chat-demo .ch-sent-msg{background:var(--primary);color:#FFF;padding:10px 16px;border-radius:18px 18px 4px 18px;font-size:0.9rem;max-width:280px}
+.chat-demo .ch-sent-status{text-align:right;color:#4CAF50;font-size:0.78rem;font-weight:600;margin-top:0.3rem}
+.usecase-section{display:flex;align-items:center;gap:2.5rem;padding:2.5rem 0;border-bottom:2px solid #FFE4CC}
+.usecase-section:last-child{border-bottom:none}
+.usecase-info{flex:1}
+.usecase-info h2{font-size:1.6rem;color:var(--brown);margin-bottom:0.6rem}
+.usecase-info p{color:var(--muted);line-height:1.8;font-size:0.95rem}
+.usecase-visual{flex:0 0 340px}
+@media(max-width:768px){.usecase-grid{grid-template-columns:repeat(2,1fr)}.usecase-section{flex-direction:column!important;text-align:center}.usecase-visual{flex:none;width:100%}}
+</style>
+</head>
+<body>
+
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 懒狗输入法</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">首页</a></li>
+    <li><a href="features.html">功能</a></li>
+    <li><a href="usecases.html" class="active">场景</a></li>
+    <li><a href="download.html">下载</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li></li>
+
+    <li><a href="community.html">社区</a></li>
+    <li><a href="about.html">关于</a></li>
+  </ul>
+  <button class="lang-btn">English</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+
+<div class="page-header">
+  <h1>应用场景</h1>
+  <p>无论什么场景，懒狗都能帮你秒回</p>
+</div>
+
+<!-- 场景分类 -->
+<div class="section" style="padding-top:0">
+  <div class="feature-detail fade-up" style="flex-direction:column;padding:2rem 0">
+    <h3 style="color:var(--brown);font-size:1.1rem;margin-bottom:1.5rem;text-align:center">📂 场景分类一览</h3>
+    <div class="usecase-grid">
+      <div class="uc-card" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='#FFE4CC'"><div style="font-size:2.2rem;margin-bottom:0.5rem">💕</div><h4 style="color:var(--primary)">情感社交</h4><p>情侣日常 · 家人关怀 · 朋友闲聊</p></div>
+      <div class="uc-card" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='#FFE4CC'"><div style="font-size:2.2rem;margin-bottom:0.5rem">💼</div><h4 style="color:var(--pink)">职场办公</h4><p>工作沟通 · 邮件回复 · 会议消息</p></div>
+      <div class="uc-card" onmouseover="this.style.borderColor='#4CAF50'" onmouseout="this.style.borderColor='#FFE4CC'"><div style="font-size:2.2rem;margin-bottom:0.5rem">💡</div><h4 style="color:#4CAF50">AI 提词</h4><p>ChatGPT · DeepSeek · Claude</p></div>
+      <div class="uc-card" onmouseover="this.style.borderColor='var(--primary)'" onmouseout="this.style.borderColor='#FFE4CC'"><div style="font-size:2.2rem;margin-bottom:0.5rem">🎧</div><h4 style="color:var(--primary)">客服销售</h4><p>电商咨询 · 售后处理</p></div>
+      <div class="uc-card" onmouseover="this.style.borderColor='var(--pink)'" onmouseout="this.style.borderColor='#FFE4CC'"><div style="font-size:2.2rem;margin-bottom:0.5rem">🎮</div><h4 style="color:var(--pink)">游戏社交</h4><p>Discord · 组队开黑</p></div>
+      <div class="uc-card" onmouseover="this.style.borderColor='#4CAF50'" onmouseout="this.style.borderColor='#FFE4CC'"><div style="font-size:2.2rem;margin-bottom:0.5rem">🌍</div><h4 style="color:#4CAF50">跨国社交</h4><p>多语言 · 跨文化沟通</p></div>
+    </div>
+  </div>
+</div>
+
+<!-- 场景1：情侣聊天 -->
+<section class="section" style="padding-top:0">
+  <div class="usecase-section fade-up">
+    <div class="usecase-info">
+      <h2>💕 情侣日常聊天</h2>
+      <p>下班路上收到对象的消息「想你了」，懒狗自动生成甜蜜/幽默/温暖三种风格的回复建议，选一个点一下直接发送。再也不纠结回什么。</p>
+      <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+        <span class="tag tag-primary">甜蜜风格</span><span class="tag tag-pink">一键发送</span><span class="tag tag-green">单手操作</span>
+      </div>
+    </div>
+    <div class="usecase-visual">
+      <div class="chat-demo">
+        <div class="ch-msg-from"><div class="ch-avatar">👤</div><div class="ch-bubble">今天怎么这么晚还没回来，想你了💕</div></div>
+        <div class="ch-ai-bar"><p>🐶 AI感知：女友撒娇+想念 → 生成甜蜜回复</p></div>
+        <div class="ch-suggestions">
+          <div class="ch-sugg selected"><span>宝贝我也想你！马上到家🥰</span><span class="ch-badge" style="background:var(--primary)">💕 甜蜜</span></div>
+          <div class="ch-sugg"><span>在路上啦，顺便带了奶茶🍵</span><span class="ch-badge" style="background:var(--pink)">😎 幽默</span></div>
+          <div class="ch-sugg"><span>快到了～求抱抱🤗</span><span class="ch-badge" style="background:#4CAF50">🤗 温暖</span></div>
+        </div>
+        <div class="ch-sent"><div><div class="ch-sent-msg">宝贝我也想你！马上到家🥰</div><div class="ch-sent-status">✅ 点一下即发送</div></div><div class="ch-avatar">🐶</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 场景2：职场 -->
+<section class="section" style="padding-top:0">
+  <div class="usecase-section fade-up" style="flex-direction:row-reverse">
+    <div class="usecase-info">
+      <h2>💼 职场高效沟通</h2>
+      <p>开会时领导发消息催进度？懒狗自动识别工作场景，生成专业得体的回复。再也不用偷偷摸摸打字，让AI帮你维持专业形象。</p>
+      <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+        <span class="tag tag-primary">专业风格</span><span class="tag tag-green">钉钉/飞书</span><span class="tag tag-pink">会议场景</span>
+      </div>
+    </div>
+    <div class="usecase-visual">
+      <div class="chat-demo">
+        <div class="ch-msg-from"><div class="ch-avatar">👤</div><div class="ch-bubble">方案今天能交吗？</div></div>
+        <div class="ch-ai-bar"><p>🐶 AI感知：工作催促 → 生成专业回复</p></div>
+        <div class="ch-suggestions">
+          <div class="ch-sugg selected"><span>收到，正在做最后的优化，预计下午4点前发您</span><span class="ch-badge" style="background:var(--primary)">💼 专业</span></div>
+          <div class="ch-sugg"><span>在搞了在搞了，马上好！😅</span><span class="ch-badge" style="background:var(--pink)">😎 轻松</span></div>
+          <div class="ch-sugg"><span>好的，4点前提交</span><span class="ch-badge" style="background:#4CAF50">⚡ 简洁</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 场景3：群聊 -->
+<section class="section" style="padding-top:0">
+  <div class="usecase-section fade-up">
+    <div class="usecase-info">
+      <h2>🎉 群聊社交达人</h2>
+      <p>朋友群聊得热火朝天，你想参与但不知道接什么话？懒狗分析上下文，生成幽默风趣的回复。从「已读不回」变成「群聊达人」。</p>
+      <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+        <span class="tag tag-pink">幽默风格</span><span class="tag tag-primary">微信群</span><span class="tag tag-green">破冰</span>
+      </div>
+    </div>
+    <div class="usecase-visual">
+      <div class="chat-demo">
+        <div class="ch-msg-from"><div class="ch-avatar">👥</div><div class="ch-bubble">周末谁去密室逃脱？</div></div>
+        <div class="ch-ai-bar"><p>🐶 AI感知：群聊邀约 → 生成幽默回复</p></div>
+        <div class="ch-suggestions">
+          <div class="ch-sugg selected"><span>算我一个！这次我要当坦克冲第一个🤣</span><span class="ch-badge" style="background:var(--pink)">😎 幽默</span></div>
+          <div class="ch-sugg"><span>冲！上次被吓到嗓子都哑了😂</span><span class="ch-badge" style="background:var(--primary)">🥳 活泼</span></div>
+          <div class="ch-sugg"><span>去的去的，几点在哪集合？</span><span class="ch-badge" style="background:#4CAF50">⚡ 直接</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 场景4：AI提词 -->
+<section class="section" style="padding-top:0">
+  <div class="usecase-section fade-up" style="flex-direction:row-reverse">
+    <div class="usecase-info">
+      <h2>💡 AI 对话提词优化</h2>
+      <p>用ChatGPT写不出好提示词？懒狗自动把你的模糊指令变成结构化Prompt。角色定义、输出格式、约束条件一步到位。</p>
+      <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+        <span class="tag tag-primary">ChatGPT</span><span class="tag tag-pink">DeepSeek</span><span class="tag tag-green">Claude</span>
+      </div>
+    </div>
+    <div class="usecase-visual">
+      <div class="chat-demo">
+        <div style="background:#FFF8F0;border-radius:14px;padding:1rem;margin-bottom:0.8rem">
+          <p style="color:#E8607A;font-size:0.78rem;font-weight:600;margin-bottom:0.4rem">❌ 原始提示词</p>
+          <div style="background:#FFF;border:2px solid #FFE4CC;border-radius:8px;padding:0.6rem;font-size:0.85rem;color:var(--muted)">帮我写个方案</div>
+        </div>
+        <div class="ch-ai-bar"><p>🐶 提示词优化器自动增强</p></div>
+        <div style="background:#F0FFF0;border-radius:14px;padding:1rem">
+          <p style="color:#4CAF50;font-size:0.78rem;font-weight:600;margin-bottom:0.4rem">✅ 优化后</p>
+          <div style="background:#FFF;border:2px solid #4CAF50;border-radius:8px;padding:0.6rem;font-size:0.82rem;color:var(--dark);line-height:1.6">你是资深产品经理，为「智能客服系统」撰写方案：需求背景、技术架构、实施计划、预期收益。Markdown格式，2000字以内。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 场景5：客服 -->
+<section class="section" style="padding-top:0">
+  <div class="usecase-section fade-up">
+    <div class="usecase-info">
+      <h2>🎧 客服与销售回复</h2>
+      <p>电商客服每天回复上百条咨询？懒狗识别问题类型，自动生成专业亲和的回复模板。效率提升10倍，满意度不降反升。</p>
+      <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+        <span class="tag tag-primary">10x效率</span><span class="tag tag-green">电商场景</span><span class="tag tag-pink">模板</span>
+      </div>
+    </div>
+    <div class="usecase-visual">
+      <div class="chat-demo">
+        <div class="ch-msg-from"><div class="ch-avatar">👤</div><div class="ch-bubble">这件衣服有M码吗？</div></div>
+        <div class="ch-ai-bar"><p>🐶 AI感知：尺码咨询 → 生成客服回复</p></div>
+        <div class="ch-suggestions">
+          <div class="ch-sugg selected"><span>亲，M码有货的哦～参考详情页尺码表选购，正常穿M码刚好😊</span><span class="ch-badge" style="background:var(--primary)">✨ 推荐</span></div>
+          <div class="ch-sugg"><span>有货的，亲要什么颜色呢？</span><span class="ch-badge" style="background:#4CAF50">⚡ 简洁</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 场景6：跨国 -->
+<section class="section" style="padding-top:0">
+  <div class="usecase-section fade-up" style="flex-direction:row-reverse">
+    <div class="usecase-info">
+      <h2>🌍 跨国社交聊天</h2>
+      <p>WhatsApp上跟外国朋友聊天天，懒狗自动识别语言，生成对应语言的回复。告别语言障碍，自信交友。</p>
+      <div style="margin-top:1rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+        <span class="tag tag-primary">多语言</span><span class="tag tag-green">WhatsApp</span><span class="tag tag-pink">Telegram</span>
+      </div>
+    </div>
+    <div class="usecase-visual">
+      <div class="chat-demo">
+        <div class="ch-msg-from"><div class="ch-avatar">👤</div><div class="ch-bubble">Hey! How was your weekend? 😊</div></div>
+        <div class="ch-ai-bar"><p>🐶 AI感知：英文闲聊 → 生成英文回复</p></div>
+        <div class="ch-suggestions">
+          <div class="ch-sugg selected"><span>It was amazing! Went hiking with friends. How about you?</span><span class="ch-badge" style="background:var(--primary)">✨ 推荐</span></div>
+          <div class="ch-sugg"><span>Great! Had a relaxing time at home 🏠</span><span class="ch-badge" style="background:#4CAF50">⚡ 简洁</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- 更多场景 -->
+<section class="section">
+  <h2 class="section-title">🐾 更多场景</h2>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.5rem;max-width:1000px;margin:2rem auto 0">
+    <div class="card fade-up"><div class="card-icon">📱</div><h3>朋友圈评论</h3><p>看到朋友朋友圈不知道评论什么？懒狗根据内容生成有趣的评论建议。</p></div>
+    <div class="card fade-up"><div class="card-icon">📧</div><h3>邮件快速回复</h3><p>Outlook、Gmail中懒狗识别邮件内容，生成得体的回复。</p></div>
+    <div class="card fade-up"><div class="card-icon">🤝</div><h3>约会聊天</h3><p>约会软件不知道怎么开口？懒狗分析对方资料生成有话题感的回复。</p></div>
+    <div class="card fade-up"><div class="card-icon">📝</div><h3>学习讨论</h3><p>学习群、技术群里，懒狗帮你组织语言生成条理清晰的回复。</p></div>
+    <div class="card fade-up"><div class="card-icon">🛒</div><h3>二手交易</h3><p>闲鱼上买卖东西，砍价协商的话术让AI帮你写。</p></div>
+    <div class="card fade-up"><div class="card-icon">🎮</div><h3>游戏开黑</h3><p>打游戏时腾不出手？懒狗快速生成「马上到」等游戏常用语。</p></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links"><a href="privacy.html">隐私政策</a><a href="terms.html">使用条款</a></div>
+  <p>© 2026 懒狗输入法 Langou Input Method. All rights reserved.</p>
+  <p class="tagline">🐶 懒狗输入法，解放你的双手</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>使用教程 - 懒狗输入法</title>
+<meta name="description" content="懒狗输入法使用教程：从安装到精通，手把手教你用AI聊天。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+<style>
+  .step-box{background:var(--glass);border:1px solid #FFE4CC;border-radius:16px;padding:2rem;margin-bottom:2rem;backdrop-filter:blur(20px);position:relative}
+  .step-box::before{content:attr(data-step);position:absolute;top:-16px;left:24px;background:var(--cyan);color:var(--bg);font-size:0.75rem;font-weight:800;padding:4px 14px;border-radius:20px;letter-spacing:1px}
+  .step-box h3{color:var(--cyan);font-size:1.2rem;margin-bottom:0.8rem;padding-top:0.5rem}
+  .step-box p{color:var(--gray);line-height:1.9;font-size:0.95rem}
+  .step-box ul{margin-top:0.8rem;padding-left:1.2rem}
+  .step-box ul li{color:var(--gray);font-size:0.9rem;margin-bottom:0.4rem;position:relative;padding-left:0.5rem}
+  .step-box ul li::before{content:'▸';color:var(--cyan);position:absolute;left:-0.7rem}
+  .tip-box{background:rgba(0,210,255,0.05);border:1px solid #FFE4CC;border-radius:12px;padding:1.2rem 1.5rem;margin:1.5rem 0}
+  .tip-box::before{content:'💡 小贴士';display:block;color:var(--cyan);font-weight:700;font-size:0.85rem;margin-bottom:0.5rem}
+  .tip-box p{color:var(--gray);font-size:0.9rem;line-height:1.7}
+</style>
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 懒狗输入法</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">首页</a></li>
+    <li><a href="features.html">功能</a></li>
+    <li><a href="usecases.html">场景</a></li>
+    <li><a href="download.html">下载</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li></li>
+
+    <li><a href="community.html">社区</a></li>
+    <li><a href="about.html">关于</a></li>
+  </ul>
+  <button class="lang-btn">English</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+
+<div class="page-header">
+  <h1>使用教程</h1>
+  <p>从安装到精通，5分钟上手懒狗输入法</p>
+</div>
+
+<!-- Android 安装教程 -->
+<section class="section">
+  <h2 class="section-title" style="text-align:left">📱 Android 版安装教程</h2>
+
+  <!-- SVG 步骤流程图 -->
+  <div class="feature-detail fade-up" style="justify-content:center;padding:1.5rem 0;margin-bottom:1.5rem">
+    <svg viewBox="0 0 880 200" style="width:100%;max-width:860px;height:auto" xmlns="http://www.w3.org/2000/svg" aria-label="Android安装步骤流程图">
+      <defs>
+        <linearGradient id="stepGrad1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFE4CC"/><stop offset="100%" stop-color="rgba(0,210,255,0.05)"/></linearGradient>
+        <linearGradient id="stepGrad2" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="rgba(255,181,194,0.25)"/><stop offset="100%" stop-color="rgba(255,0,127,0.05)"/></linearGradient>
+        <linearGradient id="stepGrad3" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="rgba(0,255,136,0.2)"/><stop offset="100%" stop-color="rgba(0,255,136,0.05)"/></linearGradient>
+        <linearGradient id="stepGrad4" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="rgba(255,136,0,0.2)"/><stop offset="100%" stop-color="rgba(255,136,0,0.05)"/></linearGradient>
+        <linearGradient id="stepGrad5" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFE4CC"/><stop offset="100%" stop-color="rgba(0,210,255,0.05)"/></linearGradient>
+        <filter id="stepGlow"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#FF8C42" flood-opacity="0.3"/></filter>
+        <marker id="stepArrow" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8" fill="none" stroke="rgba(0,210,255,0.5)" stroke-width="1.5"/></marker>
+      </defs>
+
+      <text x="440" y="28" text-anchor="middle" fill="#FF8C42" font-size="14" font-weight="700" filter="url(#stepGlow)">📱 Android 安装步骤</text>
+
+      <!-- 步骤1: 下载APK -->
+      <rect x="20" y="45" width="140" height="120" rx="12" fill="url(#stepGrad1)" stroke="#FF8C42" stroke-width="1.2"/>
+      <circle cx="90" cy="72" r="14" fill="#FF8C42" opacity="0.9"/>
+      <text x="90" y="77" text-anchor="middle" fill="#0D0D1A" font-size="12" font-weight="800">1</text>
+      <text x="90" y="102" text-anchor="middle" fill="#FF8C42" font-size="24">📥</text>
+      <text x="90" y="130" text-anchor="middle" fill="#FF8C42" font-size="11" font-weight="600">下载 APK</text>
+      <text x="90" y="146" text-anchor="middle" fill="#A08670" font-size="9">~45MB</text>
+
+      <!-- 箭头 1→2 -->
+      <line x1="160" y1="105" x2="187" y2="105" stroke="rgba(0,210,255,0.5)" stroke-width="1.5" marker-end="url(#stepArrow)"/>
+
+      <!-- 步骤2: 允许安装 -->
+      <rect x="192" y="45" width="140" height="120" rx="12" fill="url(#stepGrad2)" stroke="#FFB5C2" stroke-width="1.2"/>
+      <circle cx="262" cy="72" r="14" fill="#FFB5C2" opacity="0.9"/>
+      <text x="262" y="77" text-anchor="middle" fill="#0D0D1A" font-size="12" font-weight="800">2</text>
+      <text x="262" y="102" text-anchor="middle" fill="#FFB5C2" font-size="24">🔓</text>
+      <text x="262" y="130" text-anchor="middle" fill="#FFB5C2" font-size="11" font-weight="600">允许安装</text>
+      <text x="262" y="146" text-anchor="middle" fill="#A08670" font-size="9">未知来源</text>
+
+      <!-- 箭头 2→3 -->
+      <line x1="332" y1="105" x2="359" y2="105" stroke="rgba(0,210,255,0.5)" stroke-width="1.5" marker-end="url(#stepArrow)"/>
+
+      <!-- 步骤3: 启用输入法 -->
+      <rect x="364" y="45" width="140" height="120" rx="12" fill="url(#stepGrad3)" stroke="#4CAF50" stroke-width="1.2"/>
+      <circle cx="434" cy="72" r="14" fill="#4CAF50" opacity="0.9"/>
+      <text x="434" y="77" text-anchor="middle" fill="#0D0D1A" font-size="12" font-weight="800">3</text>
+      <text x="434" y="102" text-anchor="middle" fill="#4CAF50" font-size="24">⌨️</text>
+      <text x="434" y="130" text-anchor="middle" fill="#4CAF50" font-size="11" font-weight="600">启用输入法</text>
+      <text x="434" y="146" text-anchor="middle" fill="#A08670" font-size="9">系统设置</text>
+
+      <!-- 箭头 3→4 -->
+      <line x1="504" y1="105" x2="531" y2="105" stroke="rgba(0,210,255,0.5)" stroke-width="1.5" marker-end="url(#stepArrow)"/>
+
+      <!-- 步骤4: 切换输入法 -->
+      <rect x="536" y="45" width="140" height="120" rx="12" fill="url(#stepGrad4)" stroke="#FFB347" stroke-width="1.2"/>
+      <circle cx="606" cy="72" r="14" fill="#FFB347" opacity="0.9"/>
+      <text x="606" y="77" text-anchor="middle" fill="#0D0D1A" font-size="12" font-weight="800">4</text>
+      <text x="606" y="102" text-anchor="middle" fill="#FFB347" font-size="24">🔄</text>
+      <text x="606" y="130" text-anchor="middle" fill="#FFB347" font-size="11" font-weight="600">切换输入法</text>
+      <text x="606" y="146" text-anchor="middle" fill="#A08670" font-size="9">默认/手动</text>
+
+      <!-- 箭头 4→5 -->
+      <line x1="676" y1="105" x2="703" y2="105" stroke="rgba(0,210,255,0.5)" stroke-width="1.5" marker-end="url(#stepArrow)"/>
+
+      <!-- 步骤5: 开启无障碍 -->
+      <rect x="708" y="45" width="140" height="120" rx="12" fill="url(#stepGrad5)" stroke="#FF8C42" stroke-width="1.2"/>
+      <circle cx="778" cy="72" r="14" fill="#FF8C42" opacity="0.9"/>
+      <text x="778" y="77" text-anchor="middle" fill="#0D0D1A" font-size="12" font-weight="800">5</text>
+      <text x="778" y="102" text-anchor="middle" fill="#FF8C42" font-size="24">♿</text>
+      <text x="778" y="130" text-anchor="middle" fill="#FF8C42" font-size="11" font-weight="600">开启无障碍</text>
+      <text x="778" y="146" text-anchor="middle" fill="#A08670" font-size="9">推荐开启</text>
+
+    </svg>
+  </div>
+
+  <div class="step-box fade-up" data-step="步骤 1">
+    <h3>下载安装包</h3>
+    <p>点击下方按钮下载最新版APK安装包。建议在Wi-Fi环境下下载（约45MB）。</p>
+    <a href="download.html" class="btn btn-primary" style="display:inline-flex;margin-top:1rem;padding:0.6rem 1.5rem;font-size:0.9rem">📥 前往下载页</a>
+  </div>
+
+  <div class="step-box fade-up" data-step="步骤 2">
+    <h3>允许安装未知来源应用</h3>
+    <p>由于懒狗输入法暂未上架应用商店，需要手动允许安装：</p>
+    <ul>
+      <li>打开手机「设置」→「安全」→「更多安全设置」</li>
+      <li>找到「安装未知应用」或「允许安装未知来源应用」</li>
+      <li>选择你用来打开APK的文件管理器或浏览器，开启权限</li>
+    </ul>
+    <div class="tip-box"><p>不同品牌的手机路径略有差异。华为/荣耀：设置→安全→更多安全设置→安装外部来源应用。小米：设置→隐私保护→特殊权限→安装未知应用。OPPO/vivo：设置→安全→安装未知应用。</p></div>
+  </div>
+
+  <div class="step-box fade-up" data-step="步骤 3">
+    <h3>安装并启用输入法</h3>
+    <p>点击APK文件完成安装后，需要启用懒狗输入法：</p>
+    <ul>
+      <li>打开「设置」→「系统」→「语言和输入法」</li>
+      <li>点击「虚拟键盘」→「管理键盘」</li>
+      <li>找到「懒狗输入法」，打开开关</li>
+      <li>在弹出的确认对话框中点击「确定」</li>
+    </ul>
+  </div>
+
+  <div class="step-box fade-up" data-step="步骤 4">
+    <h3>切换到懒狗输入法</h3>
+    <p>在任意输入框中点击，系统会弹出输入法选择器，选择「懒狗输入法」即可。或者在通知栏中点击输入法切换图标。</p>
+    <div class="tip-box"><p>你也可以在「设置→语言和输入法」中将懒狗输入法设为默认输入法，这样就不用每次手动切换了。</p></div>
+  </div>
+
+  <div class="step-box fade-up" data-step="步骤 5">
+    <h3>开启无障碍服务（推荐）</h3>
+    <p>为了让懒狗自动识别聊天上下文，建议开启无障碍服务：</p>
+    <ul>
+      <li>打开懒狗输入法的设置界面（在通知栏点击懒狗图标，或在输入法中长按地球图标）</li>
+      <li>点击「开启无障碍服务」</li>
+      <li>系统会跳转到无障碍设置页面，找到「懒狗输入法」并开启</li>
+      <li>在弹出的权限确认中点击「允许」</li>
+    </ul>
+    <div class="tip-box"><p>无障碍服务是Android的标准辅助功能，不会影响手机性能或安全。懒狗仅用它来读取屏幕上的聊天文本，不会进行任何其他操作。你随时可以在设置中关闭。</p></div>
+  </div>
+</section>
+
+<!-- Windows 安装教程 -->
+<section class="section">
+  <h2 class="section-title" style="text-align:left">🖥️ Windows 版安装教程</h2>
+
+  <div class="step-box fade-up" data-step="步骤 1">
+    <h3>检查系统要求</h3>
+    <p>确保你的电脑满足以下要求：</p>
+    <ul>
+      <li>操作系统：Windows 10 21H2 或更高版本 / Windows 11</li>
+      <li>处理器：x64 架构（目前不支持ARM）</li>
+      <li>内存：4GB RAM 或以上</li>
+      <li>依赖：.NET 8 Desktop Runtime（安装时会自动提示下载）</li>
+    </ul>
+  </div>
+
+  <div class="step-box fade-up" data-step="步骤 2">
+    <h3>下载并安装</h3>
+    <p>下载MSI安装包后双击运行，按照安装向导完成安装。安装过程中可能需要管理员权限。</p>
+    <a href="download.html" class="btn btn-primary" style="display:inline-flex;margin-top:1rem;padding:0.6rem 1.5rem;font-size:0.9rem">📥 前往下载页</a>
+  </div>
+
+  <div class="step-box fade-up" data-step="步骤 3">
+    <h3>添加输入法</h3>
+    <p>安装完成后需要在Windows中添加懒狗输入法：</p>
+    <ul>
+      <li>打开「设置」→「时间和语言」→「语言和区域」</li>
+      <li>点击中文（简体）旁边的「...」→「语言选项」</li>
+      <li>在「键盘」部分点击「添加键盘」</li>
+      <li>找到并选择「懒狗输入法」</li>
+    </ul>
+  </div>
+
+  <div class="step-box fade-up" data-step="步骤 4">
+    <h3>配置与使用</h3>
+    <p>在系统托盘（右下角）找到懒狗图标，右键点击进入设置：</p>
+    <ul>
+      <li>登录懒狗账户（与Android版共享数据和设置）</li>
+      <li>选择AI回复的默认风格偏好</li>
+      <li>按 Win+空格 切换到懒狗输入法</li>
+      <li>在任意聊天窗口中，懒狗会自动识别对话并弹出AI建议</li>
+    </ul>
+    <div class="tip-box"><p>Windows版使用UI Automation读取聊天文本，无需额外授权。如果某个应用无法自动识别，可以手动选中文本后按快捷键触发AI建议。</p></div>
+  </div>
+</section>
+
+<!-- 使用技巧 -->
+<section class="section">
+  <h2 class="section-title" style="text-align:left">🎯 使用技巧</h2>
+
+  <div class="step-box fade-up" data-step="技巧 1">
+    <h3>选择合适的回复风格</h3>
+    <p>不同场景使用不同风格，效果更佳：</p>
+    <ul>
+      <li><strong>甜蜜：</strong>适合恋人、亲密朋友的日常聊天</li>
+      <li><strong>幽默：</strong>适合朋友群聊、轻松社交场合</li>
+      <li><strong>温暖：</strong>适合安慰朋友、家人关怀</li>
+      <li><strong>专业：</strong>适合工作沟通、商务邮件</li>
+      <li><strong>简洁：</strong>适合快速回复、游戏场景</li>
+      <li><strong>随和：</strong>适合日常闲聊、普通社交</li>
+    </ul>
+  </div>
+
+  <div class="step-box fade-up" data-step="技巧 2">
+    <h3>善用提示词优化器</h3>
+    <p>在与AI工具对话时，提示词的质量直接决定输出质量。懒狗的提示词优化器可以帮你：</p>
+    <ul>
+      <li>把模糊的指令变成结构化的Prompt</li>
+      <li>自动添加角色定义、输出格式、约束条件</li>
+      <li>支持针对不同AI模型的优化策略</li>
+    </ul>
+    <div class="tip-box"><p>使用方法：在ChatGPT/DeepSeek的输入框中输入你的原始提示词，懒狗会自动弹出优化建议。点击即可替换。</p></div>
+  </div>
+
+  <div class="step-box fade-up" data-step="技巧 3">
+    <h3>AI回复建议</h3>
+    <p>所有功能完全免费，不限次数使用：</p>
+    <ul>
+      <li>日常聊天优先使用AI建议，简单回复可以自己打字</li>
+      <li>AI回复建议没有次数限制，放心使用</li>
+      <li>所有数据在云端实时同步</li>
+      <li>基础输入功能（拼音/手写/语音）始终可用</li>
+    </ul>
+  </div>
+
+  <div class="step-box fade-up" data-step="技巧 4">
+    <h3>自定义词库</h3>
+    <p>懒狗会自动学习你的常用词汇和输入习惯。你也可以手动管理词库：</p>
+    <ul>
+      <li>在设置中进入「词库管理」</li>
+      <li>添加常用短语、快捷回复</li>
+      <li>导入/导出自定义词库文件</li>
+      <li>词库自动同步到所有已登录设备</li>
+    </ul>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">隐私政策</a>
+    <a href="terms.html">使用条款</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} 懒狗输入法 懒狗输入法. All rights reserved.</p>
+  {TAGLINE}>懒狗输入法，解放你的双手 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body>
+</html>

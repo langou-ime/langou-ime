@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Developer API - Langou Input Method</title>
+<meta name="description" content="Langou IME Developer API documentation. REST API for AI reply generation, style customization, user management, and webhook integration.">
+<link rel="stylesheet" href="../css/style.css?v=2"></head>
+<body class="en"><canvas id="particles-canvas"></canvas>
+<nav class="navbar" id="navbar">
+  <a href="/en/" class="nav-brand">🐶 Langou IME</a>
+  <ul class="nav-links">
+    <li><a href="/en/">Home</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="usecases.html">Use Cases</a></li>
+    <li><a href="download.html">Download</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li></li>
+    <li></li>
+
+    <li><a href="community.html">Community</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <button class="lang-btn">中文</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+<div class="page-header"><h1>🔌 Developer API</h1><p>Build on top of Langou's AI capabilities</p></div>
+
+<section class="section" id="main">
+<div class="privacy-content">
+
+<h2>Langou API Overview</h2>
+<p>The Langou API enables developers to integrate Langou's AI reply generation, Chinese input processing, and prompt optimization into their own applications. The API follows RESTful conventions, uses JSON for request/response formats, and authenticates via API keys. All endpoints are available at <code>https://api.langou-ime.com/v1</code>.</p>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🔑</div>
+<div class="fd-content">
+<h3>Authentication</h3>
+<p>All API requests require an API key passed via the <code>Authorization</code> header:</p>
+<pre><code>Authorization: Bearer YOUR_API_KEY</code></pre>
+<p>API keys are available through the Developer Dashboard at <a href="#">https://langou-ime.com/developer</a>. Each key is scoped to specific permissions (read, write, admin) and can be rotated or revoked independently.</p>
+<p><strong>Rate limits:</strong> 100 requests/minute for API keys. Contact us for higher limits.</p>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🤖</div>
+<div class="fd-content">
+<h3>AI Reply Generation Endpoint</h3>
+<p><code>POST /v1/replies/generate</code></p>
+<p>Generate AI-powered chat replies based on conversation context and desired style.</p>
+<p><strong>Request body:</strong></p>
+<pre><code>{
+  "context": [
+    {"sender": "user", "text": "Did you finish the report?"},
+    {"sender": "me", "text": "Almost done, just need the final numbers"},
+    {"sender": "user", "text": "Can you send it by 3 PM?"}
+  ],
+  "style": "professional",
+  "count": 3,
+  "language": "en"
+}</code></pre>
+<p><strong>Response:</strong></p>
+<pre><code>{
+  "suggestions": [
+    "Absolutely. I'll have the final report with all numbers ready for you by 3 PM.",
+    "Yes, I'll make sure you have it before 3 PM. Just compiling the final data now.",
+    "3 PM works perfectly. I'll send it over with the completed numbers."
+  ],
+  "style": "professional",
+  "model": "mimo-v2.5-pro",
+  "generation_time_ms": 842
+}</code></pre>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🎨</div>
+<div class="fd-content">
+<h3>Style Customization API</h3>
+<p><code>POST /v1/styles/custom</code></p>
+<p>Create custom reply styles with fine-grained personality parameters.</p>
+<p><strong>Request body:</strong></p>
+<pre><code>{
+  "name": "Coach",
+  "base_style": "warm",
+  "parameters": {
+    "formality": 0.3,
+    "enthusiasm": 0.8,
+    "empathy": 0.9,
+    "directness": 0.6,
+    "humor": 0.2,
+    "emotional_expression": 0.7
+  },
+  "description": "Encouraging, supportive tone for mentoring"
+}</code></pre>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">💡</div>
+<div class="fd-content">
+<h3>Prompt Optimization Endpoint</h3>
+<p><code>POST /v1/prompts/optimize</code></p>
+<p>Optimize prompts for use with ChatGPT, DeepSeek, Claude, or other AI models.</p>
+<p><strong>Request body:</strong></p>
+<pre><code>{
+  "original_text": "Write an email about the project delay",
+  "target_model": "chatgpt",
+  "detail_level": "detailed"
+}</code></pre>
+<p><strong>Response:</strong></p>
+<pre><code>{
+  "optimized": "Write a professional project delay notification email addressed to stakeholders. Include: (1) acknowledgment of the delay, (2) the reason for the delay, (3) revised timeline, (4) mitigation steps being taken. Use a transparent but constructive tone.",
+  "concise": "Draft a stakeholder email about a project delay: transparent tone, include reason, new timeline, and next steps.",
+  "improvements": ["Added stakeholder context", "Specified email structure", "Clarified tone guidance"]
+}</code></pre>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">📚</div>
+<div class="fd-content">
+<h3>Dictionary Management API</h3>
+<p><code>POST /v1/dictionary/entries</code> — Add entries to user dictionary<br>
+<code>GET /v1/dictionary/entries</code> — List dictionary entries<br>
+<code>DELETE /v1/dictionary/entries</code> — Remove dictionary entries</p>
+<p>Manage custom dictionary entries programmatically — useful for enterprise deployments that need to seed industry-specific terminology.</p>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🧩</div>
+<div class="fd-content">
+<h3>Webhook Integration</h3>
+<p>Langou supports outgoing webhooks to notify your application when certain events occur:</p>
+<ul>
+<li><strong>reply.sent:</strong> Fired when a user sends an AI-generated reply</li>
+<li><strong>style.changed:</strong> Fired when the user switches reply styles</li>
+<li><strong>feedback.received:</strong> Fired when a user rates an AI suggestion</li>
+<li><strong>error.occurred:</strong> Fired when an AI generation fails</li>
+</ul>
+<p>Webhooks are configured via the Developer Dashboard with optional retry logic, HMAC signature verification, and custom payload filtering.</p>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">📖</div>
+<div class="fd-content">
+<h3>SDKs &amp; Libraries</h3>
+<p>Official client libraries are available for:</p>
+<ul>
+<li><strong>Python:</strong> <code>pip install langou-api</code></li>
+<li><strong>JavaScript/TypeScript:</strong> <code>npm install langou-api</code></li>
+<li><strong>Java/Kotlin:</strong> Available via Maven Central</li>
+<li><strong>Swift:</strong> Available via Swift Package Manager</li>
+</ul>
+<p>Community-maintained libraries are listed in our  resources. See the full API reference at <a href="https://docs.langou-ime.com" target="_blank">docs.langou-ime.com</a>.</p>
+</div>
+</div>
+
+<h2>Getting Started</h2>
+<ol>
+<li><strong>Get your API key</strong> — Visit the Developer Dashboard</li>
+<li><strong>Read the docs</strong> — Full API reference with examples at <a href="https://docs.langou-ime.com" target="_blank">docs.langou-ime.com</a></li>
+<li><strong>Join the developer community</strong> — Our <a href="community.html">Discord</a> has dedicated API channels</li>
+</ol>
+
+<p class="cta-text">For integration help, visit our  or check the <a href="comparison.html">Comparison</a> to see how Langou's API differs from other platforms.</p>
+
+</div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} Langou Input Method. All rights reserved.</p>
+  {TAGLINE}>Langou Input — Free Your Hands 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body></html>

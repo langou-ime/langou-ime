@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>提示词优化器 - 懒狗输入法</title>
+<meta name="description" content="懒狗输入法提示词优化器详解：自动优化AI对话指令，支持ChatGPT/DeepSeek/Claude，优化前后对比示例。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 懒狗输入法</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">首页</a></li>
+    <li><a href="features.html" class="active">功能</a></li>
+    <li><a href="usecases.html">场景</a></li>
+    <li><a href="download.html">下载</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li></li>
+
+    <li><a href="community.html">社区</a></li>
+    <li><a href="about.html">关于</a></li>
+  </ul>
+  <button class="lang-btn">English</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+
+<div class="page-header">
+  <h1>💡 提示词优化器</h1>
+  <p>不会写 Prompt？让懒狗帮你优化</p>
+</div>
+
+<section class="section">
+  <div class="privacy-content">
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">💡</div>
+      <div class="fd-content">
+        <h3>为什么需要提示词优化器？</h3>
+        <p>在使用 ChatGPT、DeepSeek、Claude 等 AI 工具时，输入的质量直接决定输出的质量。但大多数人并不擅长写 Prompt——要么太简短导致 AI 回答泛泛，要么缺少关键约束导致输出不符合预期。懒狗输入法的提示词优化器能自动分析你的原始指令，从角色定义、输出格式、约束条件、示例引导等多个维度进行优化，生成两版优化结果（详细版和简洁版）供你选择。</p>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">⚙️</div>
+      <div class="fd-content">
+        <h3>工作原理</h3>
+        <p>优化器的工作流程分为四个步骤：</p>
+        <ul>
+          <li><strong>意图分析：</strong>分析你输入的原始文本，识别你的真实需求——你需要生成什么类型的内容？面向什么受众？有什么特殊要求？</li>
+          <li><strong>缺失要素填充：</strong>自动补充常见的 Prompt 关键要素——角色定义（谁来做）、输出格式（怎么做）、约束条件（什么不能做）、示例（参考什么风格）。</li>
+          <li><strong>双版输出：</strong>生成「详细版」和「简洁版」两个版本。详细版包含完整的角色、格式、约束、示例；简洁版保留核心优化要素但更精炼。</li>
+          <li><strong>模型适配：</strong>根据您正在使用的 AI 平台（ChatGPT / DeepSeek / Claude）微调优化策略，因为不同模型对 Prompt 的敏感度和偏好不同。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">🎯</div>
+      <div class="fd-content">
+        <h3>优化前后对比</h3>
+
+        <div style="background:var(--glass);border-radius:16px;padding:1.5rem;margin:1rem 0;border:1px solid #FFE4CC">
+          <h4 style="color:var(--cyan);font-size:1rem;margin-bottom:0.8rem">示例 1：写方案</h4>
+          <div style="background:var(--bg2);border-radius:10px;padding:1rem;margin-bottom:0.5rem">
+            <div style="color:var(--red);font-size:0.8rem;font-weight:600;margin-bottom:0.3rem">❌ 原始提示词：</div>
+            <div style="color:var(--gray);font-size:0.85rem">帮我写个方案</div>
+          </div>
+          <div style="background:var(--bg2);border-radius:10px;padding:1rem">
+            <div style="color:var(--green);font-size:0.8rem;font-weight:600;margin-bottom:0.3rem">✅ 优化后（详细版）：</div>
+            <div style="color:var(--gray);font-size:0.85rem;line-height:1.7">你是一位资深产品经理。请为「智能客服系统」撰写一份项目方案，要求：1）包含需求背景、技术架构、实施计划、预期收益四个部分；2）输出格式为 Markdown；3）字数控制在 2000 字以内；4）面向公司高管汇报，语言专业但不晦涩。</div>
+          </div>
+        </div>
+
+        <div style="background:var(--glass);border-radius:16px;padding:1.5rem;margin:1rem 0;border:1px solid #FFE4CC">
+          <h4 style="color:var(--cyan);font-size:1rem;margin-bottom:0.8rem">示例 2：写文案</h4>
+          <div style="background:var(--bg2);border-radius:10px;padding:1rem;margin-bottom:0.5rem">
+            <div style="color:var(--red);font-size:0.8rem;font-weight:600;margin-bottom:0.3rem">❌ 原始提示词：</div>
+            <div style="color:var(--gray);font-size:0.85rem">写个朋友圈文案</div>
+          </div>
+          <div style="background:var(--bg2);border-radius:10px;padding:1rem">
+            <div style="color:var(--green);font-size:0.8rem;font-weight:600;margin-bottom:0.3rem">✅ 优化后（简洁版）：</div>
+            <div style="color:var(--gray);font-size:0.85rem;line-height:1.7">请写一条朋友圈文案，主题：第一次去海边看日出。要求：1）字数 50 字以内；2）风格温暖治愈；3）搭配 2-3 个 emoji；4）语调像对朋友分享感受一样自然。</div>
+          </div>
+        </div>
+
+        <div style="background:var(--glass);border-radius:16px;padding:1.5rem;margin:1rem 0;border:1px solid #FFE4CC">
+          <h4 style="color:var(--cyan);font-size:1rem;margin-bottom:0.8rem">示例 3：代码问题</h4>
+          <div style="background:var(--bg2);border-radius:10px;padding:1rem;margin-bottom:0.5rem">
+            <div style="color:var(--red);font-size:0.8rem;font-weight:600;margin-bottom:0.3rem">❌ 原始提示词：</div>
+            <div style="color:var(--gray);font-size:0.85rem">这个代码报错了，帮我看看</div>
+          </div>
+          <div style="background:var(--bg2);border-radius:10px;padding:1rem">
+            <div style="color:var(--green);font-size:0.8rem;font-weight:600;margin-bottom:0.3rem">✅ 优化后（详细版）：</div>
+            <div style="color:var(--gray);font-size:0.85rem;line-height:1.7">你是一位资深 Python 开发者。以下是报错代码：[粘贴代码]。报错信息：TypeError: 'int' object is not iterable。请帮我：1）解释报错原因；2）提供修复后的代码；3）补充如何避免同类错误的建议。请用中文回答。</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">🛠️</div>
+      <div class="fd-content">
+        <h3>使用场景</h3>
+        <ul>
+          <li><strong>AI 对话平台：</strong>在 ChatGPT、DeepSeek、Claude、Kimi 等对话界面中，输入提示词后懒狗自动弹出优化建议。</li>
+          <li><strong>写作辅助：</strong>需要 AI 帮你写邮件、文案、方案、报告时，先把粗糙的指令优化成高质量的 Prompt。</li>
+          <li><strong>学习辅助：</strong>让 AI 解释复杂概念、出题目、写总结时，通过优化后的 Prompt 获得更精准的回答。</li>
+          <li><strong>编程辅助：</strong>向 AI 寻求代码帮助时，优化后的 Prompt 能让 AI 更好地理解你的问题和环境。</li>
+          <li><strong>翻译与润色：</strong>需要 AI 翻译或润色文本时，优化后的 Prompt 可以指定目标风格、受众和格式要求。</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section" style="text-align:center;padding-top:1rem">
+  <p style="color:var(--gray);margin-bottom:1.5rem">查看更多功能详解：</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+    <a href="features-context.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">智能上下文感知 →</a>
+    <a href="features-ai-reply.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">AI多风格回复 →</a>
+    <a href="features-input.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">中文输入引擎 →</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">隐私政策</a>
+    <a href="terms.html">使用条款</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} 懒狗输入法 懒狗输入法. All rights reserved.</p>
+  {TAGLINE}>懒狗输入法，解放你的双手 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body>
+</html>

@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Features - Langou Input Method</title>
+<meta name="description" content="Langou IME core features: smart context awareness, multi-style AI replies, one-tap send, prompt optimizer.">
+<link rel="stylesheet" href="../css/style.css?v=2">
+<style>
+.feat-hero{padding:5rem 1.5rem 2rem;text-align:center}
+.feat-hero h1{font-size:clamp(2.5rem,4vw,4rem);font-weight:900;color:var(--brown);margin-bottom:0.5rem}
+.feat-hero p{color:var(--muted);font-size:1.15rem;max-width:600px;margin:0 auto}
+.flow-wrap{max-width:1100px;margin:2rem auto;padding:0 1.5rem;display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap}
+.flow-card{background:#FFF;border:2px solid #FFE4CC;border-radius:16px;padding:1.5rem 1.2rem;text-align:center;min-width:150px;max-width:180px;transition:all 0.3s ease;flex-shrink:0}
+.flow-card:hover{border-color:var(--primary);box-shadow:0 4px 20px rgba(255,140,66,0.15);transform:translateY(-3px)}
+.flow-card .fc-icon{font-size:2.2rem;margin-bottom:0.4rem}
+.flow-card .fc-title{color:var(--primary);font-size:1rem;font-weight:700;margin-bottom:0.2rem}
+.flow-card .fc-desc{color:var(--muted);font-size:0.78rem;line-height:1.4}
+.flow-arrow-lg{color:var(--primary);font-size:1.8rem;padding:0 0.3rem;flex-shrink:0}
+.chat-demo{background:#FFF;border-radius:24px;padding:1.8rem;box-shadow:0 8px 40px rgba(255,140,66,0.08);margin-bottom:1.5rem;max-width:700px;margin-left:auto;margin-right:auto}
+.chat-demo .cd-ai-bar{border-top:2px dashed #FFE4CC;border-bottom:2px dashed #FFE4CC;padding:1rem 0;margin:1rem 0;text-align:center}
+.chat-demo .cd-ai-bar p{color:var(--primary);font-weight:600;font-size:0.85rem}
+.chat-demo .cd-suggestions{display:flex;flex-direction:column;gap:0.5rem}
+.chat-demo .cd-sugg{border-radius:14px;padding:10px 14px;font-size:0.9rem;display:flex;justify-content:space-between;align-items:center}
+.chat-demo .cd-sugg.selected{background:#FFF8F0;border:2px solid var(--primary)}
+.chat-demo .cd-sugg.unselected{background:#FFF;border:2px solid #FFE4CC}
+.chat-demo .cd-sugg-badge{border-radius:12px;padding:2px 10px;font-size:0.72rem;color:#FFF;flex-shrink:0}
+.cards-wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;max-width:1000px;margin:0 auto}
+@media(max-width:768px){.flow-wrap{flex-direction:column}.flow-arrow-lg{transform:rotate(90deg)}}
+</style>
+</head>
+<body class="en">
+
+<nav class="navbar" id="navbar">
+  <a href="/en/" class="nav-brand">🐶 Langou IME</a>
+  <ul class="nav-links">
+    <li><a href="/en/">Home</a></li>
+    <li><a href="features.html" class="active">Features</a></li>
+    <li><a href="usecases.html">Use Cases</a></li>
+    <li><a href="download.html">Download</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li></li>
+    <li></li>
+
+    <li><a href="community.html">Community</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <button class="lang-btn" title="Switch to Chinese">中文</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+
+<div class="feat-hero page-header" style="padding-bottom:0">
+  <h1>Core Features</h1>
+  <p>Smart replies in 3 steps, 10x efficiency boost</p>
+</div>
+
+<div class="section fade-up" style="padding-top:0">
+  <div class="flow-wrap">
+    <div class="flow-card"><div class="fc-icon">📱</div><div class="fc-title">Capture</div><div class="fc-desc">Read chat text</div></div>
+    <div class="flow-arrow-lg">→</div>
+    <div class="flow-card"><div class="fc-icon">🧠</div><div class="fc-title">Analyze</div><div class="fc-desc">Context & emotion</div></div>
+    <div class="flow-arrow-lg">→</div>
+    <div class="flow-card"><div class="fc-icon">💬</div><div class="fc-title">Generate</div><div class="fc-desc">6 style replies</div></div>
+    <div class="flow-arrow-lg">→</div>
+    <div class="flow-card"><div class="fc-icon">👆</div><div class="fc-title">Tap to Send</div><div class="fc-desc">One tap done</div></div>
+    <div class="flow-arrow-lg">→</div>
+    <div class="flow-card"><div class="fc-icon">✅</div><div class="fc-title">Sent!</div><div class="fc-desc">3 seconds total</div></div>
+  </div>
+</div>
+
+<!-- Feature 01 -->
+<section class="section" style="padding-bottom:1rem">
+  <div class="fade-up chat-demo">
+    <div class="cd-ai-bar"><p>🐶 AI senses the context… Detected: Girlfriend missing you</p></div>
+    <p style="font-size:0.85rem;color:var(--brown);font-weight:600;margin-bottom:0.5rem">01 · Smart Context Awareness</p>
+    <p style="color:var(--muted);font-size:0.9rem;line-height:1.7">Langou automatically reads visible chat text — no manual input needed. Smart emotion analysis detects tone (loving/playful) and intent (seeking attention). Works with WhatsApp, Telegram, WeChat, Discord, and all major apps.</p>
+  </div>
+</section>
+
+<!-- Feature 02 -->
+<section class="section" style="padding-top:0;padding-bottom:1rem">
+  <div class="fade-up chat-demo">
+    <div class="cd-ai-bar"><p>🐶 AI generates multi-style reply suggestions:</p></div>
+    <div class="cd-suggestions">
+      <div class="cd-sugg unselected"><span>Miss you too babe! Almost home 🥰</span><span class="cd-sugg-badge" style="background:var(--primary)">💕 Sweet</span></div>
+      <div class="cd-sugg unselected"><span>On my way! Got you bubble tea 🍵</span><span class="cd-sugg-badge" style="background:var(--pink)">😎 Funny</span></div>
+      <div class="cd-sugg unselected"><span>Coming home, need a hug 🤗</span><span class="cd-sugg-badge" style="background:#4CAF50">🤗 Warm</span></div>
+    </div>
+    <p style="font-size:0.85rem;color:var(--brown);font-weight:600;margin-top:1rem">02 · Multi-Style AI Reply Generation</p>
+    <p style="color:var(--muted);font-size:0.9rem;line-height:1.7">Powered by MiMo large language model. Sweet/Humorous/Warm/Professional/Concise/Casual — 6 styles to match any conversation. Every suggestion is natural, optimized, and ready to send.</p>
+  </div>
+</section>
+
+<!-- Feature 03 -->
+<section class="section" style="padding-top:0;padding-bottom:1rem">
+  <div class="fade-up chat-demo">
+    <div class="cd-suggestions">
+      <div class="cd-sugg selected"><span>Miss you too babe! Almost home 🥰</span><span class="cd-sugg-badge" style="background:var(--primary)">💕 Sweet</span></div>
+      <div class="cd-sugg unselected"><span>On my way! With bubble tea 🍵</span><span class="cd-sugg-badge" style="background:var(--pink)">😎 Funny</span></div>
+      <div class="cd-sugg unselected"><span>Need a hug 🥺</span><span class="cd-sugg-badge" style="background:#4CAF50">🤗 Warm</span></div>
+    </div>
+    <div style="text-align:right;margin-top:1rem"><span style="background:var(--primary);color:#FFF;padding:8px 14px;border-radius:16px 16px 4px 16px;font-size:0.9rem">Miss you too babe! Almost home 🥰</span></div>
+    <p style="text-align:right;color:#4CAF50;font-size:0.8rem;font-weight:600;margin-top:0.3rem">✅ Sent!</p>
+    <p style="font-size:0.85rem;color:var(--brown);font-weight:600;margin-top:1rem">03 · One-Tap Select & Send</p>
+    <p style="color:var(--muted);font-size:0.9rem;line-height:1.7">Found the perfect reply? One tap fills and sends it. No copy-paste, no app switching. Recognition → generation → selection → sending — four steps become one.</p>
+  </div>
+</section>
+
+<!-- Feature 04 -->
+<section class="section" style="padding-top:0;padding-bottom:1rem">
+  <div class="fade-up chat-demo">
+    <div style="background:#FFF8F0;border-radius:16px;padding:1.2rem;margin-bottom:1.2rem">
+      <p style="color:#E8607A;font-size:0.8rem;font-weight:600;margin-bottom:0.5rem">❌ Original prompt</p>
+      <div style="background:#FFF;border:2px solid #FFE4CC;border-radius:10px;padding:0.8rem;font-size:0.9rem;color:var(--muted)">write me a plan</div>
+    </div>
+    <div class="cd-ai-bar"><p>🐶 Prompt optimizer at work…</p></div>
+    <div style="background:#F0FFF0;border-radius:16px;padding:1.2rem">
+      <p style="color:#4CAF50;font-size:0.8rem;font-weight:600;margin-bottom:0.5rem">✅ Optimized prompt</p>
+      <div style="background:#FFF;border:2px solid #4CAF50;border-radius:10px;padding:0.8rem;font-size:0.85rem;color:var(--dark);line-height:1.7">You are a senior product manager. Write a project proposal for "Smart Customer Service System" including: 1) Background 2) Architecture 3) Timeline 4) Expected ROI. Markdown, under 2000 words.</div>
+    </div>
+    <p style="font-size:0.85rem;color:var(--brown);font-weight:600;margin-top:1rem">04 · Prompt Optimizer</p>
+    <p style="color:var(--muted);font-size:0.9rem;line-height:1.7">Struggling with ChatGPT or DeepSeek prompts? Langou auto-transforms vague instructions into structured, professional prompts — doubling your AI output quality.</p>
+  </div>
+</section>
+
+<section class="section" style="padding-top:0;padding-bottom:4rem">
+  <h2 class="section-title">🐾 More Features</h2>
+  <div class="cards-wrap">
+    <div class="card fade-up"><div class="card-icon">☁️</div><h3>Cloud Sync</h3><p>Dictionary, preferences, and data sync across all devices.</p></div>
+    <div class="card fade-up"><div class="card-icon">🎨</div><h3>Custom Themes</h3><p>Cute dog-themed design, eye-friendly typing experience.</p></div>
+    <div class="card fade-up"><div class="card-icon">🔤</div><h3>Chinese Input Engine</h3><p>Based on RIME, full/double pinyin, million-word dictionary.</p></div>
+    <div class="card fade-up"><div class="card-icon">🌍</div><h3>Multi-Language</h3><p>Full Chinese and English. AI auto-matches conversation language.</p></div>
+    <div class="card fade-up"><div class="card-icon">🔒</div><h3>Privacy Protection</h3><p>Encrypted transfer, no screenshot storage, memory-only processing.</p></div>
+    <div class="card fade-up"><div class="card-icon">⚡</div><h3>Lightning Fast</h3><p>2-3 second reply generation, 10x faster than manual typing.</p></div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links"><a href="privacy.html">Privacy</a><a href="terms.html">Terms</a></div>
+  <p>© 2026 Langou Input Method. All rights reserved.</p>
+  <p class="tagline">🐶 Langou Input — Free Your Hands</p>
+</footer>
+<script src="../js/particles.js?v=2"></script><script src="../js/main.js?v=2"></script>
+</body></html>

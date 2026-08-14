@@ -20,6 +20,8 @@ local.properties
 **/.cxx/
 **/.next/
 **/node_modules/
+**/.playwright-cli/
+**/output/playwright/
 
 bin/
 obj/

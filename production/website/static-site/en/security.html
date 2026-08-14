@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Security &amp; Privacy - Langou Input Method</title>
+<meta name="description" content="Langou IME Security and Privacy. End-to-end encryption, on-device processing, no data collection, and transparent privacy practices.">
+<link rel="stylesheet" href="../css/style.css?v=2"></head>
+<body class="en"><canvas id="particles-canvas"></canvas>
+<nav class="navbar" id="navbar">
+  <a href="/en/" class="nav-brand">🐶 Langou IME</a>
+  <ul class="nav-links">
+    <li><a href="/en/">Home</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="usecases.html">Use Cases</a></li>
+    <li><a href="download.html">Download</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li></li>
+    <li></li>
+
+    <li><a href="community.html">Community</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <button class="lang-btn">中文</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+<div class="page-header"><h1>🔒 Security &amp; Privacy</h1><p>Your data stays yours. Always.</p></div>
+
+<!-- SVG Security Layer Concentric Circles -->
+<div class="section" style="padding-top:0">
+  <div class="feature-detail fade-up" style="justify-content:center;padding:2rem 0">
+    <svg viewBox="0 0 560 520" style="width:100%;max-width:540px;height:auto" xmlns="http://www.w3.org/2000/svg" aria-label="Langou Security Layer Diagram">
+      <defs>
+        <radialGradient id="coreGlowEn" cx="50%" cy="50%" r="50%"><stop offset="0%" stop-color="#FF8C42" stop-opacity="0.3"/><stop offset="100%" stop-color="#FF8C42" stop-opacity="0"/></radialGradient>
+        <filter id="shieldGlowEn"><feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#FF8C42" flood-opacity="0.5"/></filter>
+      </defs>
+
+      <circle cx="280" cy="260" r="240" fill="none" stroke="#FF8C42" stroke-width="1" stroke-dasharray="4,4" opacity="0.2"/>
+
+      <!-- Outer: Transport Encryption -->
+      <circle cx="280" cy="260" r="220" fill="none" stroke="#FF8C42" stroke-width="2" stroke-dasharray="6,4" opacity="0.6"/>
+      <text x="280" y="44" text-anchor="middle" fill="#FF8C42" font-size="14" font-weight="700">🔐 Transport Encryption</text>
+      <text x="280" y="62" text-anchor="middle" fill="#A08670" font-size="10">HTTPS / TLS 1.3 · E2E Encrypted Sync</text>
+      <text x="280" y="76" text-anchor="middle" fill="#A08670" font-size="10">Perfect Forward Secrecy · MITM Protection</text>
+
+      <!-- Middle: Memory-Only Processing -->
+      <circle cx="280" cy="260" r="155" fill="none" stroke="#FFB5C2" stroke-width="2" stroke-dasharray="5,3" opacity="0.6"/>
+      <text x="105" y="260" text-anchor="middle" fill="#FFB5C2" font-size="13" font-weight="700">💾 Memory-Only</text>
+      <text x="105" y="278" text-anchor="middle" fill="#A08670" font-size="10">Processed in RAM only</text>
+      <text x="105" y="294" text-anchor="middle" fill="#A08670" font-size="10">Released immediately</text>
+      <text x="105" y="310" text-anchor="middle" fill="#A08670" font-size="10">No disk/log writes</text>
+
+      <!-- Inner: Data Minimization -->
+      <circle cx="280" cy="260" r="95" fill="none" stroke="#4CAF50" stroke-width="2" stroke-dasharray="4,3" opacity="0.6"/>
+      <text x="395" y="185" text-anchor="middle" fill="#4CAF50" font-size="12" font-weight="700">📋 Data Minimization</text>
+      <text x="395" y="202" text-anchor="middle" fill="#A08670" font-size="10">Only essential text</text>
+      <text x="395" y="218" text-anchor="middle" fill="#A08670" font-size="10">No GPS/contacts/gallery</text>
+
+      <!-- Core: User Privacy -->
+      <circle cx="280" cy="260" r="45" fill="url(#coreGlowEn)" stroke="#FF8C42" stroke-width="2.5" filter="url(#shieldGlowEn)"/>
+      <text x="280" y="255" text-anchor="middle" fill="#FF8C42" font-size="11" font-weight="700">🛡️</text>
+      <text x="280" y="272" text-anchor="middle" fill="#FF8C42" font-size="10" font-weight="600">Your Privacy</text>
+
+      <text x="280" y="500" text-anchor="middle" fill="#A08670" font-size="10">Multi-Layer Security Architecture</text>
+    </svg>
+  </div>
+</div>
+
+<section class="section" id="main">
+<div class="privacy-content">
+
+<h2>Our Privacy Philosophy</h2>
+<p>An AI-powered keyboard has access to everything you type. We take this responsibility seriously. Langou is built on a simple principle: <strong>your data belongs to you, not us.</strong> We do not sell data, show ads, or monetize your personal information. Langou Input Method is completely free to use, with no hidden costs or data monetization.</p>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🏠</div>
+<div class="fd-content">
+<h3>On-Device Processing First</h3>
+<p>Wherever possible, processing happens on your device — not on our servers:</p>
+<ul>
+<li><strong>OCR (Optical Character Recognition):</strong> PaddleOCR runs entirely on-device. No screenshots leave your phone or computer.</li>
+<li><strong>Emotion &amp; Intent Classification:</strong> Initial NLP analysis runs locally using TensorFlow Lite.</li>
+<li><strong>Voice Recognition:</strong> On-device speech-to-text processing via platform APIs.</li>
+<li><strong>Dictionary &amp; Typing Habits:</strong> Your personal dictionary and learned patterns stay on-device unless you explicitly enable cloud sync.</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🌐</div>
+<div class="fd-content">
+<h3>Cloud AI Communication</h3>
+<p>When AI reply generation requires cloud processing (the 420B parameter model is too large for on-device), here's what happens:</p>
+<ul>
+<li><strong>Minimal data:</strong> Only the context (up to 10 anonymized messages) is sent. No account info, device info, or location is included.</li>
+<li><strong>No storage:</strong> Prompt data is processed and immediately discarded. We do not log or store prompt contents.</li>
+<li><strong>Encryption in transit:</strong> All communication uses TLS 1.3 with perfect forward secrecy.</li>
+<li><strong>No training:</strong> Your prompts and replies are never used for model training. Period.</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🔑</div>
+<div class="fd-content">
+<h3>Account &amp; Sync Security</h3>
+<p>For users who enable cloud sync, we provide enterprise-grade protection:</p>
+<ul>
+<li><strong>End-to-end encryption:</strong> Dictionary, typing habits, and preferences are encrypted with AES-256-GCM on your device before transmission. The server stores only encrypted blobs.</li>
+<li><strong>Zero-knowledge architecture:</strong> We cannot read your synced data — the encryption keys never leave your devices.</li>
+<li><strong>Two-factor authentication:</strong> Optional 2FA via authenticator app or hardware key (WebAuthn).</li>
+<li><strong>Session management:</strong> View and revoke active sessions from your account dashboard at any time.</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">📋</div>
+<div class="fd-content">
+<h3>Accessibility &amp; Permissions</h3>
+<p>We're transparent about the permissions Langou uses and why:</p>
+<ul>
+<li><strong>Accessibility Service (Android):</strong> Used only to read visible chat text when Langou keyboard is active. We never read passwords, credit card fields, or other sensitive inputs (Android's built-in security prevents this).</li>
+<li><strong>Notification Access:</strong> Optional — used to detect incoming messages for proactive AI suggestions.</li>
+<li><strong>Screen Capture:</strong> Only used as OCR fallback when UI Automation fails. Capture is limited to the chat app window.</li>
+<li><strong>Internet:</strong> Required for cloud AI generation and sync. On-device features (Chinese input, offline OCR) work without internet.</li>
+</ul>
+</div>
+</div>
+
+<div class="feature-detail fade-up">
+<div class="fd-icon">🗑️</div>
+<div class="fd-content">
+<h3>Data Deletion &amp; Export</h3>
+<p>You have full control over your data:</p>
+<ul>
+<li><strong>Export:</strong> Settings → Export Data downloads all your data (dictionary, stats, preferences) as JSON or CSV.</li>
+<li><strong>Local data:</strong> Clear all local data from settings at any time.</li>
+<li><strong>Cloud data:</strong> Delete synced data from your account dashboard.</li>
+<li><strong>Account deletion:</strong> Delete your account and all associated data with 30-day grace period for recovery.</li>
+<li><strong>No data retention:</strong> We don't keep logs, analytics, or usage data. Anonymous crash reports can be disabled.</li>
+</ul>
+</div>
+</div>
+
+<p class="cta-text">For full details, see our <a href="privacy.html">Privacy Policy</a> and <a href="terms.html">Terms of Service</a>. Also check our <a href="comparison.html">Comparison</a> page to see how our privacy approach differs from other IMEs.</p>
+
+</div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} Langou Input Method. All rights reserved.</p>
+  {TAGLINE}>Langou Input — Free Your Hands 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body></html>

@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 多风格回复生成 - 懒狗输入法</title>
+<meta name="description" content="懒狗输入法AI多风格回复生成：基于MiMo-V2.5-Pro模型的六种回复风格详解，包含甜蜜、幽默、温暖、专业、简洁、随和风格示例。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 懒狗输入法</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">首页</a></li>
+    <li><a href="features.html" class="active">功能</a></li>
+    <li><a href="usecases.html">场景</a></li>
+    <li><a href="download.html">下载</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li></li>
+
+    <li><a href="community.html">社区</a></li>
+    <li><a href="about.html">关于</a></li>
+  </ul>
+  <button class="lang-btn">English</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+
+<div class="page-header">
+  <h1>🤖 AI 多风格回复生成</h1>
+  <p>基于小米 MiMo 大模型，六种风格随心选</p>
+</div>
+
+<section class="section">
+  <div class="privacy-content">
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">🧠</div>
+      <div class="fd-content">
+        <h3>MiMo-V2.5-Pro 模型介绍</h3>
+        <p>懒狗输入法的 AI 回复引擎基于小米 MiMo-V2.5-Pro 大语言模型。该模型采用混合专家（MoE）架构，拥有 420 亿激活参数，在中文对话理解与生成方面表现出色。相比上一代模型，推理速度提升了 40%，回复质量提升了 25%。模型经过专门的对话微调（SFT）和人类反馈强化学习（RLHF），特别适合聊天场景的回复生成。每次调用会同时生成 3 条不同角度的回复建议，经过质量过滤和去重后展示给用户，确保多样性和实用性。</p>
+      </div>
+    </div>
+
+    <!-- 6种风格 -->
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:2rem">
+
+      <div class="card fade-up" style="text-align:left;padding:1.5rem">
+        <div class="card-icon" style="font-size:2rem">💕</div>
+        <h3 style="font-size:1.1rem">甜蜜 · 甜蜜风格</h3>
+        <p style="font-size:0.85rem">恋人之间使用，温暖贴心，恰到好处的亲昵</p>
+        <div style="background:var(--bg2);border-radius:12px;padding:1rem;margin-top:1rem;font-size:0.8rem;color:var(--gray)">
+          <div style="color:var(--gray2);margin-bottom:0.5rem">📝 对方说："今天天气好冷"</div>
+          <div style="background:rgba(255,0,127,0.1);border-radius:8px;padding:0.5rem;margin-bottom:0.3rem">"抱抱宝贝，让我给你暖暖～🥰"</div>
+          <div style="background:rgba(255,0,127,0.1);border-radius:8px;padding:0.5rem;margin-bottom:0.3rem">"那我来当你的暖宝宝呀💕"</div>
+          <div style="background:rgba(255,0,127,0.1);border-radius:8px;padding:0.5rem">"那我给你点杯热奶茶暖暖手😘"</div>
+        </div>
+        <a href="styles-sweet.html" style="display:inline-block;margin-top:0.8rem;color:var(--magenta);font-size:0.8rem">查看完整风格详解 →</a>
+      </div>
+
+      <div class="card fade-up" style="text-align:left;padding:1.5rem">
+        <div class="card-icon" style="font-size:2rem">😂</div>
+        <h3 style="font-size:1.1rem">幽默 · 幽默风格</h3>
+        <p style="font-size:0.85rem">风趣俏皮，用幽默化解尴尬或增加趣味性</p>
+        <div style="background:var(--bg2);border-radius:12px;padding:1rem;margin-top:1rem;font-size:0.8rem;color:var(--gray)">
+          <div style="color:var(--gray2);margin-bottom:0.5rem">📝 对方说："我今天迟到了被领导抓了"</div>
+          <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem;margin-bottom:0.3rem">"领导：你小子挺会挑时间来啊😏"</div>
+          <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem;margin-bottom:0.3rem">"下次带上我，我帮你打掩护🤣"</div>
+          <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem">"迟到是给领导一个表现威严的机会，你太贴心了😎"</div>
+        </div>
+        <a href="styles-humor.html" style="display:inline-block;margin-top:0.8rem;color:var(--orange);font-size:0.8rem">查看完整风格详解 →</a>
+      </div>
+
+      <div class="card fade-up" style="text-align:left;padding:1.5rem">
+        <div class="card-icon" style="font-size:2rem">🤗</div>
+        <h3 style="font-size:1.1rem">温暖 · 温暖风格</h3>
+        <p style="font-size:0.85rem">共情理解，让对方感到被关心和接纳</p>
+        <div style="background:var(--bg2);border-radius:12px;padding:1rem;margin-top:1rem;font-size:0.8rem;color:var(--gray)">
+          <div style="color:var(--gray2);margin-bottom:0.5rem">📝 对方说："最近工作压力好大"</div>
+          <div style="background:rgba(0,255,136,0.1);border-radius:8px;padding:0.5rem;margin-bottom:0.3rem">"辛苦了我的宝，有什么我能帮你的吗？"</div>
+          <div style="background:rgba(0,255,136,0.1);border-radius:8px;padding:0.5rem;margin-bottom:0.3rem">"压力大的时候记得还有我在呢，一起想办法💪"</div>
+          <div style="background:rgba(0,255,136,0.1);border-radius:8px;padding:0.5rem">"我听你说完，有什么想吐槽的尽管跟我说～"</div>
+        </div>
+        <a href="styles-warm.html" style="display:inline-block;margin-top:0.8rem;color:var(--green);font-size:0.8rem">查看完整风格详解 →</a>
+      </div>
+
+      <div class="card fade-up" style="text-align:left;padding:1.5rem">
+        <div class="card-icon" style="font-size:2rem">💼</div>
+        <h3 style="font-size:1.1rem">专业 · 专业风格</h3>
+        <p style="font-size:0.85rem">正式得体，适合工作场景和商务沟通</p>
+        <div style="background:var(--bg2);border-radius:12px;padding:1rem;margin-top:1rem;font-size:0.8rem;color:var(--gray)">
+          <div style="color:var(--gray2);margin-bottom:0.5rem">📝 对方说："方案什么时候能改完？"</div>
+          <div style="background:#FFE4CC;border-radius:8px;padding:0.5rem;margin-bottom:0.3rem">"正在根据您的反馈进行修改，预计今天下班前完成。"</div>
+          <div style="background:#FFE4CC;border-radius:8px;padding:0.5rem;margin-bottom:0.3rem">"收到，我正在处理第3部分的数据更新，完成后立即同步给您。"</div>
+          <div style="background:#FFE4CC;border-radius:8px;padding:0.5rem">"已排入今日工作计划，预计16:00前提交修订版。"</div>
+        </div>
+        <a href="styles-pro.html" style="display:inline-block;margin-top:0.8rem;color:var(--cyan);font-size:0.8rem">查看完整风格详解 →</a>
+      </div>
+
+      <div class="card fade-up" style="text-align:left;padding:1.5rem">
+        <div class="card-icon" style="font-size:2rem">✂️</div>
+        <h3 style="font-size:1.1rem">简洁 · 简洁风格</h3>
+        <p style="font-size:0.85rem">言简意赅，效率优先，适合快速回复</p>
+        <div style="background:var(--bg2);border-radius:12px;padding:1rem;margin-top:1rem;font-size:0.8rem;color:var(--gray)">
+          <div style="color:var(--gray2);margin-bottom:0.5rem">📝 对方说："今晚聚餐去吗？几点？"</div>
+          <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:0.5rem;margin-bottom:0.3rem">"去，几点？"</div>
+          <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:0.5rem;margin-bottom:0.3rem">"7点可以。"</div>
+          <div style="background:rgba(255,255,255,0.05);border-radius:8px;padding:0.5rem">"好，老地方见。"</div>
+        </div>
+        <a href="styles-concise.html" style="display:inline-block;margin-top:0.8rem;color:var(--gray);font-size:0.8rem">查看完整风格详解 →</a>
+      </div>
+
+      <div class="card fade-up" style="text-align:left;padding:1.5rem">
+        <div class="card-icon" style="font-size:2rem">😊</div>
+        <h3 style="font-size:1.1rem">随和 · 随和风格</h3>
+        <p style="font-size:0.85rem">自然随意，像普通朋友聊天一样轻松</p>
+        <div style="background:var(--bg2);border-radius:12px;padding:1rem;margin-top:1rem;font-size:0.8rem;color:var(--gray)">
+          <div style="color:var(--gray2);margin-bottom:0.5rem">📝 对方说："周末有什么安排？"</div>
+          <div style="background:rgba(0,210,255,0.05);border-radius:8px;padding:0.5rem;margin-bottom:0.3rem">"还没想好呢，你有啥好主意不？"</div>
+          <div style="background:rgba(0,210,255,0.05);border-radius:8px;padding:0.5rem;margin-bottom:0.3rem">"打算宅家打游戏哈哈，你呢？"</div>
+          <div style="background:rgba(0,210,255,0.05);border-radius:8px;padding:0.5rem">"看天气吧，不下雨的话出去溜达溜达"</div>
+        </div>
+        <a href="styles-casual.html" style="display:inline-block;margin-top:0.8rem;color:var(--gray);font-size:0.8rem">查看完整风格详解 →</a>
+      </div>
+
+    </div>
+
+    <div class="feature-detail fade-up" style="border-top:1px solid rgba(0,210,255,0.06);margin-top:2rem;padding-top:2rem">
+      <div class="fd-icon">🎯</div>
+      <div class="fd-content">
+        <h3>质量控制机制</h3>
+        <p>每条 AI 生成的回复建议都经过多层次的质量检查：</p>
+        <ul>
+          <li><strong>去重过滤：</strong>同类回复自动去重，确保展示的三条建议角度不同、句式不同。</li>
+          <li><strong>长度控制：</strong>单条回复建议长度保持在 15-80 字之间，避免过短（敷衍感）或过长（阅读负担）。</li>
+          <li><strong>安全性检查：</strong>过滤不适当、冒犯性、政治敏感或违反法律法规的内容。</li>
+          <li><strong>相关性评分：</strong>每条建议与对话上下文的相关性评分低于 60% 的直接过滤。</li>
+          <li><strong>风格一致性：</strong>确保生成内容与所选风格一致——专业风格里不会出现 emoji，甜蜜风格里不会过于冷淡。</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section" style="text-align:center;padding-top:1rem">
+  <p style="color:var(--gray);margin-bottom:1.5rem">查看更多功能详解：</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+    <a href="features-context.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">智能上下文感知 →</a>
+    <a href="features-onetap.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">一键选用发送 →</a>
+    <a href="features-prompt.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">提示词优化器 →</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">隐私政策</a>
+    <a href="terms.html">使用条款</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} 懒狗输入法 懒狗输入法. All rights reserved.</p>
+  {TAGLINE}>懒狗输入法，解放你的双手 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body>
+</html>

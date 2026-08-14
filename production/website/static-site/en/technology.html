@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Technology - Langou IME</title>
+<meta name="description" content="懒狗输入法Technology详解：MiMo大模型、RIME引擎、无障碍服务、端到端加密。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+<style>
+/* 技术页面专用样式 */
+.tech-hero{padding:5rem 1.5rem 3rem;text-align:center;position:relative}
+.tech-hero h1{font-size:clamp(2.5rem,4vw,4rem);font-weight:900;background:linear-gradient(135deg,#FF8C42,#FFB5C2);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:0.5rem}
+.tech-hero p{color:#B0B0C8;font-size:1.15rem;max-width:600px;margin:0 auto}
+
+.arch-container{max-width:900px;margin:0 auto;padding:0 1.5rem}
+.arch-box{background:rgba(0,210,255,0.05);border:2px solid #FFB347;border-radius:16px;padding:1.8rem 2rem;margin-bottom:0;position:relative;transition:all 0.3s ease}
+.arch-box:hover{border-color:#FF8C42;box-shadow:0 0 30px #FFE4CC;transform:translateY(-3px)}
+.arch-box.magenta{border-color:rgba(255,0,127,0.3);background:rgba(255,0,127,0.05)}
+.arch-box.magenta:hover{border-color:#FFB5C2;box-shadow:0 0 30px rgba(255,181,194,0.2)}
+.arch-box.green{border-color:rgba(0,255,136,0.3);background:rgba(0,255,136,0.05)}
+.arch-box.green:hover{border-color:#4CAF50;box-shadow:0 0 30px rgba(76,175,80,0.15)}
+.arch-box.orange{border-color:rgba(255,136,0,0.3);background:rgba(255,136,0,0.05)}
+.arch-box.orange:hover{border-color:#FFB347;box-shadow:0 0 30px rgba(255,136,0,0.15)}
+.arch-icon{font-size:2.5rem;margin-bottom:0.5rem}
+.arch-title{font-size:1.3rem;font-weight:700;margin-bottom:0.3rem}
+.arch-title.cyan{color:#FF8C42}.arch-title.magenta{color:#FFB5C2}.arch-title.green{color:#4CAF50}.arch-title.orange{color:#FFB347}
+.arch-desc{color:#B0B0C8;font-size:0.95rem;line-height:1.7}
+.arch-tags{display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:0.8rem}
+.arch-tag{padding:4px 12px;border-radius:20px;font-size:0.75rem;font-weight:600;background:#FFE4CC;color:#FF8C42;border:1px solid #FFE4CC}
+.arch-tag.magenta{background:rgba(255,0,127,0.1);color:#FFB5C2;border-color:rgba(255,181,194,0.25)}
+.arch-tag.green{background:rgba(0,255,136,0.1);color:#4CAF50;border-color:rgba(0,255,136,0.2)}
+
+.arrow-connector{display:flex;justify-content:center;padding:0.6rem 0}
+.arrow-connector svg{width:40px;height:40px}
+
+.metric-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin:2rem auto;max-width:900px}
+.metric-card{background:rgba(0,210,255,0.04);border:1px solid #FFE4CC;border-radius:16px;padding:1.5rem;text-align:center;transition:all 0.3s ease}
+.metric-card:hover{border-color:#FF8C42;transform:translateY(-4px);box-shadow:0 0 20px #FFE4CC}
+.metric-num{font-size:2.5rem;font-weight:900;margin-bottom:0.2rem}
+.metric-num.cyan{color:#FF8C42}.metric-num.magenta{color:#FFB5C2}.metric-num.green{color:#4CAF50}
+.metric-label{color:#B0B0C8;font-size:0.85rem}
+
+.flow-section{max-width:1000px;margin:3rem auto;padding:0 1.5rem}
+.flow-title{font-size:1.6rem;font-weight:700;text-align:center;margin-bottom:2rem;color:#FF8C42}
+.flow-steps{display:flex;align-items:center;justify-content:center;gap:0;flex-wrap:wrap}
+.flow-step{background:rgba(0,210,255,0.06);border:2px solid rgba(0,210,255,0.25);border-radius:14px;padding:1.2rem 1.5rem;text-align:center;min-width:160px;max-width:200px;transition:all 0.3s ease}
+.flow-step:hover{border-color:#FF8C42;box-shadow:0 0 20px #FFE4CC;transform:translateY(-3px)}
+.flow-step .fs-icon{font-size:2rem;margin-bottom:0.4rem}
+.flow-step .fs-text{color:#FF8C42;font-size:0.9rem;font-weight:600}
+.flow-step .fs-desc{color:#A08670;font-size:0.75rem;margin-top:0.3rem}
+.flow-arrow{color:#FF8C42;font-size:1.5rem;padding:0 0.5rem;flex-shrink:0}
+
+@media(max-width:768px){.metric-grid{grid-template-columns:repeat(2,1fr)}.flow-steps{flex-direction:column}.flow-arrow{transform:rotate(90deg)}}
+</style>
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 Langou IME</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">Home</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="usecases.html">Use Cases</a></li>
+    <li><a href="download.html">Download</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li></li>
+    <li></li>
+
+    <li><a href="community.html">Community</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <button class="lang-btn">中文</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+
+<!-- Hero -->
+<div class="tech-hero page-header" style="padding-bottom:2rem">
+  <h1>Technology</h1>
+  <p>On-device capture + cloud intelligence, four-layer architecture</p>
+</div>
+
+<!-- 核心流程图 -->
+<div class="flow-section fade-up">
+  <div class="flow-title">💬 AI回复生成流程</div>
+  <div class="flow-steps">
+    <div class="flow-step"><div class="fs-icon">📱</div><div class="fs-text">屏幕采集</div><div class="fs-desc">读取聊天文本</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="fs-icon">🧠</div><div class="fs-text">上下文分析</div><div class="fs-desc">情绪+意图识别</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="fs-icon">🤖</div><div class="fs-text">AI生成</div><div class="fs-desc">MiMo大模型</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="fs-icon">💬</div><div class="fs-text">多风格建议</div><div class="fs-desc">6种风格可选</div></div>
+    <div class="flow-arrow">→</div>
+    <div class="flow-step"><div class="fs-icon">✅</div><div class="fs-text">一键发送</div><div class="fs-desc">3秒完成</div></div>
+  </div>
+</div>
+
+<!-- 四层架构图 -->
+<section class="section" style="padding-top:1rem">
+  <h2 class="section-title">🏗️ 四层架构</h2>
+  <p class="section-subtitle">每一层都有明确的职责和安全边界</p>
+  <div class="arch-container">
+    <div class="arch-box fade-up">
+      <div class="arch-icon">📱</div>
+      <div class="arch-title cyan">第一层 · 用户设备</div>
+      <div class="arch-desc">Android（Trime客户端 + 无障碍服务）、Windows（UI Automation + 悬浮窗）、iOS/macOS（开发中）。负责屏幕文本采集、输入法引擎、用户交互界面。</div>
+      <div class="arch-tags"><span class="arch-tag">Android 8.0+</span><span class="arch-tag">Windows 10+</span><span class="arch-tag">iOS (2027)</span></div>
+    </div>
+    <div class="arrow-connector"><svg viewBox="0 0 40 40"><path d="M20 5 L20 30 M12 22 L20 30 L28 22" stroke="#FF8C42" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+    <div class="arch-box magenta fade-up">
+      <div class="arch-icon">👁️</div>
+      <div class="arch-title magenta">第二层 · 上下文感知引擎</div>
+      <div class="arch-desc">通过无障碍服务（Android）或UI Automation（Windows）读取屏幕上的聊天文本。备用通道：截图 + PaddleOCR本地识别。智能过滤广告和系统通知，只保留有效对话。</div>
+      <div class="arch-tags"><span class="arch-tag magenta">最多10条消息</span><span class="arch-tag magenta">内存级处理</span><span class="arch-tag magenta">不写入磁盘</span></div>
+    </div>
+    <div class="arrow-connector"><svg viewBox="0 0 40 40"><path d="M20 5 L20 30 M12 22 L20 30 L28 22" stroke="#FFB5C2" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+    <div class="arch-box green fade-up">
+      <div class="arch-icon">🧠</div>
+      <div class="arch-title green">第三层 · AI推理层</div>
+      <div class="arch-desc">小米MiMo-V2.5-Pro大语言模型，420亿激活参数MoE架构。支持32K上下文窗口，2-3秒端到端延迟。针对聊天Use Cases深度优化的提示工程，生成6种风格的自然回复。</div>
+      <div class="arch-tags"><span class="arch-tag green">420亿参数</span><span class="arch-tag green">32K上下文</span><span class="arch-tag green">2-3秒延迟</span></div>
+    </div>
+    <div class="arrow-connector"><svg viewBox="0 0 40 40"><path d="M20 5 L20 30 M12 22 L20 30 L28 22" stroke="#4CAF50" stroke-width="2" fill="none" stroke-linecap="round"/></svg></div>
+    <div class="arch-box orange fade-up">
+      <div class="arch-icon">🔐</div>
+      <div class="arch-title orange">第四层 · 安全传输层</div>
+      <div class="arch-desc">HTTPS/TLS 1.3端到端加密传输。对话文本仅在服务器内存中处理，完成后立即释放。不存储原始截图，不采集GPS、通讯录等无关数据。严格遵守PIPL和GDPR。</div>
+      <div class="arch-tags"><span class="arch-tag" style="background:rgba(255,136,0,0.1);color:#FFB347;border-color:rgba(255,136,0,0.2)">TLS 1.3</span><span class="arch-tag" style="background:rgba(255,136,0,0.1);color:#FFB347;border-color:rgba(255,136,0,0.2)">零存储</span><span class="arch-tag" style="background:rgba(255,136,0,0.1);color:#FFB347;border-color:rgba(255,136,0,0.2)">PIPL/GDPR</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- 核心指标 -->
+<section class="section" style="padding-top:1rem">
+  <h2 class="section-title">📊 核心指标</h2>
+  <p class="section-subtitle">用数据说话</p>
+  <div class="metric-grid">
+    <div class="metric-card fade-up"><div class="metric-num cyan">2-3s</div><div class="metric-label">AI回复生成延迟</div></div>
+    <div class="metric-card fade-up"><div class="metric-num magenta">70%+</div><div class="metric-label">用户采纳率</div></div>
+    <div class="metric-card fade-up"><div class="metric-num green">&lt;3%</div><div class="metric-label">额外电量消耗</div></div>
+    <div class="metric-card fade-up"><div class="metric-num cyan">45MB</div><div class="metric-label">安装包体积</div></div>
+    <div class="metric-card fade-up"><div class="metric-num magenta">20+</div><div class="metric-label">支持聊天应用</div></div>
+    <div class="metric-card fade-up"><div class="metric-num green">420亿</div><div class="metric-label">AI模型参数</div></div>
+  </div>
+</section>
+
+<!-- 技术详情 -->
+<section class="section">
+  <h2 class="section-title">🔬 技术详情</h2>
+  <div style="max-width:900px;margin:0 auto">
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">🧠</div>
+      <div class="fd-content"><h3>MiMo大语言模型</h3><p>小米MiMo-V2.5-Pro，420亿激活参数MoE架构。中文对话理解极为出色，支持32K上下文窗口。针对聊天回复Use Cases进行了深度提示词优化，生成内容自然流畅。</p></div>
+    </div>
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">👁️</div>
+      <div class="fd-content"><h3>上下文感知引擎</h3><p>主通道：Android无障碍服务 / Windows UI Automation，直接读取屏幕聊天文本。备用通道：截图 + PaddleOCR本地识别（不联网）。智能过滤非聊天内容，分析情绪和意图。</p></div>
+    </div>
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">⌨️</div>
+      <div class="fd-content"><h3>RIME输入引擎</h3><p>基于中州韻开源引擎，支持全拼、双拼、简拼、模糊音。百万级中文词库，智能候选排序。用户自造词自动学习并云端同步。</p></div>
+    </div>
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">☁️</div>
+      <div class="fd-content"><h3>云端同步架构</h3><p>增量同步，仅传输变更数据。用户数据加密存储，密钥由密码派生。支持一键导出全部个人数据（JSON格式）。</p></div>
+    </div>
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">📖</div>
+      <div class="fd-content"><h3>开源组件</h3><p>Android客户端基于Trime（GPL-3.0）。RIME引擎（BSD-3-Clause）。PaddleOCR（Apache-2.0）。后端服务当前闭源，未来计划部分开源。</p></div>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+
+
+  </div>
+  {COPYRIGHT_LINE} Langou Input Method. All rights reserved.</p>
+  {TAGLINE}>Langou Input — Free Your Hands 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body>
+</html>

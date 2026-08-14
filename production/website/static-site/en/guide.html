@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>User Guide - Langou Input Method</title>
+<link rel="stylesheet" href="../css/style.css?v=2">
+<style>
+  .step-box{background:var(--glass);border:1px solid #FFE4CC;border-radius:16px;padding:2rem;margin-bottom:2rem;backdrop-filter:blur(20px);position:relative}
+  .step-box::before{content:attr(data-step);position:absolute;top:-16px;left:24px;background:var(--cyan);color:var(--bg);font-size:0.75rem;font-weight:800;padding:4px 14px;border-radius:20px;letter-spacing:1px}
+  .step-box h3{color:var(--cyan);font-size:1.2rem;margin-bottom:0.8rem;padding-top:0.5rem}
+  .step-box p{color:var(--gray);line-height:1.9;font-size:0.95rem}
+  .step-box ul{margin-top:0.8rem;padding-left:1.2rem}
+  .step-box ul li{color:var(--gray);font-size:0.9rem;margin-bottom:0.4rem;position:relative;padding-left:0.5rem}
+  .step-box ul li::before{content:'▸';color:var(--cyan);position:absolute;left:-0.7rem}
+  .tip-box{background:rgba(0,210,255,0.05);border:1px solid #FFE4CC;border-radius:12px;padding:1.2rem 1.5rem;margin:1.5rem 0}
+  .tip-box::before{content:'💡 Tip';display:block;color:var(--cyan);font-weight:700;font-size:0.85rem;margin-bottom:0.5rem}
+  .tip-box p{color:var(--gray);font-size:0.9rem;line-height:1.7}
+</style>
+</head>
+<body class="en">
+<canvas id="particles-canvas"></canvas>
+<nav class="navbar" id="navbar">
+  <a href="/en/" class="nav-brand">🐶 Langou IME</a>
+  <ul class="nav-links">
+    <li><a href="/en/">Home</a></li>
+    <li><a href="features.html">Features</a></li>
+    <li><a href="usecases.html">Use Cases</a></li>
+    <li><a href="download.html">Download</a></li>
+    <li><a href="faq.html">FAQ</a></li>
+    <li></li>
+    <li></li>
+
+    <li><a href="community.html">Community</a></li>
+    <li><a href="about.html">About</a></li>
+  </ul>
+  <button class="lang-btn">中文</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+
+<div class="page-header"><h1>User Guide</h1><p>From installation to mastery — get started in 5 minutes</p></div>
+
+<section class="section">
+  <h2 class="section-title" style="text-align:left">📱 Android Installation</h2>
+
+  <!-- SVG Step Flow Diagram -->
+  <div class="feature-detail fade-up" style="justify-content:center;padding:1.5rem 0;margin-bottom:1.5rem">
+    <svg viewBox="0 0 880 200" style="width:100%;max-width:860px;height:auto" xmlns="http://www.w3.org/2000/svg" aria-label="Android Installation Steps">
+      <defs>
+        <linearGradient id="stepGrad1en" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFE4CC"/><stop offset="100%" stop-color="rgba(0,210,255,0.05)"/></linearGradient>
+        <linearGradient id="stepGrad2en" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="rgba(255,181,194,0.25)"/><stop offset="100%" stop-color="rgba(255,0,127,0.05)"/></linearGradient>
+        <linearGradient id="stepGrad3en" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="rgba(0,255,136,0.2)"/><stop offset="100%" stop-color="rgba(0,255,136,0.05)"/></linearGradient>
+        <linearGradient id="stepGrad4en" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="rgba(255,136,0,0.2)"/><stop offset="100%" stop-color="rgba(255,136,0,0.05)"/></linearGradient>
+        <linearGradient id="stepGrad5en" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#FFE4CC"/><stop offset="100%" stop-color="rgba(0,210,255,0.05)"/></linearGradient>
+        <filter id="stepGlowEn"><feDropShadow dx="0" dy="0" stdDeviation="3" flood-color="#FF8C42" flood-opacity="0.3"/></filter>
+        <marker id="stepArrowEn" markerWidth="10" markerHeight="8" refX="10" refY="4" orient="auto"><path d="M0,0 L10,4 L0,8" fill="none" stroke="rgba(0,210,255,0.5)" stroke-width="1.5"/></marker>
+      </defs>
+
+      <text x="440" y="28" text-anchor="middle" fill="#FF8C42" font-size="14" font-weight="700" filter="url(#stepGlowEn)">📱 Android Installation Steps</text>
+
+      <!-- Step 1: Download APK -->
+      <rect x="20" y="45" width="140" height="120" rx="12" fill="url(#stepGrad1en)" stroke="#FF8C42" stroke-width="1.2"/>
+      <circle cx="90" cy="72" r="14" fill="#FF8C42" opacity="0.9"/>
+      <text x="90" y="77" text-anchor="middle" fill="#0D0D1A" font-size="12" font-weight="800">1</text>
+      <text x="90" y="102" text-anchor="middle" fill="#FF8C42" font-size="24">📥</text>
+      <text x="90" y="130" text-anchor="middle" fill="#FF8C42" font-size="11" font-weight="600">Download APK</text>
+      <text x="90" y="146" text-anchor="middle" fill="#A08670" font-size="9">~45MB</text>
+
+      <line x1="160" y1="105" x2="187" y2="105" stroke="rgba(0,210,255,0.5)" stroke-width="1.5" marker-end="url(#stepArrowEn)"/>
+
+      <!-- Step 2: Allow Installation -->
+      <rect x="192" y="45" width="140" height="120" rx="12" fill="url(#stepGrad2en)" stroke="#FFB5C2" stroke-width="1.2"/>
+      <circle cx="262" cy="72" r="14" fill="#FFB5C2" opacity="0.9"/>
+      <text x="262" y="77" text-anchor="middle" fill="#0D0D1A" font-size="12" font-weight="800">2</text>
+      <text x="262" y="102" text-anchor="middle" fill="#FFB5C2" font-size="24">🔓</text>
+      <text x="262" y="130" text-anchor="middle" fill="#FFB5C2" font-size="11" font-weight="600">Allow Install</text>
+      <text x="262" y="146" text-anchor="middle" fill="#A08670" font-size="9">Unknown sources</text>
+
+      <line x1="332" y1="105" x2="359" y2="105" stroke="rgba(0,210,255,0.5)" stroke-width="1.5" marker-end="url(#stepArrowEn)"/>
+
+      <!-- Step 3: Enable IME -->
+      <rect x="364" y="45" width="140" height="120" rx="12" fill="url(#stepGrad3en)" stroke="#4CAF50" stroke-width="1.2"/>
+      <circle cx="434" cy="72" r="14" fill="#4CAF50" opacity="0.9"/>
+      <text x="434" y="77" text-anchor="middle" fill="#0D0D1A" font-size="12" font-weight="800">3</text>
+      <text x="434" y="102" text-anchor="middle" fill="#4CAF50" font-size="24">⌨️</text>
+      <text x="434" y="130" text-anchor="middle" fill="#4CAF50" font-size="11" font-weight="600">Enable IME</text>
+      <text x="434" y="146" text-anchor="middle" fill="#A08670" font-size="9">System settings</text>
+
+      <line x1="504" y1="105" x2="531" y2="105" stroke="rgba(0,210,255,0.5)" stroke-width="1.5" marker-end="url(#stepArrowEn)"/>
+
+      <!-- Step 4: Switch IME -->
+      <rect x="536" y="45" width="140" height="120" rx="12" fill="url(#stepGrad4en)" stroke="#FFB347" stroke-width="1.2"/>
+      <circle cx="606" cy="72" r="14" fill="#FFB347" opacity="0.9"/>
+      <text x="606" y="77" text-anchor="middle" fill="#0D0D1A" font-size="12" font-weight="800">4</text>
+      <text x="606" y="102" text-anchor="middle" fill="#FFB347" font-size="24">🔄</text>
+      <text x="606" y="130" text-anchor="middle" fill="#FFB347" font-size="11" font-weight="600">Switch IME</text>
+      <text x="606" y="146" text-anchor="middle" fill="#A08670" font-size="9">Default/manual</text>
+
+      <line x1="676" y1="105" x2="703" y2="105" stroke="rgba(0,210,255,0.5)" stroke-width="1.5" marker-end="url(#stepArrowEn)"/>
+
+      <!-- Step 5: Accessibility -->
+      <rect x="708" y="45" width="140" height="120" rx="12" fill="url(#stepGrad5en)" stroke="#FF8C42" stroke-width="1.2"/>
+      <circle cx="778" cy="72" r="14" fill="#FF8C42" opacity="0.9"/>
+      <text x="778" y="77" text-anchor="middle" fill="#0D0D1A" font-size="12" font-weight="800">5</text>
+      <text x="778" y="102" text-anchor="middle" fill="#FF8C42" font-size="24">♿</text>
+      <text x="778" y="130" text-anchor="middle" fill="#FF8C42" font-size="11" font-weight="600">Accessibility</text>
+      <text x="778" y="146" text-anchor="middle" fill="#A08670" font-size="9">Recommended</text>
+
+    </svg>
+  </div>
+
+  <div class="step-box fade-up" data-step="Step 1"><h3>Download APK</h3><p>Download the latest APK (~45MB). Wi-Fi recommended.</p><a href="download.html" class="btn btn-primary" style="display:inline-flex;margin-top:1rem;padding:0.6rem 1.5rem;font-size:0.9rem">📥 Go to Download</a></div>
+  <div class="step-box fade-up" data-step="Step 2"><h3>Allow Unknown Sources</h3><ul><li>Open Settings → Security → Install unknown apps</li><li>Select your browser or file manager, enable permission</li></ul><div class="tip-box"><p>Path varies by brand. Samsung: Settings→Apps→Special access. Google Pixel: Settings→Apps→Special app access.</p></div></div>
+  <div class="step-box fade-up" data-step="Step 3"><h3>Install & Enable</h3><ul><li>Tap the APK to install</li><li>Go to Settings → System → Languages & input → Virtual keyboard</li><li>Tap "Manage keyboards" → Enable "Langou IME"</li></ul></div>
+  <div class="step-box fade-up" data-step="Step 4"><h3>Enable Accessibility (Recommended)</h3><ul><li>Open Langou settings (tap the globe icon or notification bar icon)</li><li>Tap "Enable Accessibility Service"</li><li>Find "Langou IME" in accessibility settings and enable it</li></ul><div class="tip-box"><p>Accessibility is a standard Android feature. Langou only uses it to read visible chat text — nothing else. You can disable it anytime.</p></div></div>
+</section>
+
+<section class="section">
+  <h2 class="section-title" style="text-align:left">🖥️ Windows Installation</h2>
+  <div class="step-box fade-up" data-step="Step 1"><h3>Check Requirements</h3><ul><li>Windows 10 21H2+ or Windows 11</li><li>x64 processor, 4GB+ RAM</li><li>.NET 8 Desktop Runtime (auto-prompted during install)</li></ul></div>
+  <div class="step-box fade-up" data-step="Step 2"><h3>Download & Install</h3><p>Download MSI, double-click to run. Admin rights may be required.</p><a href="download.html" class="btn btn-primary" style="display:inline-flex;margin-top:1rem;padding:0.6rem 1.5rem;font-size:0.9rem">📥 Go to Download</a></div>
+  <div class="step-box fade-up" data-step="Step 3"><h3>Add Keyboard</h3><ul><li>Settings → Time & Language → Language & Region</li><li>Click "..." on Chinese (Simplified) → Language options</li><li>Under Keyboards, click "Add a keyboard" → Select "Langou IME"</li></ul></div>
+  <div class="step-box fade-up" data-step="Step 4"><h3>Configure & Use</h3><ul><li>Right-click the Langou icon in system tray for settings</li><li>Sign in with your Langou account (syncs with Android)</li><li>Press Win+Space to switch to Langou</li><li>AI suggestions appear automatically in any chat window</li></ul></div>
+</section>
+
+<section class="section">
+  <h2 class="section-title" style="text-align:left">🎯 Pro Tips</h2>
+  <div class="step-box fade-up" data-step="Tip 1"><h3>Choose the Right Style</h3><ul><li><strong>Sweet:</strong> Romantic chats, close friends</li><li><strong>Humorous:</strong> Group chats, casual social</li><li><strong>Warm:</strong> Comforting friends, family care</li><li><strong>Professional:</strong> Work, business emails</li><li><strong>Concise:</strong> Quick replies, gaming</li><li><strong>Casual:</strong> Everyday small talk</li></ul></div>
+  <div class="step-box fade-up" data-step="Tip 2"><h3>Use the Prompt Optimizer</h3><p>When chatting with AI tools, Langou transforms vague prompts into structured ones with role definitions, output formats, and constraints.</p></div>
+  <div class="step-box fade-up" data-step="Tip 3"><h3>Unlimited AI Suggestions</h3><ul><li>All features are completely free with no daily limits</li><li>Basic typing (pinyin/handwriting/voice) is always unlimited</li><li>Enjoy worry-free AI-powered typing anytime</li></ul></div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} Langou Input Method. All rights reserved.</p>
+  {TAGLINE}>Langou Input — Free Your Hands 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body></html>

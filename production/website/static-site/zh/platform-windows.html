@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Windows版详解 - 懒狗输入法</title>
+<meta name="description" content="懒狗输入法Windows版安装教程、UI Automation配置、快捷键、兼容性说明。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 懒狗输入法</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">首页</a></li>
+    <li><a href="features.html">功能</a></li>
+    <li><a href="usecases.html">场景</a></li>
+    <li><a href="download.html">下载</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li></li>
+
+    <li><a href="community.html">社区</a></li>
+    <li><a href="about.html">关于</a></li>
+  </ul>
+  <button class="lang-btn">English</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+<div class="page-header"><h1>🖥️ Windows 版详解</h1><p>桌面端也享受 AI 智能输入</p></div>
+<section class="section"><div class="privacy-content">
+<div class="feature-detail fade-up"><div class="fd-icon">📥</div><div class="fd-content"><h3>安装教程</h3>
+<ol style="color:var(--gray);padding-left:1.2rem;counter-reset:step">
+<li style="margin-bottom:0.5rem;font-size:0.9rem"><strong>下载安装包：</strong>访问官网下载页面，下载 MSI 安装包。</li>
+<li style="margin-bottom:0.5rem;font-size:0.9rem"><strong>运行安装：</strong>双击 MSI 文件，按照安装向导的提示完成安装。建议选择「为所有用户安装」。</li>
+<li style="margin-bottom:0.5rem;font-size:0.9rem"><strong>切换输入法：</strong>在任务栏右下角的输入法图标处，或通过快捷键 <kbd>Win + 空格</kbd>，选择「懒狗输入法」。</li>
+<li style="margin-bottom:0.5rem;font-size:0.9rem"><strong>启用 AI 功能：</strong>右键点击懒狗输入法状态栏图标，选择「设置」>「AI 回复」，开启 AI 上下文感知功能。</li>
+<li style="margin-bottom:0.5rem;font-size:0.9rem"><strong>登录账户：</strong>如需使用云端同步和 AI 数据管理，点击「登录」按钮注册或登录懒狗账户。</li>
+</ol>
+</div></div>
+
+<div class="feature-detail fade-up"><div class="fd-icon">🔧</div><div class="fd-content"><h3>UI Automation 原理</h3>
+<p>Windows 版使用 Microsoft UI Automation（UIA）框架来读取聊天窗口的内容。UIA 是 Windows 系统内置的辅助技术框架，与 Android 无障碍服务的原理类似。懒狗输入法通过 UIA 获取当前活动窗口的 UI 树，从中提取聊天文本内容。该过程在本地完成，不截图、不上传图像，仅提取文本数据。提取效率极高，CPU 占用几乎为零。</p>
+<p>UIA 支持的应用包括：微信桌面版、QQ 桌面版、钉钉、飞书、Slack 桌面版、Discord、Telegram 桌面版、Outlook、以及所有基于 Chromium 的浏览器中的网页聊天界面。</p></div></div>
+
+<div class="feature-detail fade-up"><div class="fd-icon">⌨️</div><div class="fd-content"><h3>快捷键一览</h3>
+<ul><li><strong>输入法切换：</strong><kbd>Ctrl + Shift</kbd> 或 <kbd>Win + 空格</kbd></li>
+<li><strong>中英文切换：</strong><kbd>Shift</kbd></li>
+<li><strong>全角/半角切换：</strong><kbd>Shift + 空格</kbd></li>
+<li><strong>呼出 AI 建议：</strong>自动触发（无需手动操作）</li>
+<li><strong>选择第 N 条 AI 建议：</strong><kbd>Alt + 1</kbd> / <kbd>Alt + 2</kbd> / <kbd>Alt + 3</kbd></li>
+<li><strong>刷新 AI 建议：</strong><kbd>Alt + R</kbd></li>
+<li><strong>打开设置：</strong><kbd>Ctrl + Alt + L</kbd></li>
+<li><strong>手写面板切换：</strong><kbd>Ctrl + Alt + H</kbd></li>
+<li><strong>语音输入：</strong><kbd>Ctrl + Alt + V</kbd></li></ul>
+<p>详细快捷键列表请查看 <a href="keyboard-shortcuts.html" style="color:var(--cyan)">快捷键参考页面</a>。</p></div></div>
+
+<div class="feature-detail fade-up"><div class="fd-icon">📋</div><div class="fd-content"><h3>兼容性</h3>
+<ul><li><strong>系统要求：</strong>Windows 10 1809 及以上版本 / Windows 11</li><li><strong>硬件要求：</strong>x64 架构，4GB 以上 RAM</li><li><strong>支持的应用：</strong>微信桌面版、QQ 桌面版、钉钉、飞书、Slack、Discord、Telegram 桌面版、Microsoft Teams、Outlook、Chrome/Edge/Firefox 浏览器内的聊天页面。</li>
+<li><strong>注意：</strong>由于 Windows 系统限制，UIA 在某些旧版应用中可能无法完整读取聊天内容。此时懒狗会自动降级为截图+OCR 模式（需要管理员权限）。</li></ul></div></div>
+
+<div class="feature-detail fade-up"><div class="fd-icon">⚡</div><div class="fd-content"><h3>优化建议</h3>
+<ul><li><strong>开机自启：</strong>建议在设置中开启「开机自动启动」，确保每次开机懒狗就在后台就绪。</li>
+<li><strong>管理员权限：</strong>某些需要读取高权限窗口的应用（如 VS Code、某些 IDE），可以右键懒狗输入法快捷方式，选择「以管理员身份运行」以提升兼容性。</li>
+<li><strong>禁用冲突快捷键：</strong>如果其他软件的快捷键与懒狗冲突，可以在设置中自定义所有快捷键。</li>
+<li><strong>多显示器支持：</strong>懒狗输入法完整支持多显示器环境，AI 建议栏自动显示在输入框所在的显示器上。</li></ul></div></div>
+</div></section>
+<section class="section" style="text-align:center;padding-top:1rem"><p style="color:var(--gray);margin-bottom:1.5rem">了解更多：</p><div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+<a href="platform-android.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">Android版 →</a>
+<a href="keyboard-shortcuts.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">快捷键参考 →</a>
+<a href="tips.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">使用技巧 →</a>
+</div></section>
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">隐私政策</a>
+    <a href="terms.html">使用条款</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} 懒狗输入法 懒狗输入法. All rights reserved.</p>
+  {TAGLINE}>懒狗输入法，解放你的双手 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body>
+</html>

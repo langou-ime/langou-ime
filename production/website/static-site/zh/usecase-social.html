@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>社交群聊场景 - 懒狗输入法</title>
+<meta name="description" content="懒狗输入法社交群聊场景详解：微信群/QQ群/Discord场景、幽默回复、破冰技巧。让AI帮你在群里活跃气氛。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 懒狗输入法</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">首页</a></li>
+    <li><a href="features.html">功能</a></li>
+    <li><a href="usecases.html" class="active">场景</a></li>
+    <li><a href="download.html">下载</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li></li>
+
+    <li><a href="community.html">社区</a></li>
+    <li><a href="about.html">关于</a></li>
+  </ul>
+  <button class="lang-btn">English</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+
+<div class="page-header">
+  <h1>🎉 社交群聊场景</h1>
+  <p>从「已读不回」到「群聊达人」</p>
+</div>
+
+<section class="section">
+  <div class="privacy-content">
+
+    <p class="fade-up" style="color:var(--gray);line-height:1.9;margin-bottom:2rem">微信群、QQ群、Discord……群聊是社交压力的重灾区。大家都在热火朝天地聊，你要么不知道说什么，要么好不容易打了一段话发送后却发现话题已经过去了。懒狗输入法实时分析群聊上下文，生成幽默风趣的回复建议，让你轻松融入任何话题。</p>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">😄</div>
+      <div class="fd-content">
+        <h4>场景 1：朋友群聊天接梗</h4>
+        <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+          <div style="max-width:450px;font-size:0.85rem">
+            <div style="color:var(--gray2);margin-bottom:0.5rem">📝 群里在聊周末活动：</div>
+            <div style="background:#F5F0EB;color:#4A3728;padding:6px 12px;border-radius:12px 12px 12px 4px;display:inline-block;margin-bottom:0.3rem;max-width:80%">周末谁去密室逃脱？</div>
+            <div style="background:#F5F0EB;color:#4A3728;padding:6px 12px;border-radius:12px 12px 12px 4px;display:inline-block;margin-bottom:0.5rem;max-width:80%">我我我！上次那个太吓人了😂</div>
+            <div style="margin-top:0.5rem;color:var(--gray2);font-size:0.8rem">🤖 AI 建议（幽默风格）：</div>
+            <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--orange)">"算我一个！这次我要当坦克冲第一个，你们跟紧我🤣"</div>
+            <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--orange)">"上次吓得我抱紧了前面不认识的兄弟，这次我准备好了😎"</div>
+            <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--orange)">"带我一个！我负责在角落里尖叫制造氛围感👻"</div>
+          </div>
+          <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+            <span class="tag" style="background:var(--orange);color:var(--bg);font-size:0.7rem">幽默风格</span>
+            <span class="tag" style="background:var(--cyan);color:var(--bg);font-size:0.7rem">群聊活跃</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">💬</div>
+      <div class="fd-content">
+        <h4>场景 2：被 @ 时快速回应</h4>
+        <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+          <div style="max-width:450px;font-size:0.85rem">
+            <div style="color:var(--gray2);margin-bottom:0.5rem">📝 群里有人 @你：</div>
+            <div style="background:#F5F0EB;color:#4A3728;padding:6px 12px;border-radius:12px 12px 12px 4px;display:inline-block;margin-bottom:0.5rem;max-width:80%">@老王 上次你推荐的那家火锅店叫什么来着？</div>
+            <div style="margin-top:0.5rem;color:var(--gray2);font-size:0.8rem">🤖 AI 建议（随和风格）：</div>
+            <div style="background:rgba(0,210,255,0.05);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--gray)">"蜀大侠！在朝阳路那个商圈二楼，他们家的毛肚绝了🤤"</div>
+            <div style="background:rgba(0,210,255,0.05);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--gray)">"蜀大侠，需要我把定位发群里不？他们家必须点毛肚和鸭血！"</div>
+          </div>
+          <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+            <span class="tag" style="background:var(--gray);color:#4A3728;font-size:0.7rem">随和风格</span>
+            <span class="tag" style="background:var(--green);color:var(--bg);font-size:0.7rem">快速回应</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">🎯</div>
+      <div class="fd-content">
+        <h4>场景 3：群聊冷场时破冰</h4>
+        <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+          <div style="max-width:450px;font-size:0.85rem">
+            <div style="color:var(--gray2);margin-bottom:0.5rem">📝 群里安静了半小时，突然有人发：</div>
+            <div style="background:#F5F0EB;color:#4A3728;padding:6px 12px;border-radius:12px 12px 12px 4px;display:inline-block;margin-bottom:0.5rem;max-width:80%">有人吗？</div>
+            <div style="margin-top:0.5rem;color:var(--gray2);font-size:0.8rem">🤖 AI 建议（幽默风格·破冰）：</div>
+            <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--orange)">"都在默默潜水呢，你一出声全冒泡了👀"</div>
+            <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--orange)">"在的在的！刚才在装深沉，被你识破了😅 啥事？"</div>
+            <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--orange)">"有有有！都在等你的消息呢🤣 说吧有啥好事？"</div>
+          </div>
+          <div style="margin-top:0.8rem;display:flex;gap:0.5rem;flex-wrap:wrap">
+            <span class="tag" style="background:var(--orange);color:var(--bg);font-size:0.7rem">幽默破冰</span>
+            <span class="tag" style="background:var(--cyan);color:var(--bg);font-size:0.7rem">冷场急救</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">🤣</div>
+      <div class="fd-content">
+        <h4>场景 4：分享趣事/表情包</h4>
+        <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+          <div style="max-width:450px;font-size:0.85rem">
+            <div style="color:var(--gray2);margin-bottom:0.5rem">📝 群里有人分享趣事：</div>
+            <div style="background:#F5F0EB;color:#4A3728;padding:6px 12px;border-radius:12px 12px 12px 4px;display:inline-block;margin-bottom:0.5rem;max-width:80%">笑死，今天在电梯里遇到领导，脑子一抽喊了声"爸爸好"😱</div>
+            <div style="margin-top:0.5rem;color:var(--gray2);font-size:0.8rem">🤖 AI 建议（幽默风格）：</div>
+            <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--orange)">"哈哈哈笑不活了！领导当时的表情是不是：😶？？"</div>
+            <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--orange)">"这下年终奖稳了，领导以后就是你亲爸了😂😂"</div>
+            <div style="background:rgba(255,136,0,0.1);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--orange)">"论社死你从来没让我失望过🤣 建议明天提离职换个星球生活"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">👋</div>
+      <div class="fd-content">
+        <h4>场景 5：新群自我介绍/欢迎新人</h4>
+        <div style="background:var(--glass);border-radius:12px;padding:1.2rem;border:1px solid #FFE4CC">
+          <div style="max-width:450px;font-size:0.85rem">
+            <div style="color:var(--gray2);margin-bottom:0.5rem">📝 新人入群：</div>
+            <div style="background:#F5F0EB;color:#4A3728;padding:6px 12px;border-radius:12px 12px 12px 4px;display:inline-block;margin-bottom:0.5rem;max-width:80%">大家好，我是新来的小刘，请多关照🙏</div>
+            <div style="margin-top:0.5rem;color:var(--gray2);font-size:0.8rem">🤖 AI 建议（随和风格·欢迎）：</div>
+            <div style="background:rgba(0,210,255,0.05);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--gray)">"欢迎小刘！🎉 我们这个群主打一个——除了正经事什么都聊🤣"</div>
+            <div style="background:rgba(0,210,255,0.05);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--gray)">"欢迎欢迎！新人报三围～啊不是，报一下你最喜欢吃什么😋"</div>
+            <div style="background:rgba(0,210,255,0.05);border-radius:8px;padding:0.5rem;margin-top:0.3rem;color:var(--gray)">"小刘好！你是群里第108个成员，恭喜获得'好汉'称号🎖️"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">💡</div>
+      <div class="fd-content">
+        <h3>群聊使用技巧</h3>
+        <ul>
+          <li><strong>幽默风格适合大多数群聊：</strong>朋友群、兴趣群、同学群——幽默风格是万能钥匙，既不会太正式也不会太随意。</li>
+          <li><strong>群聊人多时用简洁回复：</strong>群聊节奏快，长篇大论容易被刷过去。「简洁风格」生成的短回复更适合群聊场景。</li>
+          <li><strong>不要在敏感话题上依赖 AI：</strong>群聊中的争议话题（政治、宗教等）AI 不会介入，请勿尝试用 AI 生成此类回复。</li>
+          <li><strong>快速融入新群：</strong>刚加入一个新群时，用懒狗分析群聊话题，生成自然的接话内容，比自我介绍后冷场要好得多。</li>
+          <li><strong>配合表情包使用：</strong>AI 建议中会包含 emoji，但在群聊中配合表情包图片效果更佳。</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section" style="text-align:center;padding-top:1rem">
+  <p style="color:var(--gray);margin-bottom:1.5rem">查看更多应用场景：</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+    <a href="usecase-love.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">情侣聊天 →</a>
+    <a href="usecase-work.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">职场沟通 →</a>
+    <a href="usecase-gaming.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">游戏社交 →</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">隐私政策</a>
+    <a href="terms.html">使用条款</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} 懒狗输入法 懒狗输入法. All rights reserved.</p>
+  {TAGLINE}>懒狗输入法，解放你的双手 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body>
+</html>

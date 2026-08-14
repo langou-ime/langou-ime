@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>一键选用即时发送 - 懒狗输入法</title>
+<meta name="description" content="懒狗输入法一键选用即时发送详解：点击建议即刻发送，无需复制粘贴。支持直接发送和填入两种模式。">
+<link rel="stylesheet" href="../css/style.css?v=2">
+</head>
+<body>
+<canvas id="particles-canvas"></canvas>
+
+<nav class="navbar" id="navbar">
+  <a href="/zh/" class="nav-brand">🐶 懒狗输入法</a>
+  <ul class="nav-links">
+    <li><a href="/zh/">首页</a></li>
+    <li><a href="features.html" class="active">功能</a></li>
+    <li><a href="usecases.html">场景</a></li>
+    <li><a href="download.html">下载</a></li>
+    <li><a href="faq.html">常见问题</a></li>
+    <li></li>
+
+    <li><a href="community.html">社区</a></li>
+    <li><a href="about.html">关于</a></li>
+  </ul>
+  <button class="lang-btn">English</button>
+  <button class="mobile-menu">☰</button>
+</nav>
+
+<div class="page-header">
+  <h1>⚡ 一键选用即时发送</h1>
+  <p>点一下，回复就发出去了</p>
+</div>
+
+<section class="section">
+  <div class="privacy-content">
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">🎯</div>
+      <div class="fd-content">
+        <h3>核心体验：一次点击 = 完整回复</h3>
+        <p>懒狗输入法最核心的交互创新就是「一键发送」。传统 AI 输入法需要：打开键盘 → 阅读建议 → 点击建议填入输入框 → 手动点击发送按钮。而懒狗输入法简化为：打开键盘 → 阅读建议 → 点击建议 <strong>→ 自动发送</strong>。</p>
+        <p>从 4 步缩减为 3 步，少了一个「手动发送」动作。看似只少一步，但在高频聊天场景中，每一次回复节省 2-3 秒，一天节省 5-10 分钟，一年超过 60 小时。更重要的是，这种体验上的流畅感——不用再去找发送按钮，不用确认消息是否已经发出。</p>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">🔄</div>
+      <div class="fd-content">
+        <h3>两种发送模式</h3>
+        <p>系统根据当前聊天应用自动选择最适合的发送模式，也支持用户在设置中手动切换：</p>
+        <ul>
+          <li><strong>📨 直接发送模式（默认）：</strong>点击 AI 建议后，文本自动填入输入框并模拟发送键（Enter/发送按钮）。适用于微信、Telegram、WhatsApp、Discord、QQ 等支持快捷发送的应用。这是最流畅的体验，真正实现「点一下，话就出去了」。</li>
+          <li><strong>✏️ 填入模式（编辑后发送）：</strong>点击 AI 建议后，文本填入输入框但不自动发送，用户可以编辑修改后再手动发送。适用于复杂回复、专业工作场景、或用户希望对 AI 建议进行二次加工的场景。</li>
+        </ul>
+        <p>两种模式可以随时切换，没有数据丢失风险。每次输入框显示 3 条 AI 建议，点击其中一条后界面自动消失，不留痕迹。</p>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">📱</div>
+      <div class="fd-content">
+        <h3>支持的应用列表</h3>
+        <p>一键发送功能已在以下应用中完成适配和测试：</p>
+        <ul>
+          <li><strong>Android 版：</strong>微信、QQ、WhatsApp、Telegram、Discord、Messenger、Line、钉钉、飞书、Slack、Teams、企业微信、淘宝旺旺、京东客服、拼多多客服、闲鱼、微博私信、知乎私信、B站私信。</li>
+          <li><strong>Windows 版：</strong>微信桌面版、QQ 桌面版、钉钉、飞书、Slack、Discord、Telegram 桌面版、Outlook、Chrome 浏览器内所有网页聊天。</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="feature-detail fade-up">
+      <div class="fd-icon">📋</div>
+      <div class="fd-content">
+        <h3>操作流程详解</h3>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:1rem;margin-top:1rem">
+          <div style="background:var(--glass);border-radius:16px;padding:1.5rem;text-align:center;border:1px solid #FFE4CC">
+            <div style="font-size:2rem;margin-bottom:0.5rem">1️⃣</div>
+            <h4 style="color:var(--cyan);font-size:0.95rem;margin-bottom:0.5rem">打开输入框</h4>
+            <p style="color:var(--gray);font-size:0.8rem">在任何聊天应用中点击输入框，懒狗键盘自动弹出，同时 AI 引擎开始分析屏幕上的对话上下文。</p>
+          </div>
+          <div style="background:var(--glass);border-radius:16px;padding:1.5rem;text-align:center;border:1px solid #FFE4CC">
+            <div style="font-size:2rem;margin-bottom:0.5rem">2️⃣</div>
+            <h4 style="color:var(--cyan);font-size:0.95rem;margin-bottom:0.5rem">查看 AI 建议</h4>
+            <p style="color:var(--gray);font-size:0.8rem">键盘上方展示 3 条 AI 生成的回复建议，每条带风格标签。浏览选择最合适的一条。</p>
+          </div>
+          <div style="background:var(--glass);border-radius:16px;padding:1.5rem;text-align:center;border:1px solid #FFE4CC">
+            <div style="font-size:2rem;margin-bottom:0.5rem">3️⃣</div>
+            <h4 style="color:var(--cyan);font-size:0.95rem;margin-bottom:0.5rem">点击发送</h4>
+            <p style="color:var(--gray);font-size:0.8rem">轻点心仪的建议，文本即刻填入并自动发送。整个过程不到 1 秒，比手动打字快 10 倍。</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section class="section" style="text-align:center;padding-top:1rem">
+  <p style="color:var(--gray);margin-bottom:1.5rem">查看更多功能详解：</p>
+  <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+    <a href="features-context.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">智能上下文感知 →</a>
+    <a href="features-ai-reply.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">AI多风格回复 →</a>
+    <a href="features-sync.html" class="btn btn-outline" style="font-size:0.85rem;padding:0.6rem 1.5rem">云端同步 →</a>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-links">
+    <a href="privacy.html">隐私政策</a>
+    <a href="terms.html">使用条款</a>
+
+
+
+  </div>
+  {COPYRIGHT_LINE} 懒狗输入法 懒狗输入法. All rights reserved.</p>
+  {TAGLINE}>懒狗输入法，解放你的双手 🐶</p>
+</footer>
+<script src="../js/particles.js?v=2"></script>
+<script src="../js/main.js?v=2"></script>
+</body>
+</html>
