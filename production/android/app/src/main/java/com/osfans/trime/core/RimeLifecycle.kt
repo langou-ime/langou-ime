@@ -9,11 +9,11 @@ package com.osfans.trime.core
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancelChildren
+import kotlinx.coroutines.suspendCancellableCoroutine
 import java.util.concurrent.ConcurrentLinkedQueue
-import kotlin.coroutines.Continuation
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.coroutines.CoroutineContext
 import kotlin.coroutines.resume
-import kotlin.coroutines.suspendCoroutine
 
 class RimeLifecycleRegistry : RimeLifecycle {
 
@@ -100,35 +100,45 @@ class RimeLifecycleScope(
 suspend fun <T> RimeLifecycle.whenAtState(
     state: RimeLifecycle.State,
     block: suspend CoroutineScope.() -> T,
-): T = if (state == currentState) {
-    block(lifecycleScope)
-} else {
-    StateDelegate(this, state).run(block)
+): T {
+    if (state != currentState) {
+        awaitState(state)
+    }
+    return block(lifecycleScope)
 }
 
 suspend inline fun <T> RimeLifecycle.whenReady(
     noinline block: suspend CoroutineScope.() -> T,
 ) = whenAtState(RimeLifecycle.State.READY, block)
 
-private class StateDelegate(
-    val lifecycle: RimeLifecycle,
-    val state: RimeLifecycle.State,
-) {
-    private val observer = RimeLifecycleObserver {
-        if (lifecycle.currentState == state) {
-            continuation?.resume(Unit)
+suspend fun RimeLifecycle.awaitState(state: RimeLifecycle.State) {
+    suspendCancellableCoroutine { continuation ->
+        val completed = AtomicBoolean(false)
+        lateinit var observer: RimeLifecycleObserver
+
+        fun unregisterAndResume() {
+            if (completed.compareAndSet(false, true)) {
+                removeObserver(observer)
+                continuation.resume(Unit)
+            }
         }
-    }
 
-    init {
-        lifecycle.addObserver(observer)
-    }
+        observer = RimeLifecycleObserver {
+            if (currentState == state) {
+                unregisterAndResume()
+            }
+        }
+        continuation.invokeOnCancellation {
+            if (completed.compareAndSet(false, true)) {
+                removeObserver(observer)
+            }
+        }
+        addObserver(observer)
 
-    private var continuation: Continuation<Unit>? = null
-
-    suspend fun <T> run(block: suspend CoroutineScope.() -> T): T {
-        suspendCoroutine { continuation = it }
-        lifecycle.removeObserver(observer)
-        return block(lifecycle.lifecycleScope)
+        // The state can change between the caller's initial check and observer
+        // registration. Re-checking here closes that race without double-resuming.
+        if (currentState == state) {
+            unregisterAndResume()
+        }
     }
 }
