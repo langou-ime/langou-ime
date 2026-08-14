@@ -1,0 +1,23 @@
+{
+  "name": "langou-website",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.5.2",
+    "next": "^15.5.20",
+    "next-intl": "^4.13.2",
+    "postcss": "^8.5.16",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "tailwindcss": "^4.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "20.17.6",
+    "@types/react": "19.2.17",
+    "typescript": "5.8.2"
+  }
+}

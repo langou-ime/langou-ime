@@ -1,0 +1,29 @@
+{
+  "name": "langou-website",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "test": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON --test test/*.test.ts"
+  },
+  "dependencies": {
+    "autoprefixer": "^10.5.2",
+    "next": "16.2.12",
+    "next-intl": "^4.13.2",
+    "postcss": "8.5.24",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "sharp": "0.35.3",
+    "tailwindcss": "^4.3.2"
+  },
+  "devDependencies": {
+    "@types/node": "20.17.6",
+    "@types/react": "19.2.17",
+    "typescript": "5.8.2"
+  },
+  "overrides": {
+    "postcss": "8.5.24",
+    "sharp": "0.35.3"
+  }
+}
