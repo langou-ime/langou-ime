@@ -30,6 +30,16 @@ def test_monorepo_ci_runs_all_product_surfaces_from_their_component_roots() -> N
     assert ".msi" not in workflow.lower()
 
 
+def test_android_instrumentation_preserves_logcat_on_failure() -> None:
+    workflow = (REPOSITORY_ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+
+    assert "adb logcat -c" in workflow
+    assert "adb logcat -d -v threadtime" in workflow
+    assert "android-api-${{ matrix.api-level }}-logcat.txt" in workflow
+    assert "if: always()" in workflow
+    assert "INTERNAL-android-logcat-api-${{ matrix.api-level }}" in workflow
+
+
 def test_one_tag_builds_both_signed_installers_and_one_draft_release() -> None:
     workflow = (REPOSITORY_ROOT / ".github/workflows/release.yml").read_text(
         encoding="utf-8"

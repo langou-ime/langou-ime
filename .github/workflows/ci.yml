@@ -193,7 +193,25 @@ jobs:
           ram-size: 3072M
           disk-size: 4096M
           disable-animations: true
-          script: cd production/android && ./gradlew connectedDebugAndroidTest --stacktrace
+          script: |
+            adb logcat -c || true
+            set +e
+            (cd production/android && ./gradlew connectedDebugAndroidTest --stacktrace)
+            test_status=$?
+            adb logcat -d -v threadtime > "$GITHUB_WORKSPACE/android-api-${{ matrix.api-level }}-logcat.txt" || true
+            adb shell dumpsys input_method > "$GITHUB_WORKSPACE/android-api-${{ matrix.api-level }}-input-method.txt" || true
+            exit "$test_status"
+
+      - name: Upload Android instrumentation diagnostics
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: INTERNAL-android-logcat-api-${{ matrix.api-level }}-${{ github.sha }}
+          path: |
+            android-api-${{ matrix.api-level }}-logcat.txt
+            android-api-${{ matrix.api-level }}-input-method.txt
+          if-no-files-found: warn
+          retention-days: 7
 
   windows-managed:
     name: Windows assistant tests and build
