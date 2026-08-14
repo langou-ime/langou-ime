@@ -101,7 +101,24 @@ if (-not (Test-Path (Join-Path $nsisRuntime "LangouAssistant.exe") -PathType Lea
     throw "Assistant runtime was not staged for NSIS packaging."
 }
 
-& "$env:ProgramFiles(x86)\NSIS\Bin\makensis.exe" `
+$nsisCompiler = (Get-Command "makensis.exe" -ErrorAction SilentlyContinue).Source
+if ([string]::IsNullOrWhiteSpace($nsisCompiler)) {
+    $nsisCandidates = @()
+    if (-not [string]::IsNullOrWhiteSpace(${env:ProgramFiles(x86)})) {
+        $nsisCandidates += Join-Path ${env:ProgramFiles(x86)} "NSIS\makensis.exe"
+    }
+    if (-not [string]::IsNullOrWhiteSpace($env:ProgramFiles)) {
+        $nsisCandidates += Join-Path $env:ProgramFiles "NSIS\makensis.exe"
+    }
+    $nsisCompiler = $nsisCandidates |
+        Where-Object { Test-Path $_ -PathType Leaf } |
+        Select-Object -First 1
+}
+if ([string]::IsNullOrWhiteSpace($nsisCompiler)) {
+    throw "NSIS compiler was not found on PATH or in the standard Program Files directories."
+}
+
+& $nsisCompiler `
     /DWEASEL_VERSION=1.0.0 `
     /DWEASEL_BUILD=0 `
     /DPRODUCT_VERSION=1.0.0.0 `

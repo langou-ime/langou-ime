@@ -25,6 +25,12 @@ public sealed class PackageBuildScriptContractTests
         Assert.Contains("output\\assistant-runtime", script, StringComparison.Ordinal);
         Assert.Contains("Assistant runtime was not staged for NSIS packaging.", script, StringComparison.Ordinal);
         Assert.Contains("makensis.exe", script, StringComparison.Ordinal);
+        Assert.Contains("Get-Command \"makensis.exe\"", script, StringComparison.Ordinal);
+        Assert.Contains("${env:ProgramFiles(x86)}", script, StringComparison.Ordinal);
+        Assert.DoesNotContain(
+            "$env:ProgramFiles(x86)\\NSIS\\Bin\\makensis.exe",
+            script,
+            StringComparison.Ordinal);
         Assert.Contains("output\\install.nsi", script, StringComparison.Ordinal);
         Assert.Contains("langou-ime-windows-x64-v1.0.0.exe", script, StringComparison.Ordinal);
         Assert.DoesNotContain(".msi", script, StringComparison.OrdinalIgnoreCase);
