@@ -118,6 +118,10 @@ if ([string]::IsNullOrWhiteSpace($nsisCompiler)) {
     throw "NSIS compiler was not found on PATH or in the standard Program Files directories."
 }
 
+Copy-Item (Join-Path $repoRoot "LICENSE.txt") `
+    (Join-Path $repoRoot "output\LICENSE.txt") `
+    -Force
+
 & $nsisCompiler `
     /DWEASEL_VERSION=1.0.0 `
     /DWEASEL_BUILD=0 `

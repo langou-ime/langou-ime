@@ -147,6 +147,8 @@ jobs:
     needs: android
     runs-on: ubuntu-24.04
     timeout-minutes: 45
+    env:
+      BUILD_ABI: x86_64
     strategy:
       fail-fast: false
       matrix:

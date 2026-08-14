@@ -235,7 +235,10 @@ boundary<TAB>有边界感回复
                 if data == "[DONE]":
                     break
                 payload = json.loads(data)
-                delta = payload["choices"][0]["delta"].get("content", "")
+                choices = payload.get("choices")
+                if not choices:
+                    continue
+                delta = choices[0]["delta"].get("content", "")
                 for suggestion in parser.feed(delta):
                     yield suggestion
             for suggestion in parser.finish():

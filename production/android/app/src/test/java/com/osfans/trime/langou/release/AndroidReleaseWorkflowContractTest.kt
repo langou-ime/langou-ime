@@ -102,11 +102,14 @@ class AndroidReleaseWorkflowContractTest :
 
         "CI runs input method instrumentation on the required Android API matrix" {
             val workflow = File(repositoryRoot, ".github/workflows/langou-android-ci.yml").readText()
+            val buildScript = File(repositoryRoot, "app/build.gradle.kts").readText()
 
             workflow shouldContain "api-level: [26, 29, 30, 34, 36]"
             workflow shouldContain
                 "reactivecircus/android-emulator-runner@0a638108440efd5c7f980e6ba145dbcdd8f32009"
             workflow shouldContain "./gradlew connectedDebugAndroidTest"
+            buildScript shouldContain "project.buildAbiOverride?.split(\",\")"
+            workflow shouldContain "BUILD_ABI: x86_64"
 
             val smokeTest =
                 File(

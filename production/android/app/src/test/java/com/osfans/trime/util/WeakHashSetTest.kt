@@ -73,13 +73,11 @@ class WeakHashSetTest :
 
         "iterator should return all elements in the set" {
             val set = WeakHashSet<Int>()
-            set.add(114)
-            set.add(514)
-            set.add(1919)
-            set.add(810)
+            val expected = listOf(114, 514, 1919, 810)
+            set.addAll(expected)
             val iterator = set.iterator()
             iterator.asSequence().toList().let {
-                it shouldContainOnly listOf(114, 514, 1919, 810)
+                it shouldContainOnly expected
             }
         }
 

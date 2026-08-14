@@ -29,6 +29,49 @@ class DelayedOpenAiStream(httpx.AsyncByteStream):
 
 
 @pytest.mark.asyncio
+async def test_mimo_provider_ignores_terminal_usage_event_with_empty_choices() -> None:
+    def handler(request: httpx.Request) -> httpx.Response:
+        del request
+        return httpx.Response(
+            200,
+            headers={"content-type": "text/event-stream"},
+            stream=FragmentedOpenAiStream(
+                [
+                    'data: {"choices":[{"delta":{"content":'
+                    '"natural\\t好呀\\ngentle\\t可以呀～\\nboundary\\t我先看看时间"}}]}\n\n',
+                    'data: {"choices":[],"usage":{"total_tokens":42}}\n\n',
+                    "data: [DONE]\n\n",
+                ]
+            ),
+        )
+
+    client = httpx.AsyncClient(
+        transport=httpx.MockTransport(handler),
+        base_url="https://token-plan-cn.xiaomimimo.com/v1/",
+    )
+    provider = import_module("langou_backend.suggestions").MimoSuggestionProvider(
+        client=client,
+        primary_model="mimo-v2.5-pro",
+        fallback_model="mimo-v2.5",
+    )
+    request = SuggestionRequest.model_validate(
+        {
+            "request_id": "req_01JZQ6K3EP7EZAW4ZK2B7J1X8M",
+            "device_id": "dev_01JZQ6M0HZK9TBEXB1N6H7Y2RP",
+            "application": "wechat",
+            "locale": "zh-CN",
+            "turns": [{"role": "other", "text": "今晚一起吃饭吗？"}],
+            "save_history": False,
+        }
+    )
+
+    result = [item async for item in provider.generate(request)]
+
+    assert [item.text for item in result] == ["好呀", "可以呀～", "我先看看时间"]
+    await client.aclose()
+
+
+@pytest.mark.asyncio
 async def test_mimo_provider_falls_back_and_normalizes_three_styles() -> None:
     try:
         suggestions = import_module("langou_backend.suggestions")

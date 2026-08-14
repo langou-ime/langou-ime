@@ -9,6 +9,8 @@ import org.gradle.api.tasks.Sync
 
 val langouReleasePublicKey =
     providers.environmentVariable("LANGOU_RELEASE_PUBLIC_KEY_BASE64").orElse("").get()
+val langouBuildAbis =
+    project.buildAbiOverride?.split(",") ?: listOf("armeabi-v7a", "arm64-v8a")
 
 plugins {
     id("com.osfans.trime.app-convention")
@@ -36,7 +38,7 @@ android {
         versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         ndk {
-            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+            abiFilters += langouBuildAbis
         }
 
         multiDexEnabled = true
@@ -99,7 +101,7 @@ android {
         abi {
             isEnable = true
             reset()
-            include("armeabi-v7a", "arm64-v8a")
+            include(*langouBuildAbis.toTypedArray())
             isUniversalApk = true
         }
     }
