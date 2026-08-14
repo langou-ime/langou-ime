@@ -29,6 +29,9 @@
     <None Include="..\LangouInstaller\Package.wxs"
           Link="Installer\Package.wxs"
           CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\output\install.nsi"
+          Link="Installer\install.nsi"
+          CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\scripts\Build-LangouPackage.ps1"
           Link="Scripts\Build-LangouPackage.ps1"
           CopyToOutputDirectory="PreserveNewest" />

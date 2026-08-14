@@ -125,7 +125,7 @@ toquit:
   StrCmp $R0 "" 0 skip
   ; The default installation directory
   ; install x64 build for NativeARM64_WINDOWS11 and NativeAMD64_WINDOWS11
-  ${If} ${AtLeastWin11} ; Windows 11 and above
+  ${If} ${AtLeastBuild} 22000 ; Windows 11 and above
     ${If} ${IsNativeARM64}
       StrCpy $INSTDIR "$PROGRAMFILES64\Rime"
     ${ElseIf} ${IsNativeAMD64}
@@ -255,7 +255,7 @@ program_files:
     File /nonfatal "weaselARM64X.ime"
   ${EndIf}
   ; install x64 build for NativeARM64_WINDOWS11 and NativeAMD64_WINDOWS11
-  ${If} ${AtLeastWin11} ; Windows 11 and above
+  ${If} ${AtLeastBuild} 22000 ; Windows 11 and above
     ${If} ${IsNativeARM64}
       File "WeaselDeployer.exe"
       File "WeaselServer.exe"

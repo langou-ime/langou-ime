@@ -44,6 +44,18 @@ public sealed class PackageBuildScriptContractTests
         Assert.DoesNotContain(".msi", script, StringComparison.OrdinalIgnoreCase);
     }
 
+    [Fact]
+    public void Installer_uses_the_nsis_308_compatible_windows_11_build_check()
+    {
+        var installer = File.ReadAllText(InstallerPath());
+
+        Assert.DoesNotContain("${AtLeastWin11}", installer, StringComparison.Ordinal);
+        Assert.Contains("${AtLeastBuild} 22000", installer, StringComparison.Ordinal);
+    }
+
     private static string SourcePath() =>
         Path.Combine(AppContext.BaseDirectory, "Scripts", "Build-LangouPackage.ps1");
+
+    private static string InstallerPath() =>
+        Path.Combine(AppContext.BaseDirectory, "Installer", "install.nsi");
 }
