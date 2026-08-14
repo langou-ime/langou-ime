@@ -1,0 +1,352 @@
+# SPDX-FileCopyrightText: 2026 Langou Input Method contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+config_version: "1.0.0"
+name: 奶油懒狗
+author: Langou Input Method contributors
+
+style:
+  auto_caps: false
+  candidate_padding: 10
+  candidate_spacing: 2
+  candidate_text_size: 18
+  candidate_view_height: 44
+  comment_height: 12
+  comment_position: right
+  comment_text_size: 11
+  horizontal_gap: 6
+  vertical_gap: 5
+  key_height: 52
+  key_text_size: 22
+  key_long_text_size: 14
+  label_text_size: 16
+  keyboard_height: 286
+  keyboard_height_land: 220
+  keyboard_padding: 6
+  keyboard_padding_land: 24
+  keyboard_padding_bottom: 5
+  popup_height: 64
+  popup_text_size: 30
+  round_corner: 16
+  shadow_radius: 2.0
+  symbol_text_size: 10
+  reset_ascii_mode_on_focus_change: false
+  enter_label_mode: 2
+  enter_labels:
+    go: 前往
+    done: 完成
+    next: 下一步
+    pre: 上一步
+    search: 搜索
+    send: 发送
+    default: 换行
+
+preedit:
+  horizontal_padding: 10
+  top_end_radius: 12
+  foreground:
+    font_size: 16
+
+window:
+  insets:
+    vertical: 5
+    horizontal: 8
+  item_padding:
+    vertical: 4
+    horizontal: 8
+  corner_radius: 14
+  foreground:
+    label_font_size: 13
+    text_font_size: 18
+    comment_font_size: 11
+
+fallback_colors:
+  candidate_text_color: text_color
+  comment_text_color: secondary_text_color
+  hilited_candidate_text_color: text_color
+  hilited_key_text_color: key_text_color
+  hilited_key_symbol_color: key_symbol_color
+  off_key_back_color: functional_key_back_color
+  off_key_text_color: key_text_color
+  on_key_back_color: accent_color
+  on_key_text_color: text_color
+  preview_back_color: accent_color
+  preview_text_color: text_color
+  root_background: keyboard_back_color
+  candidate_background: back_color
+  text_back_color: back_color
+
+preset_color_schemes:
+  default:
+    name: 奶油懒狗
+    author: Langou Input Method contributors
+    back_color: 0xfffff8f1
+    root_background: 0xfffff5eb
+    keyboard_back_color: 0xfffff1e5
+    key_back_color: 0xfffffdf9
+    functional_key_back_color: 0xffffdfd4
+    enter_key_back_color: 0xffef8f9c
+    accent_color: 0xffffb7ad
+    border_color: 0x00ffffff
+    shadow_color: 0x1f6f5450
+    text_color: 0xff493b3b
+    secondary_text_color: 0xff8f7472
+    key_text_color: 0xff493b3b
+    key_symbol_color: 0xff9d7f7b
+    candidate_text_color: 0xff493b3b
+    comment_text_color: 0xff9d7f7b
+    hilited_candidate_back_color: 0xffffd4cc
+    hilited_candidate_text_color: 0xff493b3b
+    hilited_key_back_color: 0xffffc8be
+    hilited_key_text_color: 0xff493b3b
+    hilited_key_symbol_color: 0xff795e5b
+    label_color: 0xffef8f9c
+
+  soda:
+    name: 樱桃汽水
+    author: Langou Input Method contributors
+    back_color: 0xfffff7fa
+    root_background: 0xffffeff4
+    keyboard_back_color: 0xffffe8ef
+    key_back_color: 0xffffffff
+    functional_key_back_color: 0xffffc9d5
+    enter_key_back_color: 0xffec5b77
+    accent_color: 0xffff9ab0
+    border_color: 0x00ffffff
+    shadow_color: 0x246e3342
+    text_color: 0xff4b3038
+    secondary_text_color: 0xff936775
+    key_text_color: 0xff4b3038
+    key_symbol_color: 0xffa26d7c
+    candidate_text_color: 0xff4b3038
+    comment_text_color: 0xffa26d7c
+    hilited_candidate_back_color: 0xffffc6d3
+    hilited_candidate_text_color: 0xff4b3038
+    hilited_key_back_color: 0xffffb3c3
+    hilited_key_text_color: 0xff4b3038
+    hilited_key_symbol_color: 0xff7d4052
+    label_color: 0xffec5b77
+
+  moon:
+    name: 月光软糖
+    author: Langou Input Method contributors
+    back_color: 0xff2a273f
+    root_background: 0xff242137
+    keyboard_back_color: 0xff242137
+    key_back_color: 0xff37334f
+    functional_key_back_color: 0xff4b456a
+    enter_key_back_color: 0xffa98ee8
+    accent_color: 0xffa98ee8
+    border_color: 0x00ffffff
+    shadow_color: 0x66000000
+    text_color: 0xfff9f2ff
+    secondary_text_color: 0xffc7b9db
+    key_text_color: 0xfff9f2ff
+    key_symbol_color: 0xffc7b9db
+    candidate_text_color: 0xfff9f2ff
+    comment_text_color: 0xffc7b9db
+    hilited_candidate_back_color: 0xff514970
+    hilited_candidate_text_color: 0xffffffff
+    hilited_key_back_color: 0xff5f567f
+    hilited_key_text_color: 0xffffffff
+    hilited_key_symbol_color: 0xffe1d6f1
+    label_color: 0xffc6aef7
+
+preset_keys:
+  Mode_switch:
+    toggle: ascii_mode
+    send: Mode_switch
+    states: [中, En]
+  To_t9:
+    label: "9键"
+    command: langou_toggle_pinyin_layout
+  To_qwerty:
+    label: "26键"
+    command: langou_toggle_pinyin_layout
+  Keyboard_symbols:
+    label: 符
+    send: Eisu_toggle
+    select: symbols
+  Keyboard_number:
+    label: "123"
+    send: Eisu_toggle
+    select: number
+  Keyboard_letter:
+    label: ABC
+    send: Eisu_toggle
+    select: qwerty
+  Keyboard_default:
+    label: 返回
+    send: Eisu_toggle
+    select: .default
+  Space:
+    label: 懒狗
+    send: space
+  Shift_L: {label: "⇧", send: Shift_L}
+  BackSpace: {label: "⌫", repeatable: true, send: BackSpace}
+  Return: {label: "换行", send: Return}
+  Left: {label: "←", repeatable: true, send: Left}
+  Right: {label: "→", repeatable: true, send: Right}
+
+preset_keyboards:
+  default:
+    import_preset: langou_pinyin
+
+  langou_pinyin:
+    name: 懒狗 26 键
+    author: Langou Input Method contributors
+    ascii_mode: 0
+    ascii_keyboard: letter
+    columns: 10
+    width: 10
+    height: 52
+    horizontal_gap: 6
+    vertical_gap: 5
+    round_corner: 16
+    lock: true
+    keys:
+      - {click: q, long_click: "1"}
+      - {click: w, long_click: "2"}
+      - {click: e, long_click: "3"}
+      - {click: r, long_click: "4"}
+      - {click: t, long_click: "5"}
+      - {click: y, long_click: "6"}
+      - {click: u, long_click: "7"}
+      - {click: i, long_click: "8"}
+      - {click: o, long_click: "9"}
+      - {click: p, long_click: "0"}
+      - {click: a, width: 11}
+      - {click: s, width: 11}
+      - {click: d, width: 11}
+      - {click: f, width: 11}
+      - {click: g, width: 11}
+      - {click: h, width: 11}
+      - {click: j, width: 11}
+      - {click: k, width: 11}
+      - {click: l, width: 12}
+      - {click: Shift_L, width: 15, key_back_color: functional_key_back_color}
+      - {click: z, width: 10}
+      - {click: x, width: 10}
+      - {click: c, width: 10}
+      - {click: v, width: 10}
+      - {click: b, width: 10}
+      - {click: n, width: 10}
+      - {click: m, width: 10}
+      - {click: BackSpace, width: 15, key_back_color: functional_key_back_color}
+      - {click: Keyboard_symbols, long_click: Keyboard_number, width: 14, key_back_color: functional_key_back_color}
+      - {click: Mode_switch, width: 12, key_back_color: functional_key_back_color}
+      - {click: To_t9, width: 14, key_back_color: functional_key_back_color}
+      - {click: Space, width: 30}
+      - {click: "，", long_click: "。", width: 12}
+      - {click: Return, width: 18, key_back_color: enter_key_back_color}
+
+  qwerty:
+    __include: /preset_keyboards/langou_pinyin
+    name: 懒狗 26 键
+
+  letter:
+    __include: /preset_keyboards/langou_pinyin
+    name: 懒狗英文
+    ascii_mode: 1
+    reset_ascii_mode: true
+    lock: false
+
+  langou_t9:
+    name: 懒狗九键
+    author: Langou Input Method contributors
+    ascii_mode: 0
+    ascii_keyboard: letter
+    columns: 3
+    width: 33.333
+    height: 54
+    horizontal_gap: 7
+    vertical_gap: 6
+    round_corner: 17
+    lock: true
+    keys:
+      - {click: "1", label: "，。？！", key_text_size: 15}
+      - {click: "2", label: "ABC"}
+      - {click: "3", label: "DEF"}
+      - {click: "4", label: "GHI"}
+      - {click: "5", label: "JKL"}
+      - {click: "6", label: "MNO"}
+      - {click: "7", label: "PQRS"}
+      - {click: "8", label: "TUV"}
+      - {click: "9", label: "WXYZ"}
+      - {click: Keyboard_symbols, long_click: Keyboard_number, width: 14, key_back_color: functional_key_back_color}
+      - {click: Mode_switch, width: 14, key_back_color: functional_key_back_color}
+      - {click: To_qwerty, width: 14, key_back_color: functional_key_back_color}
+      - {click: Space, width: 30}
+      - {click: BackSpace, width: 14, key_back_color: functional_key_back_color}
+      - {click: Return, width: 14, key_back_color: enter_key_back_color}
+
+  number:
+    name: 数字
+    author: Langou Input Method contributors
+    ascii_mode: 1
+    columns: 4
+    width: 25
+    height: 54
+    horizontal_gap: 7
+    vertical_gap: 6
+    round_corner: 17
+    lock: false
+    keys:
+      - {click: "1"}
+      - {click: "2"}
+      - {click: "3"}
+      - {click: BackSpace, key_back_color: functional_key_back_color}
+      - {click: "4"}
+      - {click: "5"}
+      - {click: "6"}
+      - {click: "-"}
+      - {click: "7"}
+      - {click: "8"}
+      - {click: "9"}
+      - {click: "."}
+      - {click: Keyboard_default, key_back_color: functional_key_back_color}
+      - {click: "0"}
+      - {click: Space}
+      - {click: Return, key_back_color: enter_key_back_color}
+
+  symbols:
+    name: 符号
+    author: Langou Input Method contributors
+    ascii_mode: 0
+    columns: 6
+    width: 16.666
+    height: 48
+    horizontal_gap: 6
+    vertical_gap: 5
+    round_corner: 15
+    lock: false
+    keys:
+      - {click: "，"}
+      - {click: "。"}
+      - {click: "？"}
+      - {click: "！"}
+      - {click: "、"}
+      - {click: "～"}
+      - {click: "："}
+      - {click: "；"}
+      - {click: "“"}
+      - {click: "”"}
+      - {click: "（"}
+      - {click: "）"}
+      - {click: "《"}
+      - {click: "》"}
+      - {click: "【"}
+      - {click: "】"}
+      - {click: "…"}
+      - {click: "—"}
+      - {click: "@"}
+      - {click: "#"}
+      - {click: "%"}
+      - {click: "&"}
+      - {click: "+"}
+      - {click: "="}
+      - {click: Keyboard_default, width: 18, key_back_color: functional_key_back_color}
+      - {click: Keyboard_number, width: 16, key_back_color: functional_key_back_color}
+      - {click: Space, width: 32}
+      - {click: BackSpace, width: 16, key_back_color: functional_key_back_color}
+      - {click: Return, width: 18, key_back_color: enter_key_back_color}

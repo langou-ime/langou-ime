@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- SPDX-FileCopyrightText: 2026 Langou Input Method contributors -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="108dp"
+    android:height="108dp"
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+    <path
+        android:fillColor="#FFFFFFFF"
+        android:pathData="M29,37C17,35 14,46 18,59C21,70 29,71 36,64C31,58 28,49 29,37M79,37C91,35 94,46 90,59C87,70 79,71 72,64C77,58 80,49 79,37M54,24C37,24 27,37 27,53C27,70 38,80 54,80C70,80 81,70 81,53C81,37 71,24 54,24M37,76C29,80 27,91 31,96L77,96C81,91 79,80 71,76C66,82 60,85 54,85C48,85 42,82 37,76Z" />
+</vector>

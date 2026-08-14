@@ -1,0 +1,117 @@
+# SPDX-FileCopyrightText: 2026 Langou Input Method contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: Langou Android CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+      - "codex/**"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: langou-android-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test-and-build:
+    name: Test and build internal APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    env:
+      BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+      ANDROID_BUILD_TOOLS_VERSION: "36.0.0"
+    steps:
+      - name: Checkout source and pinned submodules
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4
+
+      - name: Install native build tools
+        run: sdkmanager --install "cmake;3.31.6" "build-tools;$ANDROID_BUILD_TOOLS_VERSION"
+
+      - name: Verify build logic regressions
+        run: ./gradlew -p build-logic :convention:test
+
+      - name: Verify unit tests and build debug APKs
+        run: ./gradlew testDebugUnitTest assembleDebug --stacktrace
+
+      - name: Verify the universal APK signature
+        run: '"$ANDROID_HOME/build-tools/$ANDROID_BUILD_TOOLS_VERSION/apksigner" verify --verbose app/build/outputs/apk/debug/*-universal-debug.apk'
+
+      - name: Create checksums
+        working-directory: app/build/outputs/apk/debug
+        run: sha256sum ./*.apk > SHA256SUMS
+
+      - name: Upload DEBUG-SIGNED-INTERNAL artifacts
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: langou-android-DEBUG-SIGNED-INTERNAL-${{ github.sha }}
+          path: |
+            app/build/outputs/apk/debug/*.apk
+            app/build/outputs/apk/debug/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 7
+
+  instrumentation:
+    name: Input method smoke · API ${{ matrix.api-level }}
+    needs: test-and-build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 45
+    strategy:
+      fail-fast: false
+      matrix:
+        api-level: [26, 29, 30, 34, 36]
+    steps:
+      - name: Checkout source and pinned submodules
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4
+
+      - name: Enable KVM
+        shell: bash
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' |
+            sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Run input method instrumentation
+        uses: reactivecircus/android-emulator-runner@0a638108440efd5c7f980e6ba145dbcdd8f32009 # v2.37.0
+        with:
+          api-level: ${{ matrix.api-level }}
+          target: default
+          arch: x86_64
+          profile: pixel_6
+          cores: 2
+          ram-size: 3072M
+          disk-size: 4096M
+          disable-animations: true
+          script: ./gradlew connectedDebugAndroidTest --stacktrace

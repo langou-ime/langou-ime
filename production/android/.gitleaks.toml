@@ -1,0 +1,26 @@
+title = "Langou Android secret scanning"
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Generated Android, Gradle, native, and IDE outputs"
+paths = [
+  '''(^|/)\.git/''',
+  '''(^|/)build/''',
+  '''(^|/)\.gradle/''',
+  '''(^|/)\.cxx/''',
+  '''(^|/)\.idea/''',
+]
+
+[[allowlists]]
+description = "Unmodified vendored Boost examples and test fixtures contain public sample keys"
+paths = [
+  '''^app/src/main/jni/boost/''',
+]
+
+[[allowlists]]
+description = "Official OpenCC Bazel module lock contains only public package URLs and SHA-256 hashes"
+paths = [
+  '''^app/src/main/jni/OpenCC/MODULE\.bazel\.lock$''',
+]

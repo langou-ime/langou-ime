@@ -1,0 +1,135 @@
+# SPDX-FileCopyrightText: 2026 Langou Input Method contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: Langou Android signed release
+
+on:
+  workflow_dispatch:
+    inputs:
+      release_mode:
+        description: "Build mode: rc for branch validation, release for v1.0.0 tag"
+        required: true
+        default: rc
+        type: choice
+        options:
+          - rc
+          - release
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: langou-android-release
+  cancel-in-progress: false
+
+jobs:
+  signed-release:
+    name: Build and publish signed APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    environment: production
+    env:
+      BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+      LANGOU_RELEASE_PUBLIC_KEY_BASE64: "NL+5JaOJjU8FhrLZueXoqi7XNagy6K0xe9etWtUvPQY="
+      LANGOU_RELEASE_FILENAME: langou-ime-android-v1.0.0.apk
+    steps:
+      - name: Validate release mode
+        shell: bash
+        run: |
+          if [ "${GITHUB_EVENT_NAME}" = "push" ]; then
+            test "${GITHUB_REF_TYPE}" = "tag"
+            test "${GITHUB_REF_NAME}" = "v1.0.0"
+            echo "LANGOU_RELEASE_FILENAME=langou-ime-android-v1.0.0.apk" >> "$GITHUB_ENV"
+          else
+            test "${{ github.event.inputs.release_mode }}" = "rc" || test "${{ github.event.inputs.release_mode }}" = "release"
+            if [ "${{ github.event.inputs.release_mode }}" = "release" ]; then
+              test "${GITHUB_REF_NAME}" = "v1.0.0"
+              echo "LANGOU_RELEASE_FILENAME=langou-ime-android-v1.0.0.apk" >> "$GITHUB_ENV"
+            else
+              echo "LANGOU_RELEASE_FILENAME=langou-ime-android-rc-${GITHUB_SHA}.apk" >> "$GITHUB_ENV"
+            fi
+          fi
+
+      - name: Checkout source and pinned submodules
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          submodules: recursive
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4
+
+      - name: Install native build tools
+        run: sdkmanager --install "cmake;3.31.6"
+
+      - name: Validate signing inputs
+        shell: bash
+        run: |
+          test -n "${ANDROID_KEYSTORE_BASE64}"
+          test -n "${ANDROID_KEYSTORE_PASSWORD}"
+          test -n "${ANDROID_KEY_ALIAS}"
+          test -n "${ANDROID_KEY_PASSWORD}"
+          test -n "${LANGOU_RELEASE_PUBLIC_KEY_BASE64}"
+
+      - name: Prepare ephemeral signing configuration
+        shell: bash
+        run: |
+          printf 'keyBase64=%s\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+            "${ANDROID_KEYSTORE_BASE64}" \
+            "${ANDROID_KEYSTORE_PASSWORD}" \
+            "${ANDROID_KEY_ALIAS}" \
+            "${ANDROID_KEY_PASSWORD}" \
+            > keystore.properties
+          chmod 600 keystore.properties
+
+      - name: Test and build signed release
+        run: ./gradlew testReleaseUnitTest lintRelease assembleRelease --stacktrace
+
+      - name: Verify package identity and signing certificate
+        shell: bash
+        run: |
+          APK="$(find app/build/outputs/apk/release -name '*-universal-release.apk' -type f -print -quit)"
+          test -n "${APK}"
+          apksigner verify --verbose --print-certs "${APK}"
+          test "$(apkanalyzer manifest application-id "${APK}")" = "tech.langou.ime"
+          test "$(apkanalyzer manifest min-sdk "${APK}")" = "26"
+          test "$(apkanalyzer manifest version-name "${APK}")" = "1.0.0"
+
+      - name: Apply the fixed public filename
+        shell: bash
+        run: |
+          APK="$(find app/build/outputs/apk/release -name '*-universal-release.apk' -type f -print -quit)"
+          test -n "${APK}"
+          mv "${APK}" "app/build/outputs/apk/release/${LANGOU_RELEASE_FILENAME}"
+
+      - name: Create SHA256SUMS
+        working-directory: app/build/outputs/apk/release
+        run: sha256sum "${LANGOU_RELEASE_FILENAME}" > SHA256SUMS
+
+      - name: Upload signed build evidence
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: signed-${{ env.LANGOU_RELEASE_FILENAME }}
+          path: |
+            app/build/outputs/apk/release/${{ env.LANGOU_RELEASE_FILENAME }}
+            app/build/outputs/apk/release/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Remove ephemeral signing configuration
+        if: always()
+        run: shred -u keystore.properties || rm -f keystore.properties
