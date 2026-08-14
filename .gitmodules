@@ -1,0 +1,54 @@
+[submodule "android/OpenCC"]
+	path = production/android/app/src/main/jni/OpenCC
+	url = https://github.com/BYVoid/OpenCC.git
+[submodule "android/snappy"]
+	path = production/android/app/src/main/jni/snappy
+	url = https://github.com/google/snappy.git
+[submodule "android/librime"]
+	path = production/android/app/src/main/jni/librime
+	url = https://github.com/rime/librime.git
+	ignore = dirty
+[submodule "android/librime-lua"]
+	path = production/android/app/src/main/jni/librime-lua
+	url = https://github.com/hchunhui/librime-lua
+	ignore = dirty
+[submodule "android/librime-lua-deps"]
+	path = production/android/app/src/main/jni/librime-lua-deps
+	url = https://github.com/hchunhui/librime-lua
+	branch = thirdparty
+[submodule "android/librime-octagram"]
+	path = production/android/app/src/main/jni/librime-octagram
+	url = https://github.com/lotem/librime-octagram.git
+[submodule "android/librime-predict"]
+	path = production/android/app/src/main/jni/librime-predict
+	url = https://github.com/rime/librime-predict
+[submodule "android/prelude"]
+	path = production/android/app/data/rime/prelude
+	url = https://github.com/rime/rime-prelude
+[submodule "android/luna-pinyin"]
+	path = production/android/app/data/rime/luna-pinyin
+	url = https://github.com/rime/rime-luna-pinyin
+[submodule "android/stroke"]
+	path = production/android/app/data/rime/stroke
+	url = https://github.com/rime/rime-stroke
+[submodule "android/essay"]
+	path = production/android/app/data/rime/essay
+	url = https://github.com/rime/rime-essay
+[submodule "android/third-party-rime-prelude"]
+	path = production/android/third_party/rime-prelude
+	url = https://github.com/rime/rime-prelude.git
+[submodule "android/third-party-rime-luna-pinyin"]
+	path = production/android/third_party/rime-luna-pinyin
+	url = https://github.com/rime/rime-luna-pinyin.git
+[submodule "android/third-party-rime-essay"]
+	path = production/android/third_party/rime-essay
+	url = https://github.com/rime/rime-essay.git
+[submodule "android/third-party-rime-emoji"]
+	path = production/android/third_party/rime-emoji
+	url = https://github.com/rime/rime-emoji.git
+[submodule "windows/librime"]
+	path = production/windows/librime
+	url = https://github.com/rime/librime.git
+[submodule "windows/plum"]
+	path = production/windows/plum
+	url = https://github.com/rime/plum.git

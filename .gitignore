@@ -45,5 +45,6 @@ hs_err_pid*.log
 
 production/releases/
 production/backend/var/
+production/backend/tmp/
 production/assets/website/*.psd
 production/windows/output/assistant-runtime/

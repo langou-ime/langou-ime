@@ -1,0 +1,353 @@
+name: Langou signed unified release
+
+on:
+  push:
+    tags:
+      - "v1.0.0"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: langou-signed-v1.0.0
+  cancel-in-progress: false
+
+env:
+  DOTNET_CLI_TELEMETRY_OPTOUT: "1"
+  BOOST_VERSION: "1.84.0"
+  BOOST_ROOT: "${{ github.workspace }}\\deps\\boost_1_84_0"
+  RELEASE_PUBLIC_KEY_BASE64: "NL+5JaOJjU8FhrLZueXoqi7XNagy6K0xe9etWtUvPQY="
+  ANDROID_FILENAME: langou-ime-android-v1.0.0.apk
+  WINDOWS_FILENAME: langou-ime-windows-x64-v1.0.0.exe
+
+jobs:
+  android:
+    name: Build and verify signed Android APK
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    environment: production
+    env:
+      BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+    steps:
+      - name: Enforce exact release source
+        shell: bash
+        run: |
+          test "${GITHUB_REPOSITORY}" = "langou-ime/langou-ime"
+          test "${GITHUB_REF}" = "refs/tags/v1.0.0"
+          test -n "${ANDROID_KEYSTORE_BASE64}"
+          test -n "${ANDROID_KEYSTORE_PASSWORD}"
+          test -n "${ANDROID_KEY_ALIAS}"
+          test -n "${ANDROID_KEY_PASSWORD}"
+
+      - name: Check out source and pinned submodules
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Java
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+          cache-dependency-path: |
+            production/android/**/*.gradle.kts
+            production/android/gradle/wrapper/gradle-wrapper.properties
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4
+
+      - name: Install native build tools
+        run: sdkmanager --install "cmake;3.31.6" "build-tools;36.0.0"
+
+      - name: Prepare ephemeral signing configuration
+        working-directory: production/android
+        shell: bash
+        run: |
+          printf 'keyBase64=%s\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+            "${ANDROID_KEYSTORE_BASE64}" \
+            "${ANDROID_KEYSTORE_PASSWORD}" \
+            "${ANDROID_KEY_ALIAS}" \
+            "${ANDROID_KEY_PASSWORD}" \
+            > keystore.properties
+          chmod 600 keystore.properties
+
+      - name: Test, lint, shrink, and sign Android release
+        working-directory: production/android
+        run: ./gradlew testReleaseUnitTest lintRelease assembleRelease --stacktrace
+
+      - name: Verify Android package identity and certificate
+        shell: bash
+        run: |
+          source_apk="$(find production/android/app/build/outputs/apk/release -name '*-universal-release.apk' -type f -print -quit)"
+          test -n "${source_apk}"
+          apksigner verify --verbose --print-certs "${source_apk}"
+          test "$(apkanalyzer manifest application-id "${source_apk}")" = "tech.langou.ime"
+          test "$(apkanalyzer manifest min-sdk "${source_apk}")" = "26"
+          test "$(apkanalyzer manifest version-name "${source_apk}")" = "1.0.0"
+          mkdir -p release-assets
+          cp "${source_apk}" "release-assets/${ANDROID_FILENAME}"
+          cd release-assets
+          sha256sum "${ANDROID_FILENAME}" > "${ANDROID_FILENAME}.sha256"
+
+      - name: Upload signed Android asset
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: signed-android-v1.0.0
+          path: |
+            release-assets/${{ env.ANDROID_FILENAME }}
+            release-assets/${{ env.ANDROID_FILENAME }}.sha256
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Remove ephemeral signing configuration
+        if: always()
+        working-directory: production/android
+        run: shred -u keystore.properties || rm -f keystore.properties
+
+  windows:
+    name: Build, SignPath sign, and verify Windows EXE
+    runs-on: windows-2022
+    timeout-minutes: 90
+    environment: production
+    defaults:
+      run:
+        working-directory: production/windows
+    env:
+      SIGNPATH_ORGANIZATION_ID: ${{ secrets.SIGNPATH_ORGANIZATION_ID }}
+      SIGNPATH_API_TOKEN: ${{ secrets.SIGNPATH_API_TOKEN }}
+      SIGNPATH_PROJECT_SLUG: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+      SIGNPATH_POLICY_SLUG: ${{ vars.SIGNPATH_POLICY_SLUG }}
+      SIGNPATH_ARTIFACT_CONFIGURATION_SLUG: ${{ vars.SIGNPATH_ARTIFACT_CONFIGURATION_SLUG }}
+    steps:
+      - name: Enforce exact release source and signing settings
+        shell: pwsh
+        run: |
+          if ("${{ github.repository }}" -ne "langou-ime/langou-ime") {
+            throw "Signed releases are restricted to the unified Langou repository."
+          }
+          if ("${{ github.ref }}" -ne "refs/tags/v1.0.0") {
+            throw "Run this workflow from the signed v1.0.0 tag."
+          }
+          $required = @(
+            $env:SIGNPATH_ORGANIZATION_ID,
+            $env:SIGNPATH_API_TOKEN,
+            $env:SIGNPATH_PROJECT_SLUG,
+            $env:SIGNPATH_POLICY_SLUG,
+            $env:SIGNPATH_ARTIFACT_CONFIGURATION_SLUG,
+            $env:RELEASE_PUBLIC_KEY_BASE64
+          )
+          if ($required | Where-Object { [string]::IsNullOrWhiteSpace($_) }) {
+            throw "Signing and release-key settings are incomplete. Public release is blocked."
+          }
+
+      - name: Check out exact source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Initialize Windows native submodules
+        working-directory: ${{ github.workspace }}
+        shell: pwsh
+        run: git submodule update --init --recursive -- production/windows/librime production/windows/plum
+
+      - name: Set up .NET 8
+        uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5
+        with:
+          dotnet-version: "8.0.x"
+          cache: true
+          cache-dependency-path: |
+            production/windows/LangouAssistant.Core/packages.lock.json
+            production/windows/LangouAssistant.Tests/packages.lock.json
+            production/windows/LangouAssistant/packages.lock.json
+
+      - name: Add MSBuild to PATH
+        uses: microsoft/setup-msbuild@6fb02220983dee41ce7ae257b6f4d8f9bf5ed4ce # v2
+
+      - name: Configure Visual Studio 2022 native build
+        shell: pwsh
+        run: |
+          Copy-Item .\env.vs2022.bat .\env.bat
+          $vswhere = "${env:ProgramFiles(x86)}\Microsoft Visual Studio\Installer\vswhere.exe"
+          $vsDevCmd = & $vswhere -latest -products "*" `
+            -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 `
+            -find "Common7\Tools\VsDevCmd.bat"
+          if (-not $vsDevCmd) { throw "Visual C++ x64 toolchain was not found." }
+          "VSDEVCMD=$vsDevCmd" | Out-File $env:GITHUB_ENV -Encoding utf8 -Append
+
+      - name: Cache fixed Boost source and libraries
+        id: boost-cache
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: "${{ env.BOOST_ROOT }}"
+          key: "windows-2022-boost-${{ env.BOOST_VERSION }}-win10-v1"
+
+      - name: Install and build Boost
+        if: steps.boost-cache.outputs.cache-hit != 'true'
+        shell: cmd
+        run: |
+          call install_boost.bat
+          if errorlevel 1 exit /b 1
+
+      - name: Fetch pinned librime binaries
+        shell: pwsh
+        run: .\get-rime.ps1 -tag 1.13.1 -use dev
+
+      - name: Compile and run native bridge parser test
+        shell: cmd
+        run: |
+          call "%VSDEVCMD%" -arch=x64 -host_arch=x64
+          if errorlevel 1 exit /b 1
+          cl /nologo /std:c++17 /EHsc /utf-8 /I"%BOOST_ROOT%" /I"WeaselServer" test\LangouBridgeProtocolTest.cpp WeaselServer\LangouBridgeProtocol.cpp /Fe:LangouBridgeProtocolTest.exe
+          if errorlevel 1 exit /b 1
+          LangouBridgeProtocolTest.exe
+          if errorlevel 1 exit /b 1
+
+      - name: Build native TSF and RIME binaries
+        shell: cmd
+        env:
+          RELEASE_BUILD: "1"
+        run: |
+          xcopy /E /I /Y rime-data output\data
+          call build.bat release
+          if errorlevel 1 exit /b 1
+
+      - name: Install NSIS
+        shell: cmd
+        run: |
+          call install_nsis.bat
+          if errorlevel 1 exit /b 1
+
+      - name: Build unsigned signing input
+        shell: pwsh
+        run: |
+          .\scripts\Build-LangouPackage.ps1 -ReleasePublicKeyBase64 "${{ env.RELEASE_PUBLIC_KEY_BASE64 }}"
+          $unsigned = @(
+            Get-ChildItem .\artifacts\langou\installer -Filter $env:WINDOWS_FILENAME -Recurse -File
+          )
+          if ($unsigned.Count -ne 1) {
+            throw "Expected exactly one unsigned signing input, found $($unsigned.Count)."
+          }
+          New-Item .\artifacts\langou\signing-input -ItemType Directory -Force | Out-Null
+          Copy-Item $unsigned[0].FullName .\artifacts\langou\signing-input\$env:WINDOWS_FILENAME
+
+      - name: Upload unsigned EXE for trusted signing
+        id: upload-unsigned
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: windows-v1.0.0-signing-input
+          path: production/windows/artifacts/langou/signing-input/langou-ime-windows-x64-v1.0.0.exe
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Submit SignPath signing request
+        uses: signpath/github-action-submit-signing-request@b9d91eadd323de506c0c81cf0c7fe7438f3360fd # v2
+        with:
+          api-token: "${{ env.SIGNPATH_API_TOKEN }}"
+          organization-id: "${{ env.SIGNPATH_ORGANIZATION_ID }}"
+          project-slug: "${{ env.SIGNPATH_PROJECT_SLUG }}"
+          signing-policy-slug: "${{ env.SIGNPATH_POLICY_SLUG }}"
+          artifact-configuration-slug: "${{ env.SIGNPATH_ARTIFACT_CONFIGURATION_SLUG }}"
+          github-artifact-id: "${{ steps.upload-unsigned.outputs.artifact-id }}"
+          wait-for-completion: true
+          wait-for-completion-timeout-in-seconds: "1800"
+          output-artifact-directory: "${{ github.workspace }}\\production\\windows\\artifacts\\langou\\signed"
+          parameters: |
+            version: "1.0.0"
+
+      - name: Require valid Authenticode and stage release asset
+        shell: pwsh
+        run: |
+          $signed = @(
+            Get-ChildItem .\artifacts\langou\signed -Filter $env:WINDOWS_FILENAME -Recurse -File
+          )
+          if ($signed.Count -ne 1) {
+            throw "Expected exactly one signed Langou EXE, found $($signed.Count)."
+          }
+          $signature = Get-AuthenticodeSignature $signed[0].FullName
+          if ($signature.Status -ne "Valid" -or $null -eq $signature.SignerCertificate) {
+            throw "Authenticode verification failed: $($signature.Status) $($signature.StatusMessage)"
+          }
+          $assetRoot = Join-Path "${{ github.workspace }}" "release-assets"
+          New-Item $assetRoot -ItemType Directory -Force | Out-Null
+          $asset = Join-Path $assetRoot $env:WINDOWS_FILENAME
+          Copy-Item $signed[0].FullName $asset
+          $hash = Get-FileHash $asset -Algorithm SHA256
+          Set-Content "$asset.sha256" "$($hash.Hash.ToLowerInvariant())  $env:WINDOWS_FILENAME" -Encoding ascii
+
+      - name: Upload signed Windows asset
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: signed-windows-v1.0.0
+          path: |
+            release-assets/${{ env.WINDOWS_FILENAME }}
+            release-assets/${{ env.WINDOWS_FILENAME }}.sha256
+          if-no-files-found: error
+          retention-days: 30
+
+  draft-release:
+    name: Create one draft GitHub Release
+    needs: [android, windows]
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    environment: production
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Check out release notes
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Download signed Android asset
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: signed-android-v1.0.0
+          path: release-assets
+
+      - name: Download signed Windows asset
+        uses: actions/download-artifact@37930b1c2abaa49bbe596cd826c3c89aef350131 # v7
+        with:
+          name: signed-windows-v1.0.0
+          path: release-assets
+
+      - name: Verify exact release asset set
+        shell: bash
+        run: |
+          test -f "release-assets/${ANDROID_FILENAME}"
+          test -f "release-assets/${ANDROID_FILENAME}.sha256"
+          test -f "release-assets/${WINDOWS_FILENAME}"
+          test -f "release-assets/${WINDOWS_FILENAME}.sha256"
+          cd release-assets
+          sha256sum --check "${ANDROID_FILENAME}.sha256"
+          sha256sum --check "${WINDOWS_FILENAME}.sha256"
+
+      - name: Create unified draft Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          if gh release view "${GITHUB_REF_NAME}" >/dev/null 2>&1; then
+            echo "Release ${GITHUB_REF_NAME} already exists; refusing to replace it." >&2
+            exit 1
+          fi
+          gh release create "${GITHUB_REF_NAME}" \
+            --verify-tag \
+            --draft \
+            --title "懒狗输入法 v1.0.0" \
+            --notes-file docs/release/v1.0.0.md \
+            "release-assets/${ANDROID_FILENAME}" \
+            "release-assets/${ANDROID_FILENAME}.sha256" \
+            "release-assets/${WINDOWS_FILENAME}" \
+            "release-assets/${WINDOWS_FILENAME}.sha256"
