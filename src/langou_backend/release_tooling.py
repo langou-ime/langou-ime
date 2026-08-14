@@ -91,13 +91,13 @@ def _require_artifact(
 ) -> None:
     if not artifact.is_file():
         raise FileNotFoundError(artifact)
-    required_suffix = ".apk" if platform == "android" else ".msi"
+    required_suffix = ".apk" if platform == "android" else ".exe"
     if artifact.suffix.lower() != required_suffix:
         raise ValueError(f"{platform} release artifact must use {required_suffix}")
     expected_name = (
         f"langou-ime-android-v{version}.apk"
         if platform == "android"
-        else f"langou-ime-windows-x64-v{version}.msi"
+        else f"langou-ime-windows-x64-v{version}.exe"
     )
     if artifact.name != expected_name:
         raise ValueError(f"{platform} release artifact must be named {expected_name}")

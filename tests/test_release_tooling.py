@@ -48,8 +48,8 @@ def test_key_generation_is_private_and_refuses_overwrite(tmp_path) -> None:
 
 
 def test_signed_manifest_is_json_serializable(tmp_path) -> None:
-    artifact = tmp_path / "langou-ime-windows-x64-v1.0.0.msi"
-    artifact.write_bytes(b"signed msi")
+    artifact = tmp_path / "langou-ime-windows-x64-v1.0.0.exe"
+    artifact.write_bytes(b"signed exe")
     private_key_file = tmp_path / "release-private.key"
     public_key_file = tmp_path / "release-public.key"
     generate_release_keypair(private_key_file, public_key_file)
@@ -57,7 +57,7 @@ def test_signed_manifest_is_json_serializable(tmp_path) -> None:
     manifest = build_signed_artifact_manifest(
         platform="windows",
         artifact=artifact,
-        url="https://api.langou.tech/downloads/langou-ime-windows-x64-v1.0.0.msi",
+        url="https://api.langou.tech/downloads/langou-ime-windows-x64-v1.0.0.exe",
         private_key_file=private_key_file,
         published_at=datetime(2026, 7, 26, tzinfo=UTC),
     )

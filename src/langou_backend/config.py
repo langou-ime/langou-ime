@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     mimo_api_key: str | None = None
     mimo_primary_model: str = "mimo-v2.5-pro"
     mimo_fallback_model: str = "mimo-v2.5"
+    mimo_first_suggestion_timeout_seconds: float = Field(default=3.2, gt=0.1, le=10.0)
     ai_per_minute_limit: int = Field(default=20, ge=1, le=300)
     ai_daily_budget: int = Field(default=100000, ge=1)
     cors_origins: list[str] = []
