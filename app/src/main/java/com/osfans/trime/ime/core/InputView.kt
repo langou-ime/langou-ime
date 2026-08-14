@@ -291,8 +291,16 @@ class InputView(
         enterKeyDisplay.updateLabelOnEditorInfo(info)
     }
 
-    fun showAiLoading() {
-        inputBar.showAiLoading()
+    fun showAiLoading(preserveExistingSuggestions: Boolean = false) {
+        inputBar.showAiLoading(preserveExistingSuggestions)
+    }
+
+    fun showAiContextLoading(preserveExistingSuggestions: Boolean = false) {
+        inputBar.showAiContextLoading(preserveExistingSuggestions)
+    }
+
+    fun showAiRetry(onClick: () -> Unit) {
+        inputBar.showAiRetry(onClick)
     }
 
     fun showAiPermissionRequired(onClick: () -> Unit) {
@@ -310,6 +318,12 @@ class InputView(
 
     fun dismissAiSuggestions() {
         inputBar.dismissAiSuggestions()
+    }
+
+    fun activeKeyboardId(): String = keyboardWindow.activeKeyboardId
+
+    fun syncKeyboardToSchema(schemaId: String) {
+        keyboardWindow.switchKeyboard(schemaId)
     }
 
     override fun handleRimeMessage(it: RimeMessage<*>) {

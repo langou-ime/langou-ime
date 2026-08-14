@@ -1,5 +1,6 @@
 package com.osfans.trime.langou.ai
 
+import com.osfans.trime.BuildConfig
 import java.util.Locale
 
 object ChatApplicationMapper {
@@ -17,6 +18,9 @@ object ChatApplicationMapper {
 
     fun map(packageName: String): String? {
         val normalized = packageName.lowercase(Locale.ROOT)
+        if (BuildConfig.DEBUG && normalized == BuildConfig.APPLICATION_ID.lowercase(Locale.ROOT)) {
+            return "wechat"
+        }
         return applications.firstOrNull { (prefix, _) ->
             normalized == prefix || normalized.startsWith("$prefix.")
         }?.second

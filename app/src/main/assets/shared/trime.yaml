@@ -157,9 +157,12 @@ preset_keys:
     toggle: ascii_mode
     send: Mode_switch
     states: [中, En]
-  Schema_switch:
-    label: "26/9"
-    send: Control+grave
+  To_t9:
+    label: "9键"
+    command: langou_toggle_pinyin_layout
+  To_qwerty:
+    label: "26键"
+    command: langou_toggle_pinyin_layout
   Keyboard_symbols:
     label: 符
     send: Eisu_toggle
@@ -187,9 +190,9 @@ preset_keys:
 
 preset_keyboards:
   default:
-    import_preset: qwerty
+    import_preset: langou_pinyin
 
-  qwerty:
+  langou_pinyin:
     name: 懒狗 26 键
     author: Langou Input Method contributors
     ascii_mode: 0
@@ -232,13 +235,17 @@ preset_keyboards:
       - {click: BackSpace, width: 15, key_back_color: functional_key_back_color}
       - {click: Keyboard_symbols, long_click: Keyboard_number, width: 14, key_back_color: functional_key_back_color}
       - {click: Mode_switch, width: 12, key_back_color: functional_key_back_color}
-      - {click: Schema_switch, width: 14, key_back_color: functional_key_back_color}
+      - {click: To_t9, width: 14, key_back_color: functional_key_back_color}
       - {click: Space, width: 30}
       - {click: "，", long_click: "。", width: 12}
       - {click: Return, width: 18, key_back_color: enter_key_back_color}
 
+  qwerty:
+    __include: /preset_keyboards/langou_pinyin
+    name: 懒狗 26 键
+
   letter:
-    __include: /preset_keyboards/qwerty
+    __include: /preset_keyboards/langou_pinyin
     name: 懒狗英文
     ascii_mode: 1
     reset_ascii_mode: true
@@ -268,7 +275,7 @@ preset_keyboards:
       - {click: "9", label: "WXYZ"}
       - {click: Keyboard_symbols, long_click: Keyboard_number, width: 14, key_back_color: functional_key_back_color}
       - {click: Mode_switch, width: 14, key_back_color: functional_key_back_color}
-      - {click: Schema_switch, width: 14, key_back_color: functional_key_back_color}
+      - {click: To_qwerty, width: 14, key_back_color: functional_key_back_color}
       - {click: Space, width: 30}
       - {click: BackSpace, width: 14, key_back_color: functional_key_back_color}
       - {click: Return, width: 14, key_back_color: enter_key_back_color}

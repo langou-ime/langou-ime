@@ -12,6 +12,7 @@ import io.kotest.matchers.shouldBe
 class ContextSnapshotStoreTest :
     StringSpec({
         afterTest {
+            ContextCaptureState.deactivate()
             ContextSnapshotStore.clear()
         }
 
@@ -31,5 +32,22 @@ class ContextSnapshotStoreTest :
             ContextSnapshotStore.snapshots.replayCache.single() shouldBe snapshot
             ContextSnapshotStore.clear()
             ContextSnapshotStore.snapshots.replayCache.single() shouldBe null
+        }
+
+        "switching chat apps clears the previous conversation immediately" {
+            val snapshot =
+                ChatContextSnapshot(
+                    packageName = "com.tencent.mm",
+                    application = "wechat",
+                    turns = listOf(ChatTurn("other", "晚上吃什么？")),
+                    capturedAtEpochMillis = System.currentTimeMillis(),
+                )
+
+            ContextCaptureState.activate("com.tencent.mm")
+            ContextSnapshotStore.update(snapshot)
+            ContextCaptureState.activate("com.tencent.mobileqq")
+
+            ContextSnapshotStore.snapshots.replayCache.single() shouldBe null
+            ContextCaptureState.isActive("com.tencent.mobileqq") shouldBe true
         }
     })

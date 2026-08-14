@@ -47,10 +47,12 @@ class ConversationHintResolverTest :
             ContextCaptureState.deactivate()
             ContextCaptureState.activate("com.tencent.mm")
 
+            ContextCaptureState.activePackages.replayCache.single() shouldBe "com.tencent.mm"
             ContextCaptureState.isActive("com.tencent.mm") shouldBe true
             ContextCaptureState.isActive("com.tencent.mobileqq") shouldBe false
 
             ContextCaptureState.deactivate()
+            ContextCaptureState.activePackages.replayCache.single() shouldBe null
             ContextCaptureState.isActive("com.tencent.mm") shouldBe false
         }
     })

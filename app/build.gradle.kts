@@ -35,6 +35,9 @@ android {
         versionCode = 10000
         versionName = "1.0.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        ndk {
+            abiFilters += listOf("armeabi-v7a", "arm64-v8a")
+        }
 
         multiDexEnabled = true
         buildConfigField("String", "LANGOU_API_BASE_URL", "\"https://api.langou.tech/\"")
@@ -94,6 +97,9 @@ android {
 
     splits {
         abi {
+            isEnable = true
+            reset()
+            include("armeabi-v7a", "arm64-v8a")
             isUniversalApk = true
         }
     }

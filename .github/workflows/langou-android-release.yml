@@ -5,6 +5,15 @@ name: Langou Android signed release
 
 on:
   workflow_dispatch:
+    inputs:
+      release_mode:
+        description: "Build mode: rc for branch validation, release for v1.0.0 tag"
+        required: true
+        default: rc
+        type: choice
+        options:
+          - rc
+          - release
   push:
     tags:
       - "v*"
@@ -28,13 +37,25 @@ jobs:
       ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
       ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
       ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
-      LANGOU_RELEASE_PUBLIC_KEY_BASE64: "1uFuGlWZWeHpckhp2MTF6+5yCGIZYgBd5ghWEVQjx/k="
+      LANGOU_RELEASE_PUBLIC_KEY_BASE64: "NL+5JaOJjU8FhrLZueXoqi7XNagy6K0xe9etWtUvPQY="
+      LANGOU_RELEASE_FILENAME: langou-ime-android-v1.0.0.apk
     steps:
-      - name: Require a version tag
+      - name: Validate release mode
         shell: bash
         run: |
-          test "${GITHUB_REF_TYPE}" = "tag"
-          test "${GITHUB_REF_NAME}" = "v1.0.0"
+          if [ "${GITHUB_EVENT_NAME}" = "push" ]; then
+            test "${GITHUB_REF_TYPE}" = "tag"
+            test "${GITHUB_REF_NAME}" = "v1.0.0"
+            echo "LANGOU_RELEASE_FILENAME=langou-ime-android-v1.0.0.apk" >> "$GITHUB_ENV"
+          else
+            test "${{ github.event.inputs.release_mode }}" = "rc" || test "${{ github.event.inputs.release_mode }}" = "release"
+            if [ "${{ github.event.inputs.release_mode }}" = "release" ]; then
+              test "${GITHUB_REF_NAME}" = "v1.0.0"
+              echo "LANGOU_RELEASE_FILENAME=langou-ime-android-v1.0.0.apk" >> "$GITHUB_ENV"
+            else
+              echo "LANGOU_RELEASE_FILENAME=langou-ime-android-rc-${GITHUB_SHA}.apk" >> "$GITHUB_ENV"
+            fi
+          fi
 
       - name: Checkout source and pinned submodules
         uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
@@ -93,18 +114,18 @@ jobs:
         run: |
           APK="$(find app/build/outputs/apk/release -name '*-universal-release.apk' -type f -print -quit)"
           test -n "${APK}"
-          mv "${APK}" app/build/outputs/apk/release/langou-ime-android-v1.0.0.apk
+          mv "${APK}" "app/build/outputs/apk/release/${LANGOU_RELEASE_FILENAME}"
 
       - name: Create SHA256SUMS
         working-directory: app/build/outputs/apk/release
-        run: sha256sum langou-ime-android-v1.0.0.apk > SHA256SUMS
+        run: sha256sum "${LANGOU_RELEASE_FILENAME}" > SHA256SUMS
 
       - name: Upload signed build evidence
         uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
         with:
-          name: langou-android-v1.0.0-signed
+          name: signed-${{ env.LANGOU_RELEASE_FILENAME }}
           path: |
-            app/build/outputs/apk/release/langou-ime-android-v1.0.0.apk
+            app/build/outputs/apk/release/${{ env.LANGOU_RELEASE_FILENAME }}
             app/build/outputs/apk/release/SHA256SUMS
           if-no-files-found: error
           retention-days: 30

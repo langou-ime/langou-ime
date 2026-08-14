@@ -7,7 +7,6 @@ package com.osfans.trime.ime.core
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.Intent
 import android.content.IntentFilter
 import android.content.pm.ActivityInfo
 import android.content.res.Configuration
@@ -16,7 +15,6 @@ import android.inputmethodservice.InputMethodService
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
-import android.provider.Settings
 import android.text.InputType
 import android.view.InputDevice
 import android.view.KeyCharacterMap
@@ -46,6 +44,7 @@ import com.osfans.trime.core.RimeKeyMapping
 import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
+import com.osfans.trime.daemon.launchOnReady
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.prefs.PreferenceDelegate
 import com.osfans.trime.data.prefs.PreferenceDelegateProvider
@@ -60,9 +59,11 @@ import com.osfans.trime.langou.ai.AutoSuggestionGate
 import com.osfans.trime.langou.ai.ChatApplicationMapper
 import com.osfans.trime.langou.ai.SuggestionDecision
 import com.osfans.trime.langou.ai.SuggestionTrigger
+import com.osfans.trime.langou.context.ContextAccessSettings
 import com.osfans.trime.langou.context.ContextCaptureState
 import com.osfans.trime.langou.context.ContextPermissionStatus
 import com.osfans.trime.langou.context.ContextSnapshotStore
+import com.osfans.trime.langou.context.stableSignature
 import com.osfans.trime.langou.memory.ConversationIdentity
 import com.osfans.trime.langou.memory.ConversationMemory
 import com.osfans.trime.langou.memory.ConversationMemoryController
@@ -73,6 +74,7 @@ import com.osfans.trime.langou.network.ConversationTurn
 import com.osfans.trime.langou.network.SuggestionRequest
 import com.osfans.trime.langou.privacy.ContextSignals
 import com.osfans.trime.langou.privacy.SensitiveContextPolicy
+import com.osfans.trime.langou.theme.LangouPinyinLayout
 import com.osfans.trime.receiver.RimeIntentReceiver
 import com.osfans.trime.util.any
 import com.osfans.trime.util.findSectionFrom
@@ -155,6 +157,15 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             replaceCandidateView(ThemeManager.activeTheme)
         }
 
+    val debugActiveKeyboardId: String
+        get() = inputView?.activeKeyboardId().orEmpty()
+
+    val debugSelectedSchemaId: String
+        get() = runCatching { rime.run { statusCached.schemaId } }.getOrDefault("")
+
+    val debugAiSuggestionTexts: List<String>
+        get() = debugAiSuggestions.toList()
+
     @Keep
     private val onThemeChangeListener =
         ThemeManager.OnThemeChangeListener {
@@ -210,6 +221,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     override fun onCreate() {
+        activeInstance = this
         rime = RimeDaemon.createSession(javaClass.name)
         lifecycleScope.launch {
             jobs.consumeEach { it.join() }
@@ -222,7 +234,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         lifecycleScope.launch {
             ContextSnapshotStore.snapshots
                 .distinctUntilChangedBy { snapshot ->
-                    snapshot?.let { Triple(it.packageName, it.conversationHint, it.turns) }
+                    snapshot?.stableSignature()
                 }.collect { snapshot ->
                     if (snapshot == null) {
                         langouSuggestionJob?.cancel()
@@ -318,7 +330,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                 }
             is RimeMessage.DeployMessage -> {
                 if (it.data == RimeMessage.DeployMessage.State.Success) {
-                    ThemeManager.selectTheme(ThemeManager.prefs.selectedTheme.getValue())
+                    ThemeManager.reloadSelectedThemeAfterDeployment()
                 }
             }
             else -> {}
@@ -360,6 +372,9 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         prefs.candidates.unregisterOnChangeListener(recreateCandidatesViewListener)
         ThemeManager.removeOnChangedListener(onThemeChangeListener)
         ColorManager.removeOnChangedListener(onColorChangeListener)
+        if (activeInstance === this) {
+            activeInstance = null
+        }
         super.onDestroy()
         unregisterReceiver(rimeIntentReceiver)
         RimeDaemon.destroySession(javaClass.name)
@@ -614,6 +629,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             inputDeviceManager.evaluateOnStartInputView(attribute, this)
         if (useVirtualKeyboard) {
             inputView?.startInput(attribute, restarting)
+            ensureLangouSchemaSelected()
             updateLangouCaptureState(attribute)
             scheduleLangouSuggestions(attribute)
         } else {
@@ -666,9 +682,49 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             safe &&
             ContextPermissionStatus.isAccessibilityEnabled(this)
         ) {
+            Timber.i("Langou capture active package=%s", packageName)
             ContextCaptureState.activate(packageName)
         } else {
+            Timber.i(
+                "Langou capture inactive package=%s enabled=%s supported=%s safe=%s accessibility=%s",
+                packageName,
+                enabled,
+                supported,
+                safe,
+                ContextPermissionStatus.isAccessibilityEnabled(this),
+            )
             ContextCaptureState.deactivate()
+        }
+    }
+
+    fun syncLangouKeyboardToSchema(schemaId: String) {
+        inputView?.syncKeyboardToSchema(schemaId)
+    }
+
+    private fun ensureLangouSchemaSelected() {
+        rime.launchOnReady { api ->
+            lifecycleScope.launch {
+                val currentSchema = api.selectedSchemaId()
+                val managedSchema = LangouPinyinLayout.ensureManagedSchema(currentSchema)
+                if (managedSchema == currentSchema) {
+                    syncLangouKeyboardToSchema(managedSchema)
+                    return@launch
+                }
+                Timber.i(
+                    "Langou schema fallback current=%s target=%s",
+                    currentSchema,
+                    managedSchema,
+                )
+                api.commitComposition()
+                var selected = api.selectSchema(managedSchema)
+                if (!selected) {
+                    api.deploy()
+                    selected = api.selectSchema(managedSchema)
+                }
+                if (selected) {
+                    syncLangouKeyboardToSchema(managedSchema)
+                }
+            }
         }
     }
 
@@ -678,6 +734,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     ) {
         langouSuggestionJob?.cancel()
         if (!langouSettings.getBoolean(LangouPreferences.AI_AUTO_SUGGEST, true)) {
+            Timber.i("Langou suggestions skipped reason=disabled")
             ContextCaptureState.deactivate()
             inputView?.dismissAiSuggestions()
             return
@@ -686,6 +743,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         val packageName = editorInfo.packageName.orEmpty()
         val application = ChatApplicationMapper.map(packageName)
         if (application == null) {
+            Timber.i("Langou suggestions skipped reason=unsupported_app package=%s", packageName)
             ContextCaptureState.deactivate()
             inputView?.dismissAiSuggestions()
             return
@@ -694,22 +752,24 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             ContextSignals(
                 inputType = editorInfo.inputType,
                 packageName = packageName,
-            )
+        )
         if (!SensitiveContextPolicy.canCollect(signals)) {
+            Timber.i("Langou suggestions skipped reason=sensitive package=%s", packageName)
             ContextCaptureState.deactivate()
             inputView?.dismissAiSuggestions()
             return
         }
         if (!ContextPermissionStatus.isAccessibilityEnabled(this)) {
+            Timber.i("Langou suggestions waiting reason=permission_required package=%s", packageName)
             ContextCaptureState.deactivate()
             inputView?.showAiPermissionRequired {
-                startActivity(
-                    Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS).apply {
-                        addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                    },
-                )
+                ContextAccessSettings.open(this)
             }
             return
+        }
+        if (ContextSnapshotStore.get(packageName) == null) {
+            Timber.i("Langou suggestions waiting reason=context_loading package=%s", packageName)
+            inputView?.showAiContextLoading(preserveExistingSuggestions = debugAiSuggestions.isNotEmpty())
         }
 
         langouSuggestionJob =
@@ -721,6 +781,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                         application = application,
                         conversationHint = snapshot.conversationHint,
                         confidence = snapshot.identityConfidence,
+                        contextSeed = stableConversationSeed(snapshot.turns),
                     )
                 val capturedTurns =
                     snapshot.turns.map { turn ->
@@ -744,8 +805,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                             ConversationTurn(role = turn.role, text = turn.text)
                         }
                 val context =
-                    turns
-                        .joinToString("\n") { turn -> "${turn.role}:${turn.text}" }
+                    focusedSuggestionContext(turns)
                         .takeLast(MAX_LANGOU_GATE_CONTEXT_CHARACTERS)
                 if (
                     langouSuggestionGate.evaluate(
@@ -756,9 +816,22 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                     ) !=
                     SuggestionDecision.Generate
                 ) {
+                    Timber.i(
+                        "Langou suggestions skipped reason=gate package=%s trigger=%s turns=%s",
+                        packageName,
+                        trigger,
+                        turns.size,
+                    )
                     return@launch
                 }
-                inputView?.showAiLoading()
+                Timber.i(
+                    "Langou suggestions generating package=%s trigger=%s turns=%s memory=%s",
+                    packageName,
+                    trigger,
+                    turns.size,
+                    retrieved.summary.isNotBlank(),
+                )
+                inputView?.showAiLoading(preserveExistingSuggestions = debugAiSuggestions.isNotEmpty())
                 var requestSucceeded = false
                 try {
                     val session = langouSessionManager.validSession()
@@ -817,6 +890,11 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                             }
                         lifecycleScope.launch {
                             if (requestJob?.isActive != true) return@launch
+                            Timber.i(
+                                "Langou suggestions received package=%s count=%s",
+                                packageName,
+                                currentSuggestions.size,
+                            )
                             inputView?.showAiSuggestions(
                                 values = currentSuggestions,
                                 onRefresh = {
@@ -834,9 +912,11 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                                 },
                                 onSelect = { text ->
                                     commitText(text)
+                                    debugAiSuggestions = emptyList()
                                     inputView?.dismissAiSuggestions()
                                 },
                             )
+                            debugAiSuggestions = currentSuggestions
                         }
                     }
                     requestSucceeded =
@@ -847,7 +927,12 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                     Timber.w(
                         "Langou AI unavailable: ${failure.javaClass.simpleName}",
                     )
-                    inputView?.dismissAiSuggestions()
+                    inputView?.showAiRetry {
+                        scheduleLangouSuggestions(
+                            currentInputEditorInfo,
+                            SuggestionTrigger.ManualRefresh,
+                        )
+                    }
                 } finally {
                     langouSuggestionGate.complete(identity.id, context, requestSucceeded)
                 }
@@ -864,7 +949,26 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
             application = application,
             conversationHint = snapshot.conversationHint,
             confidence = snapshot.identityConfidence,
+            contextSeed = stableConversationSeed(snapshot.turns),
         )
+    }
+
+    private fun stableConversationSeed(turns: List<com.osfans.trime.langou.context.ChatTurn>): String =
+        turns
+            .take(3)
+            .joinToString("\n") { turn ->
+                "${turn.role}:${turn.text.trim().replace(Regex("\\s+"), " ").take(80)}"
+            }
+
+    private fun focusedSuggestionContext(turns: List<ConversationTurn>): String {
+        val latestOtherIndex = turns.indexOfLast { it.role == "other" }
+        val focusedTurns =
+            if (latestOtherIndex >= 0) {
+                turns.subList(maxOf(0, latestOtherIndex - 3), latestOtherIndex + 1)
+            } else {
+                turns.takeLast(4)
+            }
+        return focusedTurns.joinToString("\n") { turn -> "${turn.role}:${turn.text}" }
     }
 
     private fun forgetActiveConversationMemory(
@@ -1351,8 +1455,23 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         showingDialog = dialog
     }
 
-    private companion object {
-        const val LANGOU_SUGGESTION_DEBOUNCE_MS = 150L
+    companion object {
+        @Volatile
+        private var activeInstance: TrimeInputMethodService? = null
+
+        @Volatile
+        private var debugAiSuggestions: List<String> = emptyList()
+
+        @JvmStatic
+        fun debugSelectedSchemaId(): String = activeInstance?.debugSelectedSchemaId.orEmpty()
+
+        @JvmStatic
+        fun debugActiveKeyboardId(): String = activeInstance?.debugActiveKeyboardId.orEmpty()
+
+        @JvmStatic
+        fun debugAiSuggestionTexts(): List<String> = activeInstance?.debugAiSuggestionTexts.orEmpty()
+
+        const val LANGOU_SUGGESTION_DEBOUNCE_MS = 80L
         const val MAX_LANGOU_TURNS = 12
         const val MAX_LANGOU_MEMORY_TURNS = 100
         const val LANGOU_MEMORY_RETENTION_MILLIS = 30L * 24L * 60L * 60L * 1_000L

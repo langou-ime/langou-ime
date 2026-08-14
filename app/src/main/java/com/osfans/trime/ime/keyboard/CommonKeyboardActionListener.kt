@@ -32,6 +32,7 @@ import com.osfans.trime.ime.switches.SwitchOptionWindow
 import com.osfans.trime.ime.symbol.LiquidData
 import com.osfans.trime.ime.symbol.LiquidWindow
 import com.osfans.trime.ime.window.BoardWindowManager
+import com.osfans.trime.langou.theme.LangouPinyinLayout
 import com.osfans.trime.ui.main.settings.ColorPickerDialog
 import com.osfans.trime.ui.main.settings.SoundEffectPickerDialog
 import com.osfans.trime.ui.main.settings.ThemePickerDialog
@@ -201,7 +202,46 @@ class CommonKeyboardActionListener {
                     "apply" -> handleApplyCommand(arg)
                     "share_text" -> service.shareText()
                     "select_candidate" -> handleSelectCandidate(arg)
+                    "langou_toggle_pinyin_layout" -> handleLangouPinyinLayout()
                     else -> handleIntentAction(action.command, arg)
+                }
+            }
+
+            private fun handleLangouPinyinLayout() {
+                rime.launchOnReady { api ->
+                    service.lifecycleScope.launch {
+                        api.commitComposition()
+                        val target =
+                            LangouPinyinLayout.targetSchema(api.selectedSchemaId())
+                        var deployed = false
+                        var selected = api.selectSchema(target)
+                        if (!selected) {
+                            Timber.i(
+                                "Langou pinyin layout switch fallback full deploy target=%s",
+                                target,
+                            )
+                            api.deploy()
+                            deployed = true
+                            selected = api.selectSchema(target)
+                        }
+                        if (selected) {
+                            service.syncLangouKeyboardToSchema(target)
+                        }
+                        Timber.i(
+                            "Langou pinyin layout switch target=%s deployed=%s selected=%s",
+                            target,
+                            deployed,
+                            selected,
+                        )
+                        if (!selected) {
+                            Toast
+                                .makeText(
+                                    context,
+                                    R.string.langou_layout_switch_failed,
+                                    Toast.LENGTH_SHORT,
+                                ).show()
+                        }
+                    }
                 }
             }
 

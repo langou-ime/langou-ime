@@ -110,9 +110,9 @@ class InputBarDelegate : InputBroadcastReceiver {
     private fun evalAlwaysUiState() {
         val newState =
             when {
-                isClipboardFresh -> AlwaysUi.State.Clipboard
-                isInlineSuggestionPresent -> AlwaysUi.State.InlineSuggestion
                 isAiSuggestionPresent -> AlwaysUi.State.AiSuggestion
+                isInlineSuggestionPresent -> AlwaysUi.State.InlineSuggestion
+                isClipboardFresh -> AlwaysUi.State.Clipboard
                 else -> AlwaysUi.State.Toolbar
             }
         if (newState == alwaysUi.currentState) return
@@ -163,8 +163,22 @@ class InputBarDelegate : InputBroadcastReceiver {
         evalAlwaysUiState()
     }
 
-    fun showAiLoading() {
+    fun showAiLoading(preserveExistingSuggestions: Boolean = false) {
+        if (preserveExistingSuggestions && isAiSuggestionPresent) return
         alwaysUi.aiSuggestionsUi.showLoading()
+        isAiSuggestionPresent = true
+        evalAlwaysUiState()
+    }
+
+    fun showAiContextLoading(preserveExistingSuggestions: Boolean = false) {
+        if (preserveExistingSuggestions && isAiSuggestionPresent) return
+        alwaysUi.aiSuggestionsUi.showContextLoading()
+        isAiSuggestionPresent = true
+        evalAlwaysUiState()
+    }
+
+    fun showAiRetry(onClick: () -> Unit) {
+        alwaysUi.aiSuggestionsUi.showRetry(onClick)
         isAiSuggestionPresent = true
         evalAlwaysUiState()
     }

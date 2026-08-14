@@ -34,10 +34,17 @@ class ConversationIdentityResolver(
         application: String,
         conversationHint: String?,
         confidence: IdentityConfidence,
+        contextSeed: String? = null,
     ): ConversationIdentity {
         val normalizedApplication = application.trim().lowercase(Locale.ROOT)
         val normalizedHint =
             conversationHint
+                ?.trim()
+                ?.replace(WHITESPACE, " ")
+                ?.lowercase(Locale.ROOT)
+                .orEmpty()
+        val normalizedSeed =
+            contextSeed
                 ?.trim()
                 ?.replace(WHITESPACE, " ")
                 ?.lowercase(Locale.ROOT)
@@ -48,7 +55,16 @@ class ConversationIdentityResolver(
                 persistent = true,
             )
         }
-        val sessionKey = "$normalizedApplication\u0000$normalizedHint"
+        val sessionKey =
+            buildString {
+                append(normalizedApplication)
+                append('\u0000')
+                append(normalizedHint)
+                if (normalizedSeed.isNotEmpty()) {
+                    append('\u0000')
+                    append(hasher.hash(normalizedSeed))
+                }
+            }
         return ConversationIdentity(
             id = ephemeralIds.getOrPut(sessionKey, ephemeralIdFactory),
             persistent = false,

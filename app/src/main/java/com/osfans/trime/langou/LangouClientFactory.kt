@@ -17,28 +17,30 @@ import java.util.UUID
 
 object LangouClientFactory {
     fun api(): LangouApiClient =
-        LangouApiClient(UrlConnectionTransport(BuildConfig.LANGOU_API_BASE_URL))
+        LangouDebugOverrides.apiFactoryOverride?.invoke()
+            ?: LangouApiClient(UrlConnectionTransport(BuildConfig.LANGOU_API_BASE_URL))
 
     fun sessionManager(
         context: Context,
         api: LangouApiClient,
     ): LangouSessionManager =
-        LangouSessionManager(
-            api = api,
-            store =
-                SecureSessionStore(
-                    SharedPreferencesKeyValueStore(
-                        context.getSharedPreferences(
-                            LangouPreferences.SESSION_FILE,
-                            Context.MODE_PRIVATE,
+        LangouDebugOverrides.sessionManagerOverride?.invoke(context, api)
+            ?: LangouSessionManager(
+                api = api,
+                store =
+                    SecureSessionStore(
+                        SharedPreferencesKeyValueStore(
+                            context.getSharedPreferences(
+                                LangouPreferences.SESSION_FILE,
+                                Context.MODE_PRIVATE,
+                            ),
                         ),
+                        AndroidKeystoreCipher(),
                     ),
-                    AndroidKeystoreCipher(),
-                ),
-            deviceIdFactory = {
-                "dev_${UUID.randomUUID().toString().replace("-", "")}"
-            },
-            epochSeconds = { System.currentTimeMillis() / 1_000L },
-            appVersion = BuildConfig.VERSION_NAME,
-        )
+                deviceIdFactory = {
+                    "dev_${UUID.randomUUID().toString().replace("-", "")}"
+                },
+                epochSeconds = { System.currentTimeMillis() / 1_000L },
+                appVersion = BuildConfig.VERSION_NAME,
+            )
 }

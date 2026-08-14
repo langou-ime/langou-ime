@@ -81,6 +81,9 @@ class KeyboardWindow :
 
     private val keyboardActionListener = commonKeyboardActionListener.listener
 
+    val activeKeyboardId: String
+        get() = currentKeyboardId
+
     override fun onCreateView(): View {
         keyboardView = context.frameLayout(R.id.keyboard_view)
         attachKeyboard(evalKeyboard(".default"))

@@ -14,6 +14,7 @@ import android.graphics.PorterDuffColorFilter
 import android.graphics.Rect
 import android.graphics.drawable.GradientDrawable
 import android.view.KeyEvent
+import android.view.View
 import com.mikepenz.iconics.IconicsDrawable
 import com.mikepenz.iconics.utils.sizeDp
 import com.osfans.trime.daemon.RimeDaemon
@@ -80,6 +81,9 @@ class KeyView(
 
     init {
         setWillNotDraw(false)
+        importantForAccessibility = View.IMPORTANT_FOR_ACCESSIBILITY_YES
+        contentDescription = key.getLabel().takeUnless { it == "enter_labels" }.orEmpty()
+        isClickable = true
         isRepeatable = key.click?.isRepeatable ?: false
         isSlideCursor = key.click?.isSlideCursor ?: false
         isSlideDelete = key.click?.isSlideDelete ?: false
@@ -280,6 +284,7 @@ class KeyView(
         val label = key.getLabel().let {
             if (it == "enter_labels") keyboardView.labelEnter else it
         }
+        if (contentDescription != label) contentDescription = label
 
         if (label.isNotEmpty()) {
             drawLabel(canvas, label)

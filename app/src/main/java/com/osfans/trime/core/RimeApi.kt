@@ -26,6 +26,8 @@ interface RimeApi {
 
     suspend fun deploy()
 
+    suspend fun deploySchema(schemaId: String): Boolean
+
     suspend fun updateConfig()
 
     suspend fun syncUserData(): Boolean

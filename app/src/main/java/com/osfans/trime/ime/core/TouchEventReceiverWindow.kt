@@ -9,7 +9,9 @@ import android.annotation.SuppressLint
 import android.view.Gravity
 import android.view.MotionEvent
 import android.view.View
+import android.view.WindowManager
 import android.widget.PopupWindow
+import timber.log.Timber
 
 class TouchEventReceiverWindow(
     private val contentView: View,
@@ -37,13 +39,22 @@ class TouchEventReceiverWindow(
         w: Int,
         h: Int,
     ) {
+        if (!contentView.isAttachedToWindow || contentView.windowToken == null) {
+            dismiss()
+            return
+        }
         isWindowShowing = true
-        if (window.isShowing) {
-            window.update(x, y, w, h)
-        } else {
-            window.width = w
-            window.height = h
-            window.showAtLocation(contentView, Gravity.TOP or Gravity.START, x, y)
+        try {
+            if (window.isShowing) {
+                window.update(x, y, w, h)
+            } else {
+                window.width = w
+                window.height = h
+                window.showAtLocation(contentView, Gravity.TOP or Gravity.START, x, y)
+            }
+        } catch (e: WindowManager.BadTokenException) {
+            isWindowShowing = false
+            Timber.w(e, "Skip preedit touch receiver popup because host window token is invalid")
         }
     }
 

@@ -5,18 +5,25 @@
 
 package com.osfans.trime.langou.context
 
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+
 object ContextCaptureState {
-    @Volatile
-    private var activePackageName: String? = null
+    private val mutableActivePackages = MutableStateFlow<String?>(null)
+    val activePackages = mutableActivePackages.asStateFlow()
 
     fun activate(packageName: String) {
-        activePackageName = packageName.takeIf(String::isNotBlank)
+        val normalized = packageName.takeIf(String::isNotBlank)
+        if (mutableActivePackages.value != normalized) {
+            ContextSnapshotStore.clear()
+            mutableActivePackages.value = normalized
+        }
     }
 
     fun deactivate() {
-        activePackageName = null
+        mutableActivePackages.value = null
         ContextSnapshotStore.clear()
     }
 
-    fun isActive(packageName: String): Boolean = activePackageName == packageName
+    fun isActive(packageName: String): Boolean = activePackages.value == packageName
 }

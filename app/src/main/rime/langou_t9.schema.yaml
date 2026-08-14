@@ -14,6 +14,32 @@ schema:
     - Langou Input Method contributors
   description: 标准 librime 数字拼写九宫格方案
 
+engine:
+  processors:
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - abc_segmentor
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - punct_translator
+    - table_translator@custom_phrase
+    - reverse_lookup_translator
+    - script_translator
+  filters:
+    - simplifier
+    - simplifier@emoji_suggestion
+    - uniquifier
+
 translator:
   dictionary: luna_pinyin
   prism: langou_t9
@@ -21,18 +47,22 @@ translator:
   enable_sentence: true
 
 speller:
-  alphabet: "98765432'"
-  initials: "98765432"
-  delimiter: " '"
+  alphabet: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA987654321
+  initials: zyxwvutsrqponmlkjihgfedcbaZYXWVUTSRQPONMLKJIHGFEDCBA987654321
   algebra:
-    __patch:
-      - pinyin:/zh_z_bufen
-      - pinyin:/n_l_bufen
-      - pinyin:/en_eng_bufen
-      - pinyin:/abbreviation
-      - pinyin:/spelling_correction
-      - pinyin:/key_correction
-      - xlit/abcdefghijklmnopqrstuvwxyz/22233344455566677778889999/
+    - abbrev/^([a-z]).+$/$1/
+    - abbrev/^([zcs]h).+$/$1/
+    - derive/^([nl])ve$/$1ue/
+    - derive/^([jqxy])u/$1v/
+    - derive/un$/uen/
+    - derive/ui$/uei/
+    - derive/iu$/iou/
+    - derive/([aeiou])ng$/$1gn/
+    - derive/([dtngkhrzcs])o(u|ng)$/$1o/
+    - derive/ong$/on/
+    - derive/ao$/oa/
+    - derive/([iu])a(o|ng?)$/a$1$2/
+    - xlit/abcdefghijklmnopqrstuvwxyz/22233344455566677778889999/
 
 key_binder:
   import_preset: default

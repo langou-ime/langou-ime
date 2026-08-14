@@ -21,13 +21,6 @@ object DataManager {
 
     private const val DATA_CHECKSUMS_NAME = "checksums.json"
 
-    private const val SCHEMA_LIST_CUSTOM_PATCH = """
-      patch:
-        schema_list:
-          - schema: luna_pinyin
-          - schema: luna_pinyin_simp
-    """
-
     private val lock = ReentrantLock()
 
     private val json by lazy { Json }
@@ -105,10 +98,12 @@ object DataManager {
         ResourceUtils.copyFile(DATA_CHECKSUMS_NAME, dataDir.resolve(DATA_CHECKSUMS_NAME).absolutePath)
 
         val custom = userDataDir.resolve(DEFAULT_CUSTOM_FILE_NAME)
-        if (!custom.exists()) {
-            if (custom.createNewFile()) {
-                custom.writeText(SCHEMA_LIST_CUSTOM_PATCH.trimIndent())
-            }
+        val replacement =
+            LangouSchemaPatch.replacementFor(
+                custom.takeIf(File::isFile)?.readText(),
+            )
+        if (replacement != null) {
+            custom.writeText(replacement)
         }
 
         Timber.d("Synced!")

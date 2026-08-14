@@ -7,8 +7,8 @@ package com.osfans.trime.ui.setup
 import android.content.Context
 import android.content.Intent
 import android.os.Build
-import android.provider.Settings
 import com.osfans.trime.R
+import com.osfans.trime.langou.context.ContextAccessSettings
 import com.osfans.trime.langou.context.ContextPermissionStatus
 import com.osfans.trime.langou.context.LegacyCapturePermissionActivity
 import com.osfans.trime.langou.context.LegacyScreenshotBroker
@@ -53,8 +53,7 @@ enum class SetupPage {
         when (this) {
             Enable -> InputMethodUtils.showImeEnablerActivity(context)
             Select -> InputMethodUtils.showImePicker()
-            ContextAccess ->
-                context.startActivity(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS))
+            ContextAccess -> ContextAccessSettings.open(context)
             LegacyCapture ->
                 context.startActivity(Intent(context, LegacyCapturePermissionActivity::class.java))
         }
@@ -72,8 +71,6 @@ enum class SetupPage {
             entries.filter { it != LegacyCapture || Build.VERSION.SDK_INT < Build.VERSION_CODES.R }
 
         fun SetupPage.isLastPage() = this == availablePages().last()
-
-        fun Int.isLastPage() = this == availablePages().size - 1
 
         fun hasUndonePage() = availablePages().any { !it.isDone() }
 

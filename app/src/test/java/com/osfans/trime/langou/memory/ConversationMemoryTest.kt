@@ -25,13 +25,33 @@ class ConversationMemoryTest :
             val xia = resolver.resolve("wechat", " 小夏 ", IdentityConfidence.High)
             val xiaAgain = resolver.resolve("wechat", "小夏", IdentityConfidence.High)
             val jie = resolver.resolve("wechat", "阿杰", IdentityConfidence.High)
-            val uncertain = resolver.resolve("wechat", null, IdentityConfidence.Low)
-            val uncertainAgain = resolver.resolve("wechat", null, IdentityConfidence.Low)
+            val uncertain =
+                resolver.resolve(
+                    "wechat",
+                    null,
+                    IdentityConfidence.Low,
+                    contextSeed = "other:周六有空吗？\nself:可以呀",
+                )
+            val uncertainAgain =
+                resolver.resolve(
+                    "wechat",
+                    null,
+                    IdentityConfidence.Low,
+                    contextSeed = "other:周六有空吗？\nself:可以呀",
+                )
+            val uncertainDifferentChat =
+                resolver.resolve(
+                    "wechat",
+                    null,
+                    IdentityConfidence.Low,
+                    contextSeed = "other:明天把合同发我\nself:好",
+                )
 
             xia.id shouldBe xiaAgain.id
             xia.id shouldNotBe jie.id
             xia.persistent shouldBe true
             uncertain.id shouldBe uncertainAgain.id
+            uncertain.id shouldNotBe uncertainDifferentChat.id
             uncertain.persistent shouldBe false
             uncertain.id shouldNotBe xia.id
         }

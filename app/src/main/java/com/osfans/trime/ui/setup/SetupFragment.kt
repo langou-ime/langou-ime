@@ -31,6 +31,7 @@ class SetupFragment : Fragment() {
                 actionButton.visibility = if (new) View.GONE else View.VISIBLE
                 actionButton.text = page.getButtonText(requireContext())
                 actionButton.setOnClickListener { page.getButtonAction(requireContext()) }
+                doneIcon.visibility = if (new) View.VISIBLE else View.GONE
                 doneText.visibility = if (new) View.VISIBLE else View.GONE
             }
             field = new

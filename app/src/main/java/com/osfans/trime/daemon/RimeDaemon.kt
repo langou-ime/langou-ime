@@ -48,7 +48,12 @@ import kotlin.concurrent.withLock
 object RimeDaemon {
     private val realRime by lazy { Rime() }
 
-    private val rimeImpl by lazy { object : RimeApi by realRime {} }
+    private val rimeImpl by lazy {
+        object : RimeApi by realRime {
+            override suspend fun deploySchema(schemaId: String): Boolean =
+                realRime.deploySchema(schemaId)
+        }
+    }
 
     private val sessions = mutableMapOf<String, RimeSession>()
 

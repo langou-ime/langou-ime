@@ -23,12 +23,18 @@ class LocalPaddleOcr(
                     PaddleOCR.create(context).also { engine = it }
                 }
             ocr.recognize(bitmap).results.map { result ->
+                val points = result.box.points
                 OcrLine(
                     text = result.text,
                     confidence = result.confidence,
                     centerX =
-                        result.box.points
+                        points
                             .map { it.x }
+                            .average()
+                            .toInt(),
+                    centerY =
+                        points
+                            .map { it.y }
                             .average()
                             .toInt(),
                 )

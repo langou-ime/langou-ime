@@ -14,6 +14,24 @@ data class ChatContextSnapshot(
     val capturedAtEpochMillis: Long,
 )
 
+fun ChatContextSnapshot.stableSignature(): String =
+    buildString {
+        append(packageName)
+        append('\u0000')
+        append(application)
+        append('\u0000')
+        append(conversationHint?.trim()?.replace(Regex("\\s+"), " ")?.lowercase().orEmpty())
+        append('\u0000')
+        append(identityConfidence.name)
+        append('\u0000')
+        turns.forEach { turn ->
+            append(turn.role)
+            append(':')
+            append(turn.text.trim().replace(Regex("\\s+"), " ").take(160).lowercase())
+            append('\n')
+        }
+    }
+
 object ContextSnapshotStore {
     private val current = MutableStateFlow<ChatContextSnapshot?>(null)
     val snapshots: StateFlow<ChatContextSnapshot?> = current.asStateFlow()

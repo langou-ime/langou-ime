@@ -4,6 +4,7 @@ data class OcrLine(
     val text: String,
     val confidence: Float,
     val centerX: Int,
+    val centerY: Int,
 )
 
 object OcrTextAdapter {
@@ -20,6 +21,7 @@ object OcrTextAdapter {
                     text = it.text,
                     centerX = it.centerX,
                     screenWidth = screenWidth,
+                    centerY = it.centerY,
                 )
             }.toList()
 

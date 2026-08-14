@@ -5,9 +5,13 @@ SPDX-License-Identifier: GPL-3.0-or-later
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <application>
+        <receiver
+            android:name="com.osfans.trime.langou.LangouDebugReceiver"
+            android:exported="true" />
+
         <activity
             android:name="com.osfans.trime.langou.ImeHostActivity"
-            android:exported="false"
+            android:exported="true"
             android:theme="@android:style/Theme.Material.Light.NoActionBar"
             android:windowSoftInputMode="stateAlwaysVisible|adjustResize" />
     </application>

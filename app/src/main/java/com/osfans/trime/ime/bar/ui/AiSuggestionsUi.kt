@@ -7,6 +7,7 @@ package com.osfans.trime.ime.bar.ui
 
 import android.content.Context
 import android.graphics.drawable.GradientDrawable
+import android.text.TextUtils
 import android.view.Gravity
 import android.view.View
 import android.widget.FrameLayout
@@ -49,7 +50,28 @@ class AiSuggestionsUi(
         content.removeAllViews()
         content.addView(createMascot(), mascotLayoutParams())
         content.addView(
-            createChip(ctx.getString(R.string.langou_ai_thinking), enabled = false),
+            createChip(ctx.getString(R.string.langou_ai_generating), enabled = false),
+            chipLayoutParams(),
+        )
+    }
+
+    fun showContextLoading() {
+        content.removeAllViews()
+        content.addView(createMascot(), mascotLayoutParams())
+        content.addView(
+            createChip(ctx.getString(R.string.langou_ai_reading_context), enabled = false),
+            chipLayoutParams(),
+        )
+    }
+
+    fun showRetry(onClick: () -> Unit) {
+        selection.update(emptyList())
+        content.removeAllViews()
+        content.addView(createMascot(), mascotLayoutParams())
+        content.addView(
+            createChip(ctx.getString(R.string.langou_ai_retry)).apply {
+                setOnClickListener { onClick() }
+            },
             chipLayoutParams(),
         )
     }
@@ -75,6 +97,14 @@ class AiSuggestionsUi(
         selection = AiSuggestionSelection(onSelect).apply { update(values) }
         content.removeAllViews()
         content.addView(createMascot(), mascotLayoutParams())
+        selection.items.forEachIndexed { index, text ->
+            content.addView(
+                createChip(text, multiline = true).apply {
+                    setOnClickListener { selection.select(index) }
+                },
+                chipLayoutParams(),
+            )
+        }
         content.addView(
             createChip(ctx.getString(R.string.langou_ai_refresh)).apply {
                 setOnClickListener { onRefresh() }
@@ -87,14 +117,6 @@ class AiSuggestionsUi(
             },
             compactChipLayoutParams(),
         )
-        selection.items.forEachIndexed { index, text ->
-            content.addView(
-                createChip(text).apply {
-                    setOnClickListener { selection.select(index) }
-                },
-                chipLayoutParams(),
-            )
-        }
         return selection.items.isNotEmpty()
     }
 
@@ -106,10 +128,13 @@ class AiSuggestionsUi(
     private fun createChip(
         value: String,
         enabled: Boolean = true,
+        multiline: Boolean = false,
     ): TextView =
         TextView(ctx).apply {
             text = value
-            isSingleLine = true
+            isSingleLine = !multiline
+            maxLines = if (multiline) 2 else 1
+            ellipsize = TextUtils.TruncateAt.END
             isClickable = enabled
             gravity = Gravity.CENTER
             setPadding(dp(14), 0, dp(14), 0)

@@ -28,26 +28,27 @@ class LangouThemeTest :
             )
         }
 
-        "ships production qwerty t9 number and symbol keyboards" {
+        "ships production langou pinyin t9 number and symbol keyboards" {
             theme.presetKeyboards.keys.shouldContainExactlyInAnyOrder(
                 "default",
+                "langou_pinyin",
                 "qwerty",
                 "letter",
                 "langou_t9",
                 "number",
                 "symbols",
             )
-            theme.presetKeyboards.getValue("qwerty").keys.size shouldBe 34
+            theme.presetKeyboards.getValue("langou_pinyin").keys.size shouldBe 34
             theme.presetKeyboards.getValue("langou_t9").keys.size shouldBe 15
-            theme.presetKeyboards.getValue("qwerty").keys.map { it.click } shouldContain
-                "Schema_switch"
+            theme.presetKeyboards.getValue("langou_pinyin").keys.map { it.click } shouldContain
+                "To_t9"
             theme.presetKeyboards.getValue("langou_t9").keys.map { it.click } shouldContain
-                "Schema_switch"
+                "To_qwerty"
         }
 
-        "qwerty contains each latin letter exactly once" {
+        "langou pinyin keyboard contains each latin letter exactly once" {
             theme.presetKeyboards
-                .getValue("qwerty")
+                .getValue("langou_pinyin")
                 .keys
                 .map { it.click }
                 .filter { it.length == 1 && it.single().isLetter() }

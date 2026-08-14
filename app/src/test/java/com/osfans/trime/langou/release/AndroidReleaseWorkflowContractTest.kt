@@ -47,19 +47,23 @@ class AndroidReleaseWorkflowContractTest :
             workflow shouldNotContain "run: apksigner verify"
         }
 
-        "signed build requires all signing material without publishing by itself" {
+        "signed build supports manual RC artifacts while preserving the fixed production filename" {
             val workflow = File(repositoryRoot, ".github/workflows/langou-android-release.yml").readText()
             workflow shouldContain "ANDROID_KEYSTORE_BASE64"
             workflow shouldContain "ANDROID_KEYSTORE_PASSWORD"
             workflow shouldContain "ANDROID_KEY_ALIAS"
             workflow shouldContain "ANDROID_KEY_PASSWORD"
             workflow shouldContain
-                "LANGOU_RELEASE_PUBLIC_KEY_BASE64: \"1uFuGlWZWeHpckhp2MTF6+5yCGIZYgBd5ghWEVQjx/k=\""
+                "LANGOU_RELEASE_PUBLIC_KEY_BASE64: \"NL+5JaOJjU8FhrLZueXoqi7XNagy6K0xe9etWtUvPQY=\""
+            workflow shouldContain "release_mode:"
+            workflow shouldContain "default: rc"
+            workflow shouldContain "LANGOU_RELEASE_FILENAME"
+            workflow shouldContain "langou-ime-android-rc-${'$'}{GITHUB_SHA}.apk"
             workflow shouldContain "./gradlew testReleaseUnitTest lintRelease assembleRelease"
             workflow shouldContain "SHA256SUMS"
             workflow shouldContain "langou-ime-android-v1.0.0.apk"
             workflow shouldContain
-                "sha256sum langou-ime-android-v1.0.0.apk > SHA256SUMS"
+                """sha256sum "${'$'}{LANGOU_RELEASE_FILENAME}" > SHA256SUMS"""
             workflow shouldContain "contents: read"
             workflow shouldNotContain "SIGNING_KEY"
             workflow shouldNotContain "Build Trime"

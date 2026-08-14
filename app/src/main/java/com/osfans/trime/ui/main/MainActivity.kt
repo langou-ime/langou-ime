@@ -11,7 +11,6 @@ import android.view.Menu
 import android.view.ViewGroup
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.graphics.drawable.DrawerArrowDrawable
@@ -24,8 +23,6 @@ import androidx.core.view.updateLayoutParams
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hasRoute
 import androidx.navigation.fragment.NavHostFragment
-import com.hjq.permissions.Permission
-import com.hjq.permissions.XXPermissions
 import com.osfans.trime.BuildConfig
 import com.osfans.trime.R
 import com.osfans.trime.daemon.launchOnReady
@@ -109,7 +106,6 @@ class MainActivity : AppCompatActivity() {
 
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
         processIntent(intent)
-        checkNotificationPermission()
     }
 
     override fun onNewIntent(intent: Intent) {
@@ -120,8 +116,15 @@ class MainActivity : AppCompatActivity() {
     private fun processIntent(intent: Intent?) {
         val action = intent?.action ?: return
         when (action) {
-            Intent.ACTION_MAIN -> if (SetupActivity.shouldSetup()) {
-                startActivity<SetupActivity>()
+            Intent.ACTION_MAIN -> {
+                // Build the nine-key prism while the user completes Android's required setup.
+                // The visible 26/9 switch then remains a genuine one-tap operation.
+                viewModel.rime.launchOnReady { api ->
+                    api.deploySchema("langou_t9")
+                }
+                if (SetupActivity.shouldSetup()) {
+                    startActivity<SetupActivity>()
+                }
             }
             Intent.ACTION_RUN -> {
                 val route = intent.parcelable<NavigationRoute>(EXTRA_SETTINGS_ROUTE) ?: return
@@ -177,25 +180,6 @@ class MainActivity : AppCompatActivity() {
         super.onResume()
         if (isStorageAvailable()) {
             SoundEffectManager.init()
-        }
-    }
-
-    private fun checkNotificationPermission() {
-        if (XXPermissions.isGranted(this, Permission.POST_NOTIFICATIONS)) {
-            return
-        } else {
-            AlertDialog
-                .Builder(this)
-                .setIconAttribute(android.R.attr.alertDialogIcon)
-                .setTitle(R.string.notification_permission_title)
-                .setMessage(R.string.notification_permission_message)
-                .setPositiveButton(R.string.grant_permission) { _, _ ->
-                    XXPermissions
-                        .with(this)
-                        .permission(Permission.POST_NOTIFICATIONS)
-                        .request(null)
-                }.setNegativeButton(android.R.string.cancel, null)
-                .show()
         }
     }
 

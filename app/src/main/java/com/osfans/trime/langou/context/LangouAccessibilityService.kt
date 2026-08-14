@@ -24,7 +24,9 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import timber.log.Timber
 
 class LangouAccessibilityService : AccessibilityService() {
@@ -32,21 +34,72 @@ class LangouAccessibilityService : AccessibilityService() {
     private val localOcr by lazy { LocalPaddleOcr(applicationContext) }
     private var ocrJob: Job? = null
     private var lastOcrAttemptEpochMillis = 0L
+    private var lastAccessibilityCaptureEpochMillis = 0L
     private var destroyed = false
 
+    override fun onCreate() {
+        super.onCreate()
+        serviceScope.launch {
+            ContextCaptureState.activePackages.collect { packageName ->
+                if (packageName == null) {
+                    ContextSnapshotStore.clear()
+                } else {
+                    findChatRoot(packageName)?.let { root ->
+                        captureVisibleContext(root, packageName)
+                    }
+                }
+            }
+        }
+    }
+
     override fun onAccessibilityEvent(event: AccessibilityEvent?) {
-        val root = rootInActiveWindow ?: event?.source ?: return
+        if (event == null || !shouldHandleEvent(event)) return
+        val packageName = ContextCaptureState.activePackages.value ?: return
+        // The IME creates its own accessibility window. Ignore those events and keep the chat
+        // snapshot instead of clearing it as soon as the keyboard becomes visible.
+        val root = findChatRoot(packageName, event?.source) ?: return
+        if (!beginAccessibilityCapture()) return
+        captureVisibleContext(root, packageName)
+    }
+
+    private fun shouldHandleEvent(event: AccessibilityEvent): Boolean =
+        when (event.eventType) {
+            AccessibilityEvent.TYPE_WINDOW_CONTENT_CHANGED,
+            AccessibilityEvent.TYPE_VIEW_TEXT_CHANGED,
+            AccessibilityEvent.TYPE_WINDOWS_CHANGED,
+            AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED,
+            AccessibilityEvent.TYPE_VIEW_SCROLLED,
+            -> true
+            else -> false
+        }
+
+    private fun beginAccessibilityCapture(): Boolean {
+        val now = System.currentTimeMillis()
+        if (now - lastAccessibilityCaptureEpochMillis < ACCESSIBILITY_CAPTURE_THROTTLE_MILLIS) {
+            return false
+        }
+        lastAccessibilityCaptureEpochMillis = now
+        return true
+    }
+
+    private fun captureVisibleContext(
+        root: AccessibilityNodeInfo,
+        targetPackageName: String,
+    ) {
         val packageName =
             root.packageName
                 ?.toString()
                 ?.takeIf(String::isNotBlank)
-                ?: event?.packageName?.toString().orEmpty()
+                ?: targetPackageName
+        if (packageName != targetPackageName) return
         val application = ChatApplicationMapper.map(packageName)
         if (application == null) {
+            Timber.i("Langou context cleared reason=unsupported_app package=%s", packageName)
             ContextSnapshotStore.clear()
             return
         }
         if (!ContextCaptureState.isActive(packageName)) {
+            Timber.i("Langou context cleared reason=inactive package=%s", packageName)
             ContextSnapshotStore.clear()
             return
         }
@@ -69,8 +122,9 @@ class LangouAccessibilityService : AccessibilityService() {
                     },
                 packageName = packageName,
                 screenLabels = labels,
-            )
+        )
         if (!SensitiveContextPolicy.canCollect(signals)) {
+            Timber.i("Langou context cleared reason=sensitive package=%s", packageName)
             ContextSnapshotStore.clear()
             return
         }
@@ -82,8 +136,24 @@ class LangouAccessibilityService : AccessibilityService() {
                 },
             )
         if (turns.isEmpty()) {
-            ContextSnapshotStore.clear()
+            val previous = ContextSnapshotStore.get(packageName)
+            if (previous == null) {
+                Timber.i("Langou context cleared reason=no_turns package=%s", packageName)
+                ContextSnapshotStore.clear()
+            } else {
+                Timber.i(
+                    "Langou context retained reason=no_turns_keep_previous package=%s previous_turns=%s",
+                    packageName,
+                    previous.turns.size,
+                )
+            }
         } else {
+            Timber.i(
+                "Langou context snapshot source=accessibility package=%s turns=%s hint=%s",
+                packageName,
+                turns.size,
+                conversationHint.text != null,
+            )
             ContextSnapshotStore.update(
                 ChatContextSnapshot(
                     packageName = packageName,
@@ -96,12 +166,39 @@ class LangouAccessibilityService : AccessibilityService() {
             )
         }
         if (turns.size < MIN_ACCESSIBILITY_TURNS) {
+            val contentBounds = Rect().also(root::getBoundsInScreen)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
-                captureAndRecognize(packageName, application, conversationHint)
+                captureAndRecognize(
+                    packageName,
+                    application,
+                    conversationHint,
+                    contentBounds,
+                )
             } else {
-                captureLegacyAndRecognize(packageName, application, conversationHint)
+                captureLegacyAndRecognize(
+                    packageName,
+                    application,
+                    conversationHint,
+                    contentBounds,
+                )
             }
         }
+    }
+
+    private fun findChatRoot(
+        packageName: String,
+        fallback: AccessibilityNodeInfo? = null,
+    ): AccessibilityNodeInfo? {
+        fun AccessibilityNodeInfo.belongsToTarget() =
+            this.packageName?.toString() == packageName
+
+        rootInActiveWindow?.takeIf { it.belongsToTarget() }?.let { return it }
+        windows
+            .asSequence()
+            .mapNotNull { it.root }
+            .firstOrNull { it.belongsToTarget() }
+            ?.let { return it }
+        return fallback?.takeIf { it.belongsToTarget() }
     }
 
     override fun onInterrupt() {
@@ -125,6 +222,7 @@ class LangouAccessibilityService : AccessibilityService() {
         packageName: String,
         application: String,
         conversationHint: ConversationHint,
+        contentBounds: Rect,
     ) {
         if (!beginOcrAttempt()) return
         takeScreenshot(
@@ -143,7 +241,12 @@ class LangouAccessibilityService : AccessibilityService() {
                         bitmap?.recycle()
                         return
                     }
-                    recognizeBitmap(bitmap, packageName, application, conversationHint)
+                    recognizeBitmap(
+                        cropToContentWindow(bitmap, contentBounds),
+                        packageName,
+                        application,
+                        conversationHint,
+                    )
                 }
 
                 override fun onFailure(errorCode: Int) {
@@ -157,6 +260,7 @@ class LangouAccessibilityService : AccessibilityService() {
         packageName: String,
         application: String,
         conversationHint: ConversationHint,
+        contentBounds: Rect,
     ) {
         if (!beginOcrAttempt()) return
         if (
@@ -164,7 +268,12 @@ class LangouAccessibilityService : AccessibilityService() {
                 if (destroyed) {
                     bitmap.recycle()
                 } else {
-                    recognizeBitmap(bitmap, packageName, application, conversationHint)
+                    recognizeBitmap(
+                        cropToContentWindow(bitmap, contentBounds),
+                        packageName,
+                        application,
+                        conversationHint,
+                    )
                 }
             }
         ) {
@@ -185,6 +294,23 @@ class LangouAccessibilityService : AccessibilityService() {
         return true
     }
 
+    private fun cropToContentWindow(
+        bitmap: Bitmap,
+        bounds: Rect,
+    ): Bitmap {
+        val left = bounds.left.coerceIn(0, bitmap.width)
+        val top = bounds.top.coerceIn(0, bitmap.height)
+        val right = bounds.right.coerceIn(left, bitmap.width)
+        val bottom = bounds.bottom.coerceIn(top, bitmap.height)
+        if (left == 0 && top == 0 && right == bitmap.width && bottom == bitmap.height) {
+            return bitmap
+        }
+        if (right <= left || bottom <= top) return bitmap
+        val cropped = Bitmap.createBitmap(bitmap, left, top, right - left, bottom - top)
+        if (cropped !== bitmap) bitmap.recycle()
+        return cropped
+    }
+
     private fun recognizeBitmap(
         bitmap: Bitmap,
         packageName: String,
@@ -194,16 +320,28 @@ class LangouAccessibilityService : AccessibilityService() {
         ocrJob =
             serviceScope.launch {
                 try {
-                    val activePackage =
-                        rootInActiveWindow?.packageName?.toString().orEmpty()
-                    if (activePackage != packageName) return@launch
+                    if (
+                        !ContextCaptureState.isActive(packageName) ||
+                        findChatRoot(packageName) == null
+                    ) {
+                        return@launch
+                    }
                     val visible =
                         OcrTextAdapter.toVisibleText(
-                            localOcr.recognize(bitmap),
+                            withContext(Dispatchers.Default) {
+                                localOcr.recognize(bitmap)
+                            },
                             bitmap.width,
                         )
+                    if (!ContextCaptureState.isActive(packageName)) return@launch
                     val turns = ChatTextSegmenter.segment(visible)
                     if (turns.isNotEmpty()) {
+                        Timber.i(
+                            "Langou context snapshot source=ocr package=%s turns=%s hint=%s",
+                            packageName,
+                            turns.size,
+                            conversationHint.text != null,
+                        )
                         ContextSnapshotStore.update(
                             ChatContextSnapshot(
                                 packageName = packageName,
@@ -267,7 +405,8 @@ class LangouAccessibilityService : AccessibilityService() {
         const val MAX_VISITED_NODES = 400
         const val MAX_SCREEN_LABEL_CHARACTERS = 4_000
         const val MIN_ACCESSIBILITY_TURNS = 2
-        const val OCR_THROTTLE_MILLIS = 2_000L
+        const val ACCESSIBILITY_CAPTURE_THROTTLE_MILLIS = 120L
+        const val OCR_THROTTLE_MILLIS = 800L
         const val CHAT_CONTENT_START_RATIO = 0.18
     }
 }

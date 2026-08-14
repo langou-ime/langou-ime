@@ -8,6 +8,7 @@
 ### Android ###
 # Gradle files
 .gradle/
+.gradle-local/
 build/
 
 # Local configuration file (sdk path, etc)
@@ -480,4 +481,3 @@ app/src/main/jni/boost/
 
 # kotlin
 .kotlin
-

@@ -90,6 +90,10 @@ class Rime :
         startRime(true)
     }
 
+    override suspend fun deploySchema(schemaId: String): Boolean = withRimeContext {
+        deployRimeSchemaFile("$schemaId.schema.yaml")
+    }
+
     override suspend fun updateConfig() = withRimeContext {
         exitRime()
         startRime(false)

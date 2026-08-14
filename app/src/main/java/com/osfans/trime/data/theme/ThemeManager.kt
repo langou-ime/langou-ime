@@ -77,8 +77,11 @@ object ThemeManager {
             null
         }
 
-    private fun loadThemeByIdOrNull(id: String): Theme? {
-        if (!Rime.deployRimeConfigFile(id, "config_version")) {
+    private fun loadThemeByIdOrNull(
+        id: String,
+        deployConfig: Boolean = true,
+    ): Theme? {
+        if (deployConfig && !Rime.deployRimeConfigFile(id, "config_version")) {
             Timber.w("Failed to deploy theme config file '$id.yaml'")
         }
 
@@ -118,18 +121,21 @@ object ThemeManager {
         return null
     }
 
-    private fun getThemeById(id: String): ResolvedTheme {
-        loadThemeByIdOrNull(id)?.let { return ResolvedTheme(id, it) }
+    private fun resolveTheme(
+        id: String,
+        deployConfig: Boolean = true,
+    ): ResolvedTheme {
+        loadThemeByIdOrNull(id, deployConfig)?.let { return ResolvedTheme(id, it) }
 
         if (id != DEFAULT_THEME_ID) {
-            loadThemeByIdOrNull(DEFAULT_THEME_ID)?.let {
+            loadThemeByIdOrNull(DEFAULT_THEME_ID, deployConfig)?.let {
                 Timber.w("Theme '$id' is unavailable, fallback to default theme '$DEFAULT_THEME_ID'")
                 return ResolvedTheme(DEFAULT_THEME_ID, it)
             }
         }
 
         for (fallbackId in getAllThemes().map { it.configId }.distinct()) {
-            loadThemeByIdOrNull(fallbackId)?.let {
+            loadThemeByIdOrNull(fallbackId, deployConfig)?.let {
                 Timber.w("Theme '$id' is unavailable, fallback to available theme '$fallbackId'")
                 return ResolvedTheme(fallbackId, it)
             }
@@ -140,7 +146,7 @@ object ThemeManager {
 
     private fun evaluateActiveTheme(): Theme {
         val selectedThemeId = prefs.selectedTheme.getValue()
-        val resolvedTheme = getThemeById(selectedThemeId)
+        val resolvedTheme = resolveTheme(selectedThemeId)
         val newTheme = resolvedTheme.theme
         if (resolvedTheme.configId != selectedThemeId) {
             prefs.selectedTheme.setValue(resolvedTheme.configId)
@@ -158,7 +164,20 @@ object ThemeManager {
     }
 
     fun selectTheme(configId: String) {
-        val resolvedTheme = getThemeById(configId)
+        applyResolvedTheme(resolveTheme(configId))
+    }
+
+    /**
+     * Rime has just completed a deployment, so its deployed theme files are already current.
+     * Starting another native deploy from the completion callback can re-enter the deployer and
+     * crash in ConfigFileUpdate. Reload from disk only.
+     */
+    fun reloadSelectedThemeAfterDeployment() {
+        val configId = prefs.selectedTheme.getValue()
+        applyResolvedTheme(resolveTheme(configId, deployConfig = false))
+    }
+
+    private fun applyResolvedTheme(resolvedTheme: ResolvedTheme) {
         val theme = resolvedTheme.theme
         KeyActionManager.resetCache()
         FontManager.resetCache(theme)

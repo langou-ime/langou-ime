@@ -6,6 +6,7 @@
 package com.osfans.trime.langou.theme
 
 import io.kotest.core.spec.style.StringSpec
+import io.kotest.matchers.shouldBe
 import io.kotest.matchers.string.shouldContain
 import java.io.File
 
@@ -21,11 +22,15 @@ class LangouKeyboardLabelsTest :
             theme shouldContain "Right: {label: \"→\", repeatable: true, send: Right}"
         }
 
-        "shows an explicit full-pinyin and t9 schema switch on both keyboards" {
-            theme shouldContain "Schema_switch:\n    label: \"26/9\"\n    send: Control+grave"
-            theme.substringAfter("qwerty:").substringBefore("letter:") shouldContain
-                "{click: Schema_switch"
-            theme.substringAfter("langou_t9:").substringBefore("number:") shouldContain
-                "{click: Schema_switch"
+        "switches full-pinyin and t9 directly without exposing the Rime schema menu" {
+            theme shouldContain
+                "To_t9:\n    label: \"9键\"\n    command: langou_toggle_pinyin_layout"
+            theme shouldContain
+                "To_qwerty:\n    label: \"26键\"\n    command: langou_toggle_pinyin_layout"
+            theme.contains("Control+grave") shouldBe false
+            theme.substringAfter("  langou_pinyin:\n").substringBefore("  qwerty:\n") shouldContain
+                "{click: To_t9"
+            theme.substringAfter("  langou_t9:\n").substringBefore("  number:\n") shouldContain
+                "{click: To_qwerty"
         }
     })
