@@ -1,0 +1,11 @@
+[Unit]
+Description=Check Langou production health
+After=network-online.target docker.service nginx.service
+
+[Service]
+Type=oneshot
+EnvironmentFile=-/etc/langou/monitoring.env
+ExecStart=/opt/langou/production-v1/infra/monitoring/healthcheck.sh
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict

@@ -1,0 +1,10 @@
+/var/log/langou/*.log {
+    daily
+    rotate 30
+    compress
+    delaycompress
+    missingok
+    notifempty
+    copytruncate
+    create 0640 root adm
+}

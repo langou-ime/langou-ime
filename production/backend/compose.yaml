@@ -1,0 +1,87 @@
+services:
+  api:
+    build:
+      context: .
+    image: langou/backend:1.0.0
+    restart: unless-stopped
+    user: "10001:10001"
+    read_only: true
+    env_file:
+      - ${LANGOU_ENV_FILE:-/etc/langou/backend.env}
+    ports:
+      - "${LANGOU_BIND_IP:-127.0.0.1}:8000:8000"
+    volumes:
+      - ${LANGOU_RELEASE_DIR:-/opt/langou/releases}:/srv/releases:ro
+    tmpfs:
+      - /tmp:size=64m,mode=1777
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    healthcheck:
+      test:
+        - CMD
+        - python
+        - -c
+        - "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/ready', timeout=3)"
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: 20m
+        max-file: "5"
+
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: langou
+      POSTGRES_USER: langou
+      POSTGRES_PASSWORD: ${LANGOU_POSTGRES_PASSWORD:?set in deployment environment}
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U langou -d langou"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging:
+      driver: json-file
+      options:
+        max-size: 20m
+        max-file: "5"
+
+  redis:
+    image: redis:7.4-alpine
+    restart: unless-stopped
+    command:
+      - redis-server
+      - --appendonly
+      - "yes"
+      - --requirepass
+      - ${LANGOU_REDIS_PASSWORD:?set in deployment environment}
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test:
+        - CMD
+        - redis-cli
+        - -a
+        - ${LANGOU_REDIS_PASSWORD:?set in deployment environment}
+        - ping
+      interval: 10s
+      timeout: 5s
+      retries: 10
+    logging:
+      driver: json-file
+      options:
+        max-size: 20m
+        max-file: "5"
+
+volumes:
+  postgres-data:
+  redis-data:
