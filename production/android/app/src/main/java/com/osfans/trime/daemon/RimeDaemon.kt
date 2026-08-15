@@ -59,28 +59,50 @@ object RimeDaemon {
 
     private val lock = ReentrantLock()
 
+    private val operationLease = RimeOperationLease()
+
+    private fun acquireOperation(name: String) = lock.withLock {
+        check(name in sessions) { "Session $name is not established" }
+        operationLease.acquire()
+    }
+
+    private fun releaseOperation() = lock.withLock {
+        if (operationLease.releaseAndCanFinalize(sessions.isNotEmpty())) {
+            realRime.finalize()
+        }
+    }
+
     private fun establish(name: String) = object : RimeSession {
-        private inline fun <T> ensureEstablished(block: () -> T) = if (name in sessions) {
-            block()
-        } else {
-            throw IllegalStateException("Session $name is not established")
+        override fun <T> run(block: suspend RimeApi.() -> T): T {
+            acquireOperation(name)
+            return try {
+                runBlocking { block(rimeImpl) }
+            } finally {
+                releaseOperation()
+            }
         }
 
-        override fun <T> run(block: suspend RimeApi.() -> T): T = ensureEstablished {
-            runBlocking { block(rimeImpl) }
-        }
-
-        override suspend fun <T> runOnReady(block: suspend RimeApi.() -> T): T = ensureEstablished {
-            realRime.lifecycle.whenReady { block(rimeImpl) }
+        override suspend fun <T> runOnReady(block: suspend RimeApi.() -> T): T {
+            acquireOperation(name)
+            return try {
+                realRime.lifecycle.whenReady { block(rimeImpl) }
+            } finally {
+                releaseOperation()
+            }
         }
 
         override fun runIfReady(block: suspend RimeApi.() -> Unit) {
-            ensureEstablished {
-                if (realRime.isReady) {
-                    realRime.lifecycleScope.launch {
+            acquireOperation(name)
+            if (realRime.isReady) {
+                realRime.lifecycleScope.launch {
+                    try {
                         block(rimeImpl)
+                    } finally {
+                        releaseOperation()
                     }
                 }
+            } else {
+                releaseOperation()
             }
         }
 
@@ -105,7 +127,7 @@ object RimeDaemon {
             return
         }
         sessions -= name
-        if (sessions.isEmpty()) {
+        if (operationLease.canFinalize(sessions.isNotEmpty())) {
             realRime.finalize()
         }
     }

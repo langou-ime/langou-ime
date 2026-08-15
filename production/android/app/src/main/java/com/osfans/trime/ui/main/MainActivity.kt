@@ -29,6 +29,7 @@ import com.osfans.trime.daemon.launchOnReady
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.soundeffect.SoundEffectManager
 import com.osfans.trime.databinding.ActivityMainBinding
+import com.osfans.trime.langou.theme.LangouPinyinLayout
 import com.osfans.trime.ui.setup.SetupActivity
 import com.osfans.trime.util.isStorageAvailable
 import com.osfans.trime.util.item
@@ -117,13 +118,17 @@ class MainActivity : AppCompatActivity() {
         val action = intent?.action ?: return
         when (action) {
             Intent.ACTION_MAIN -> {
-                // Build the nine-key prism while the user completes Android's required setup.
-                // The visible 26/9 switch then remains a genuine one-tap operation.
-                viewModel.rime.launchOnReady { api ->
-                    api.deploySchema("langou_t9")
-                }
                 if (SetupActivity.shouldSetup()) {
+                    // Setup owns first-run deployment so the large dictionaries are not compiled
+                    // twice while Android is showing its required confirmation screens.
                     startActivity<SetupActivity>()
+                } else {
+                    // Keep both managed schemas ready for upgrades and returning users. The visible
+                    // 26/9 switch then remains a genuine one-tap operation.
+                    viewModel.rime.launchOnReady { api ->
+                        api.deploySchema(LangouPinyinLayout.FULL_PINYIN_SCHEMA)
+                        api.deploySchema(LangouPinyinLayout.NINE_KEY_SCHEMA)
+                    }
                 }
             }
             Intent.ACTION_RUN -> {

@@ -69,6 +69,8 @@
     <string name="setup__select_ime">重新选择输入法</string>
     <string name="setup__prev">上一步</string>
     <string name="setup__notify_hint">请完成键盘设置</string>
+    <string name="setup__preparing_keyboard">正在准备中文键盘…</string>
+    <string name="setup__retry_keyboard">重试中文键盘初始化</string>
     <string name="setup__step_one">第 1 步</string>
     <string name="setup__step_two">第 2 步</string>
     <string name="setup__skip">稍后设置</string>

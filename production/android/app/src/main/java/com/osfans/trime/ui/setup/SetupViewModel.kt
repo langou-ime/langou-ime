@@ -8,5 +8,12 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 
 class SetupViewModel : ViewModel() {
-    val isAllDone = MutableLiveData(false)
+    val permissionsDone = MutableLiveData(false)
+    val keyboardReady = MutableLiveData(false)
+
+    fun canFinish(): Boolean =
+        SetupCompletionGate.canFinish(
+            permissionsDone = permissionsDone.value == true,
+            keyboardReady = keyboardReady.value == true,
+        )
 }

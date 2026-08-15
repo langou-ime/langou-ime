@@ -23,7 +23,7 @@ class SetupFragment : Fragment() {
     private var isDone: Boolean = false
         set(new) {
             if (new && page.isLastPage()) {
-                viewModel.isAllDone.value = true
+                viewModel.permissionsDone.value = true
             }
             with(binding) {
                 stepText.text = page.getStepText(requireContext())

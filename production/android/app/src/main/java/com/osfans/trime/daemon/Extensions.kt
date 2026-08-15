@@ -6,10 +6,13 @@ package com.osfans.trime.daemon
 
 import com.osfans.trime.core.RimeApi
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.CoroutineStart
 import kotlinx.coroutines.launch
 
 fun RimeSession.launchOnReady(block: suspend CoroutineScope.(RimeApi) -> Unit) {
-    lifecycleScope.launch {
+    // Acquire the daemon's operation lease before returning to the caller. This closes the window
+    // where a component could destroy its last session before this coroutine starts.
+    lifecycleScope.launch(start = CoroutineStart.UNDISPATCHED) {
         runOnReady { block(this) }
     }
 }
