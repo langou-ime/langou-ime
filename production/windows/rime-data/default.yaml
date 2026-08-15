@@ -7,7 +7,7 @@
 config_version: "1.0.0"
 
 schema_list:
-  - schema: luna_pinyin_simp
+  - schema: langou_pinyin
   - schema: langou_t9
 
 switcher:

@@ -65,8 +65,34 @@ public sealed class PackageBuildScriptContractTests
     {
         var installer = File.ReadAllText(InstallerPath());
 
+        Assert.Contains("${AtLeastWin10}", installer, StringComparison.Ordinal);
+        Assert.DoesNotContain("${AtLeastWin8.1}", installer, StringComparison.Ordinal);
         Assert.DoesNotContain("${AtLeastWin11}", installer, StringComparison.Ordinal);
         Assert.Contains("${AtLeastBuild} 22000", installer, StringComparison.Ordinal);
+        Assert.Contains("最低系统要求：Windows 10", installer, StringComparison.Ordinal);
+        Assert.Contains("Minimum supported system: Windows 10", installer, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Installer_customer_facing_copy_uses_only_the_Langou_brand()
+    {
+        var customerFacingLines = File.ReadLines(InstallerPath())
+            .Where(line =>
+                line.TrimStart().StartsWith("LangString ", StringComparison.Ordinal) ||
+                line.Contains("\"Publisher\"", StringComparison.Ordinal) ||
+                line.Contains("\"URLInfoAbout\"", StringComparison.Ordinal) ||
+                line.Contains("\"HelpLink\"", StringComparison.Ordinal))
+            .ToArray();
+        var customerFacingCopy = string.Join('\n', customerFacingLines);
+
+        Assert.Contains("懒狗输入法", customerFacingCopy, StringComparison.Ordinal);
+        Assert.Contains("懶狗輸入法", customerFacingCopy, StringComparison.Ordinal);
+        Assert.Contains("Langou Input Method", customerFacingCopy, StringComparison.Ordinal);
+        Assert.Contains("https://langou.tech/", customerFacingCopy, StringComparison.Ordinal);
+        Assert.DoesNotContain("小狼毫", customerFacingCopy, StringComparison.Ordinal);
+        Assert.DoesNotContain("Weasel", customerFacingCopy, StringComparison.Ordinal);
+        Assert.DoesNotContain("式恕堂", customerFacingCopy, StringComparison.Ordinal);
+        Assert.DoesNotContain("https://rime.im/", customerFacingCopy, StringComparison.Ordinal);
     }
 
     private static string SourcePath() =>

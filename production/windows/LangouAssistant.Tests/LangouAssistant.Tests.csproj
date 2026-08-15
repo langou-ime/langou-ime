@@ -65,5 +65,15 @@
     <None Include="..\LangouAssistant\SettingsWindow.xaml.cs"
           Link="Assistant\SettingsWindow.xaml.cs"
           CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\rime-data\default.yaml"
+          Link="RimeData\default.yaml"
+          CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\rime-data\langou_pinyin.schema.yaml"
+          Link="RimeData\langou_pinyin.schema.yaml"
+          CopyToOutputDirectory="PreserveNewest"
+          Condition="Exists('..\rime-data\langou_pinyin.schema.yaml')" />
+    <None Include="..\output\data\weasel.yaml"
+          Link="RimeData\weasel.yaml"
+          CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>

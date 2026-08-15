@@ -1,0 +1,43 @@
+# SPDX-FileCopyrightText: 2026 Langou Input Method contributors
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# Customer-facing wrapper around the mature RIME Luna Pinyin engine.
+
+__include: luna_pinyin_simp.schema:/
+
+schema:
+  schema_id: langou_pinyin
+  name: 懒狗全拼
+  version: "1.0.0"
+  author:
+    - Langou Input Method contributors
+    - RIME Developers
+  description: 懒狗输入法全拼方案
+
+# Keep a complete input pipeline after resolving the inherited simplified
+# pinyin patch. This is the same production-proven wrapper used on Android.
+engine:
+  processors:
+    - ascii_composer
+    - recognizer
+    - key_binder
+    - speller
+    - punctuator
+    - selector
+    - navigator
+    - express_editor
+  segmentors:
+    - ascii_segmentor
+    - matcher
+    - abc_segmentor
+    - punct_segmentor
+    - fallback_segmentor
+  translators:
+    - punct_translator
+    - table_translator@custom_phrase
+    - reverse_lookup_translator
+    - script_translator
+  filters:
+    - simplifier
+    - simplifier@emoji_suggestion
+    - uniquifier
