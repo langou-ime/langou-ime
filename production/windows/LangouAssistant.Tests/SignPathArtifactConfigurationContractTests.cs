@@ -35,6 +35,19 @@ public sealed class SignPathArtifactConfigurationContractTests
         Assert.DoesNotContain("rime.dll", includes);
     }
 
+    [Fact]
+    public void Operator_instructions_describe_the_exe_artifact_only()
+    {
+        var instructions = File.ReadAllText(
+            Path.Combine(AppContext.BaseDirectory, "SignPath", "README.md"));
+
+        Assert.Contains("langou-windows-exe.xml", instructions, StringComparison.Ordinal);
+        Assert.Contains("RC EXE", instructions, StringComparison.Ordinal);
+        Assert.Contains("EXE 本身", instructions, StringComparison.Ordinal);
+        Assert.DoesNotContain("MSI", instructions, StringComparison.OrdinalIgnoreCase);
+        Assert.DoesNotContain("langou-windows-msi.xml", instructions, StringComparison.Ordinal);
+    }
+
     private static string SourcePath() =>
         Path.Combine(AppContext.BaseDirectory, "SignPath", "langou-windows-exe.xml");
 }

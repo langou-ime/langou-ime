@@ -44,6 +44,9 @@
     <None Include="..\.signpath\artifact-configurations\langou-windows-exe.xml"
           Link="SignPath\langou-windows-exe.xml"
           CopyToOutputDirectory="PreserveNewest" />
+    <None Include="..\.signpath\README.md"
+          Link="SignPath\README.md"
+          CopyToOutputDirectory="PreserveNewest" />
     <None Include="..\WeaselServer\WeaselServerApp.cpp"
           Link="Native\WeaselServerApp.cpp"
           CopyToOutputDirectory="PreserveNewest" />
