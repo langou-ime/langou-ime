@@ -193,14 +193,7 @@ jobs:
           ram-size: 3072M
           disk-size: 4096M
           disable-animations: true
-          script: |
-            adb logcat -c || true
-            set +e
-            (cd production/android && ./gradlew connectedDebugAndroidTest --stacktrace)
-            test_status=$?
-            adb logcat -d -v threadtime > "$GITHUB_WORKSPACE/android-api-${{ matrix.api-level }}-logcat.txt" || true
-            adb shell dumpsys input_method > "$GITHUB_WORKSPACE/android-api-${{ matrix.api-level }}-input-method.txt" || true
-            exit "$test_status"
+          script: bash .github/scripts/run_android_instrumentation.sh "${{ matrix.api-level }}"
 
       - name: Upload Android instrumentation diagnostics
         if: always()
@@ -210,6 +203,8 @@ jobs:
           path: |
             android-api-${{ matrix.api-level }}-logcat.txt
             android-api-${{ matrix.api-level }}-input-method.txt
+            production/android/app/build/outputs/androidTest-results/connected/**
+            production/android/app/build/reports/androidTests/connected/**
           if-no-files-found: warn
           retention-days: 7
 

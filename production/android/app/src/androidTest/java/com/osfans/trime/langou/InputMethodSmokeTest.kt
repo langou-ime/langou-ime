@@ -8,7 +8,6 @@ package com.osfans.trime.langou
 import android.Manifest
 import android.content.ComponentName
 import android.content.Context
-import android.graphics.Rect
 import android.os.ParcelFileDescriptor
 import android.os.SystemClock
 import android.provider.Settings
@@ -134,9 +133,9 @@ class InputMethodSmokeTest {
                             activity.getSystemService(InputMethodManager::class.java)
                         active =
                             inputMethodManager.isActive(activity.editor) &&
-                                ViewCompat
-                                    .getRootWindowInsets(activity.editor)
-                                    ?.isVisible(WindowInsetsCompat.Type.ime()) == true
+                            ViewCompat
+                                .getRootWindowInsets(activity.editor)
+                                ?.isVisible(WindowInsetsCompat.Type.ime()) == true
                     }
                     active
                 },
@@ -160,6 +159,14 @@ class InputMethodSmokeTest {
                                 ?.isVisible(WindowInsetsCompat.Type.ime()) == true
                     }
                     active
+                },
+            )
+
+            assertTrue(
+                "full pinyin schema and keyboard must become ready before accepting keys",
+                awaitCondition(timeoutMillis = 120_000) {
+                    TrimeInputMethodService.debugSelectedSchemaId() == "langou_pinyin" &&
+                        TrimeInputMethodService.debugActiveKeyboardId() == "langou_pinyin"
                 },
             )
 
@@ -268,10 +275,8 @@ class InputMethodSmokeTest {
     }
 
     private fun clickImeObject(device: UiDevice, target: androidx.test.uiautomator.UiObject2) {
-        val bounds: Rect = target.visibleBounds
         target.click()
         device.waitForIdle(500)
-        device.click(bounds.centerX(), bounds.centerY())
     }
 
     private fun shell(command: String): String {

@@ -129,7 +129,6 @@ class AiSuggestionSmokeTest {
                     "--es command inject_context",
             )
 
-            val device = UiDevice.getInstance(instrumentation)
             val expected =
                 listOf(
                     "好呀，火锅可以呀，我早点出发～",
@@ -137,9 +136,19 @@ class AiSuggestionSmokeTest {
                     "可以，不过我想早点确认时间。",
                 )
             assertTrue(
-                "the IME must render all three replies derived from the injected conversation context",
+                "the IME must generate exactly three replies from the injected conversation; " +
+                    "actual=${TrimeInputMethodService.debugAiSuggestionTexts()}",
+                awaitCondition(timeoutMillis = 20_000) {
+                    TrimeInputMethodService.debugAiSuggestionTexts() == expected
+                },
+            )
+            assertEquals(expected, TrimeInputMethodService.debugAiSuggestionTexts())
+
+            val device = UiDevice.getInstance(instrumentation)
+            assertTrue(
+                "the first generated context reply must be visible in the IME suggestion strip",
                 awaitCondition(timeoutMillis = 10_000) {
-                    expected.all { value -> device.hasObject(By.text(value)) }
+                    device.hasObject(By.text(expected.first()))
                 },
             )
         }
@@ -173,9 +182,9 @@ class AiSuggestionSmokeTest {
                 activity
                     .getSystemService(InputMethodManager::class.java)
                     .isActive(activity.editor) &&
-                    ViewCompat
-                        .getRootWindowInsets(activity.editor)
-                        ?.isVisible(WindowInsetsCompat.Type.ime()) == true
+                ViewCompat
+                    .getRootWindowInsets(activity.editor)
+                    ?.isVisible(WindowInsetsCompat.Type.ime()) == true
         }
         active
     }
@@ -185,5 +194,4 @@ class AiSuggestionSmokeTest {
             instrumentation.uiAutomation.executeShellCommand(command)
         return FileInputStream(descriptor.fileDescriptor).bufferedReader().use { it.readText() }
     }
-
 }

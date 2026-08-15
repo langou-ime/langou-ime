@@ -11,6 +11,7 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
 
 class ImeHostActivity : Activity() {
@@ -26,6 +27,7 @@ class ImeHostActivity : Activity() {
                     editor,
                     InputMethodManager.SHOW_IMPLICIT,
                 )
+                WindowCompat.getInsetsController(window, editor).show(WindowInsetsCompat.Type.ime())
                 val visible =
                     ViewCompat
                         .getRootWindowInsets(editor)
@@ -63,6 +65,7 @@ class ImeHostActivity : Activity() {
     fun forceShowIme() {
         editor.removeCallbacks(showIme)
         remainingShowAttempts = 40
+        WindowCompat.getInsetsController(window, editor).show(WindowInsetsCompat.Type.ime())
         editor.post(showIme)
     }
 }

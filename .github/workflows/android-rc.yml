@@ -1,0 +1,106 @@
+name: Langou signed Android RC
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: langou-signed-android-rc
+  cancel-in-progress: false
+
+env:
+  ANDROID_BUILD_TOOLS_VERSION: "36.0.0"
+  BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+  RC_FILENAME: langou-ime-android-v1.0.0-rc-${{ github.sha }}.apk
+
+jobs:
+  signed-android-rc:
+    name: Build and verify internal signed Android RC
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    environment: android-rc
+    env:
+      ANDROID_KEYSTORE_BASE64: ${{ secrets.ANDROID_KEYSTORE_BASE64 }}
+      ANDROID_KEYSTORE_PASSWORD: ${{ secrets.ANDROID_KEYSTORE_PASSWORD }}
+      ANDROID_KEY_ALIAS: ${{ secrets.ANDROID_KEY_ALIAS }}
+      ANDROID_KEY_PASSWORD: ${{ secrets.ANDROID_KEY_PASSWORD }}
+    steps:
+      - name: Enforce internal RC source and signing inputs
+        shell: bash
+        run: |
+          test "${GITHUB_REPOSITORY}" = "langou-ime/langou-ime"
+          test "${GITHUB_REF}" = "refs/heads/main"
+          test -n "${ANDROID_KEYSTORE_BASE64}"
+          test -n "${ANDROID_KEYSTORE_PASSWORD}"
+          test -n "${ANDROID_KEY_ALIAS}"
+          test -n "${ANDROID_KEY_PASSWORD}"
+
+      - name: Check out exact source and pinned submodules
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          submodules: recursive
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Java
+        uses: actions/setup-java@03ad4de0992f5dab5e18fcb136590ce7c4a0ac95 # v5
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+          cache-dependency-path: |
+            production/android/**/*.gradle.kts
+            production/android/gradle/wrapper/gradle-wrapper.properties
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@40fd30fb8d7440372e1316f5d1809ec01dcd3699 # v4
+
+      - name: Install native build tools
+        run: sdkmanager --install "cmake;3.31.6" "build-tools;$ANDROID_BUILD_TOOLS_VERSION"
+
+      - name: Prepare ephemeral signing configuration
+        working-directory: production/android
+        shell: bash
+        run: |
+          printf 'keyBase64=%s\nstorePassword=%s\nkeyAlias=%s\nkeyPassword=%s\n' \
+            "${ANDROID_KEYSTORE_BASE64}" \
+            "${ANDROID_KEYSTORE_PASSWORD}" \
+            "${ANDROID_KEY_ALIAS}" \
+            "${ANDROID_KEY_PASSWORD}" \
+            > keystore.properties
+          chmod 600 keystore.properties
+
+      - name: Test, lint, shrink, and sign Android RC
+        working-directory: production/android
+        run: ./gradlew testReleaseUnitTest lintRelease assembleRelease --stacktrace
+
+      - name: Verify package identity, certificate, size, and SHA-256
+        shell: bash
+        run: |
+          source_apk="$(find production/android/app/build/outputs/apk/release -name '*-universal-release.apk' -type f -print -quit)"
+          test -n "${source_apk}"
+          "$ANDROID_HOME/build-tools/$ANDROID_BUILD_TOOLS_VERSION/apksigner" verify --verbose --print-certs "${source_apk}"
+          test "$(apkanalyzer manifest application-id "${source_apk}")" = "tech.langou.ime"
+          test "$(apkanalyzer manifest min-sdk "${source_apk}")" = "26"
+          test "$(apkanalyzer manifest version-name "${source_apk}")" = "1.0.0"
+          mkdir -p internal-rc
+          cp "${source_apk}" "internal-rc/${RC_FILENAME}"
+          cd internal-rc
+          sha256sum "${RC_FILENAME}" > "${RC_FILENAME}.sha256"
+
+      - name: Upload internal signed Android RC
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: INTERNAL-signed-android-rc-${{ github.sha }}
+          path: |
+            internal-rc/${{ env.RC_FILENAME }}
+            internal-rc/${{ env.RC_FILENAME }}.sha256
+          if-no-files-found: error
+          retention-days: 7
+
+      - name: Remove ephemeral signing configuration
+        if: always()
+        working-directory: production/android
+        run: shred -u keystore.properties || rm -f keystore.properties

@@ -32,10 +32,19 @@ def test_monorepo_ci_runs_all_product_surfaces_from_their_component_roots() -> N
 
 def test_android_instrumentation_preserves_logcat_on_failure() -> None:
     workflow = (REPOSITORY_ROOT / ".github/workflows/ci.yml").read_text(encoding="utf-8")
+    runner = (
+        REPOSITORY_ROOT / ".github/scripts/run_android_instrumentation.sh"
+    ).read_text(encoding="utf-8")
 
-    assert "adb logcat -c" in workflow
-    assert "adb logcat -d -v threadtime" in workflow
+    assert "bash .github/scripts/run_android_instrumentation.sh" in workflow
+    assert "adb logcat -c" in runner
+    assert "set +e" in runner
+    assert "test_status=$?" in runner
+    assert "adb logcat -d -v threadtime" in runner
+    assert 'exit "${test_status}"' in runner
     assert "android-api-${{ matrix.api-level }}-logcat.txt" in workflow
+    assert "app/build/outputs/androidTest-results/connected/**" in workflow
+    assert "app/build/reports/androidTests/connected/**" in workflow
     assert "if: always()" in workflow
     assert "INTERNAL-android-logcat-api-${{ matrix.api-level }}" in workflow
 
@@ -53,3 +62,20 @@ def test_one_tag_builds_both_signed_installers_and_one_draft_release() -> None:
     assert "gh release create" in workflow
     assert "--draft" in workflow
     assert ".msi" not in workflow.lower()
+
+
+def test_signed_android_rc_is_manual_internal_and_cannot_publish() -> None:
+    workflow = (REPOSITORY_ROOT / ".github/workflows/android-rc.yml").read_text(
+        encoding="utf-8"
+    )
+
+    assert "workflow_dispatch:" in workflow
+    assert "environment: android-rc" in workflow
+    assert "ANDROID_KEYSTORE_BASE64" in workflow
+    assert "./gradlew testReleaseUnitTest lintRelease assembleRelease" in workflow
+    assert 'apksigner" verify --verbose --print-certs' in workflow
+    assert "langou-ime-android-v1.0.0-rc-${{ github.sha }}.apk" in workflow
+    assert "INTERNAL-signed-android-rc-${{ github.sha }}" in workflow
+    assert "contents: read" in workflow
+    assert "gh release" not in workflow
+    assert "contents: write" not in workflow
