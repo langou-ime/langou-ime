@@ -95,6 +95,7 @@ def create_production_app(
             primary_model=settings.mimo_primary_model,
             fallback_model=settings.mimo_fallback_model,
             first_suggestion_timeout_seconds=settings.mimo_first_suggestion_timeout_seconds,
+            fallback_hedge_seconds=settings.mimo_fallback_hedge_seconds,
         )
     app = create_app(
         environment="production",

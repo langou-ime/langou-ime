@@ -19,6 +19,7 @@ env:
   BOOST_VERSION: "1.84.0"
   BOOST_ROOT: "${{ github.workspace }}\\deps\\boost_1_84_0"
   RELEASE_PUBLIC_KEY_BASE64: "NL+5JaOJjU8FhrLZueXoqi7XNagy6K0xe9etWtUvPQY="
+  LANGOU_RELEASE_PUBLIC_KEY_BASE64: "NL+5JaOJjU8FhrLZueXoqi7XNagy6K0xe9etWtUvPQY="
   ANDROID_FILENAME: langou-ime-android-v1.0.0.apk
   WINDOWS_FILENAME: langou-ime-windows-x64-v1.0.0.exe
 

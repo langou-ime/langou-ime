@@ -20,6 +20,15 @@ private fun locateRepositoryRoot(): File {
     return directory
 }
 
+private fun locateMonorepoRoot(): File {
+    val workingDirectory = System.getProperty("user.dir") ?: error("user.dir is unavailable")
+    var directory = File(workingDirectory).absoluteFile
+    while (!File(directory, ".github/workflows/android-rc.yml").isFile) {
+        directory = directory.parentFile ?: error("Langou monorepo root was not found")
+    }
+    return directory
+}
+
 class AndroidReleaseWorkflowContractTest :
     StringSpec({
         val repositoryRoot = locateRepositoryRoot()
@@ -69,6 +78,19 @@ class AndroidReleaseWorkflowContractTest :
             workflow shouldNotContain "Build Trime"
             workflow shouldNotContain "gh release"
             workflow shouldNotContain "contents: write"
+        }
+
+        "unified signed RC injects the pinned release manifest public key" {
+            val rcWorkflow =
+                File(locateMonorepoRoot(), ".github/workflows/android-rc.yml").readText()
+            val releaseWorkflow =
+                File(locateMonorepoRoot(), ".github/workflows/release.yml").readText()
+
+            rcWorkflow shouldContain
+                "LANGOU_RELEASE_PUBLIC_KEY_BASE64: \"NL+5JaOJjU8FhrLZueXoqi7XNagy6K0xe9etWtUvPQY=\""
+            rcWorkflow shouldContain "testReleaseUnitTest lintRelease assembleRelease"
+            releaseWorkflow shouldContain
+                "LANGOU_RELEASE_PUBLIC_KEY_BASE64: \"NL+5JaOJjU8FhrLZueXoqi7XNagy6K0xe9etWtUvPQY=\""
         }
 
         "lint report models wait for generated assets" {

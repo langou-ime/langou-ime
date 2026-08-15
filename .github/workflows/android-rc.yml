@@ -13,6 +13,7 @@ concurrency:
 env:
   ANDROID_BUILD_TOOLS_VERSION: "36.0.0"
   BUILD_ABI: armeabi-v7a,arm64-v8a,x86,x86_64
+  LANGOU_RELEASE_PUBLIC_KEY_BASE64: "NL+5JaOJjU8FhrLZueXoqi7XNagy6K0xe9etWtUvPQY="
   RC_FILENAME: langou-ime-android-v1.0.0-rc-${{ github.sha }}.apk
 
 jobs:

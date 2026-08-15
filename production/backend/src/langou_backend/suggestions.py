@@ -1,12 +1,26 @@
 import asyncio
 import json
+import logging
 from collections.abc import AsyncIterator
+from contextlib import suppress
 from dataclasses import dataclass
 from typing import Protocol
 
 import httpx
 
 from langou_backend.schemas import SuggestionRequest
+
+logger = logging.getLogger(__name__)
+
+_PROVIDER_ERRORS = (
+    TimeoutError,
+    httpx.HTTPError,
+    json.JSONDecodeError,
+    KeyError,
+    IndexError,
+    TypeError,
+    ValueError,
+)
 
 
 @dataclass(frozen=True)
@@ -41,6 +55,18 @@ class SuggestionUnavailable(Exception):
 
 class _SuggestionLineParser:
     STYLES = ("natural", "gentle", "boundary")
+    STYLE_ALIASES = {
+        "natural": "natural",
+        "自然": "natural",
+        "gentle": "gentle",
+        "温柔": "gentle",
+        "溫柔": "gentle",
+        "boundary": "boundary",
+        "有边界感": "boundary",
+        "有邊界感": "boundary",
+        "边界": "boundary",
+        "邊界": "boundary",
+    }
     MAX_BUFFER_CHARACTERS = 4096
     MAX_TEXT_CHARACTERS = 200
 
@@ -71,15 +97,20 @@ class _SuggestionLineParser:
             return None
         if self._next_style_index >= len(self.STYLES):
             return None
-        if "\t" in line:
-            separator = "\t"
-        elif "<TAB>" in line:
-            separator = "<TAB>"
-        else:
-            raise ValueError("suggestion line is missing a tab separator")
-        style, text = line.split(separator, 1)
         expected_style = self.STYLES[self._next_style_index]
-        if style.strip() != expected_style:
+        style = expected_style
+        text = line
+        for separator in ("\t", "<TAB>", "：", ":"):
+            if separator not in line:
+                continue
+            raw_style, candidate_text = line.split(separator, 1)
+            normalized_style = self.STYLE_ALIASES.get(raw_style.strip().lower())
+            if normalized_style is None:
+                continue
+            style = normalized_style
+            text = candidate_text
+            break
+        if style != expected_style:
             raise ValueError("suggestion styles are out of order")
         normalized_text = " ".join(text.split()).strip()
         if not 1 <= len(normalized_text) <= self.MAX_TEXT_CHARACTERS:
@@ -117,45 +148,106 @@ boundary	有边界感回复
         primary_model: str,
         fallback_model: str,
         first_suggestion_timeout_seconds: float = 3.2,
+        fallback_hedge_seconds: float = 0.8,
     ) -> None:
         self._client = client
         self._models = (primary_model, fallback_model)
         self._first_suggestion_timeout_seconds = first_suggestion_timeout_seconds
+        self._fallback_hedge_seconds = fallback_hedge_seconds
 
     async def generate(self, request: SuggestionRequest) -> AsyncIterator[Suggestion]:
-        for model in self._models:
-            emitted = 0
-            try:
-                stream = self._generate_with_model(model, request)
-                iterator = stream.__aiter__()
-                try:
-                    first = await asyncio.wait_for(
-                        iterator.__anext__(),
-                        timeout=self._first_suggestion_timeout_seconds,
-                    )
-                except StopAsyncIteration:
-                    first = None
-                if first is not None:
-                    emitted += 1
-                    yield first
-                    async for suggestion in iterator:
-                        emitted += 1
-                        yield suggestion
-                if emitted:
-                    return
-            except (
-                TimeoutError,
-                httpx.HTTPError,
-                json.JSONDecodeError,
-                KeyError,
-                IndexError,
-                TypeError,
-                ValueError,
-            ):
-                if emitted:
-                    return
-                continue
+        loop = asyncio.get_running_loop()
+        primary = self._generate_with_model(self._models[0], request).__aiter__()
+        primary_task = asyncio.create_task(primary.__anext__())
+        active = [(self._models[0], primary, primary_task)]
+
+        hedge_delay = min(
+            max(self._fallback_hedge_seconds, 0.0),
+            self._first_suggestion_timeout_seconds,
+        )
+        done, _ = await asyncio.wait(
+            {primary_task},
+            timeout=hedge_delay,
+            return_when=asyncio.FIRST_COMPLETED,
+        )
+        if primary_task in done:
+            winner = await self._completed_first(active.pop(0))
+            if winner is not None:
+                async for suggestion in self._yield_winner(winner, active):
+                    yield suggestion
+                return
+
+        fallback = self._generate_with_model(self._models[1], request).__aiter__()
+        fallback_task = asyncio.create_task(fallback.__anext__())
+        active.append((self._models[1], fallback, fallback_task))
+        deadline = loop.time() + self._first_suggestion_timeout_seconds
+
+        while active:
+            remaining = deadline - loop.time()
+            if remaining <= 0:
+                break
+            done, _ = await asyncio.wait(
+                {item[2] for item in active},
+                timeout=remaining,
+                return_when=asyncio.FIRST_COMPLETED,
+            )
+            if not done:
+                break
+            for candidate in tuple(active):
+                if candidate[2] not in done:
+                    continue
+                active.remove(candidate)
+                winner = await self._completed_first(candidate)
+                if winner is None:
+                    continue
+                async for suggestion in self._yield_winner(winner, active):
+                    yield suggestion
+                return
+
+        await self._cancel_candidates(active)
         raise SuggestionUnavailable
+
+    async def _completed_first(self, candidate):
+        model, iterator, task = candidate
+        try:
+            first = task.result()
+        except StopAsyncIteration:
+            await iterator.aclose()
+            return None
+        except _PROVIDER_ERRORS as exc:
+            logger.warning(
+                "MiMo suggestion candidate failed model=%s error=%s",
+                model,
+                type(exc).__name__,
+            )
+            await iterator.aclose()
+            return None
+        return model, iterator, first
+
+    async def _yield_winner(self, winner, losers) -> AsyncIterator[Suggestion]:
+        model, iterator, first = winner
+        await self._cancel_candidates(losers)
+        yield first
+        try:
+            async for suggestion in iterator:
+                yield suggestion
+        except _PROVIDER_ERRORS as exc:
+            logger.warning(
+                "MiMo suggestion stream ended early model=%s error=%s",
+                model,
+                type(exc).__name__,
+            )
+        finally:
+            await iterator.aclose()
+
+    @staticmethod
+    async def _cancel_candidates(candidates) -> None:
+        for _, _, task in candidates:
+            task.cancel()
+        for _, iterator, task in candidates:
+            with suppress(asyncio.CancelledError, *_PROVIDER_ERRORS):
+                await task
+            await iterator.aclose()
 
     async def summarize(self, request: SuggestionRequest) -> str | None:
         context = {

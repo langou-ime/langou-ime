@@ -1,5 +1,6 @@
 import asyncio
 import json
+import time
 from importlib import import_module
 
 import httpx
@@ -260,4 +261,114 @@ async def test_mimo_provider_falls_back_when_primary_first_suggestion_is_too_slo
         "我先给你一个更快的建议",
         "稍等我再看看更完整的内容",
     ]
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_mimo_provider_accepts_unlabelled_fallback_lines_in_expected_order() -> None:
+    suggestions = import_module("langou_backend.suggestions")
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        payload = json.loads(request.content)
+        if payload["model"] == "mimo-v2.5-pro":
+            return httpx.Response(503, json={"error": "temporarily_unavailable"})
+        return httpx.Response(
+            200,
+            headers={"content-type": "text/event-stream"},
+            stream=FragmentedOpenAiStream(
+                [
+                    'data: {"choices":[{"delta":{"content":'
+                    '"好呀，那就吃火锅吧\\n你来接我太贴心了\\n'
+                    '不用特意接我，我们餐厅见"}}]}\n\n',
+                    "data: [DONE]\n\n",
+                ]
+            ),
+        )
+
+    client = httpx.AsyncClient(
+        transport=httpx.MockTransport(handler),
+        base_url="https://token-plan-cn.xiaomimimo.com/v1/",
+    )
+    provider = suggestions.MimoSuggestionProvider(
+        client=client,
+        primary_model="mimo-v2.5-pro",
+        fallback_model="mimo-v2.5",
+    )
+    request = SuggestionRequest.model_validate(
+        {
+            "request_id": "req_01JZQ6K3EP7EZAW4ZK2B7J1X8M",
+            "device_id": "dev_01JZQ6M0HZK9TBEXB1N6H7Y2RP",
+            "application": "wechat",
+            "locale": "zh-CN",
+            "turns": [{"role": "other", "text": "想吃什么？"}],
+            "save_history": False,
+        }
+    )
+
+    result = [item async for item in provider.generate(request)]
+
+    assert [item.style for item in result] == ["natural", "gentle", "boundary"]
+    assert [item.text for item in result] == [
+        "好呀，那就吃火锅吧",
+        "你来接我太贴心了",
+        "不用特意接我，我们餐厅见",
+    ]
+    await client.aclose()
+
+
+@pytest.mark.asyncio
+async def test_mimo_provider_hedges_slow_primary_and_uses_fast_fallback() -> None:
+    suggestions = import_module("langou_backend.suggestions")
+    requested_models = []
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        payload = json.loads(request.content)
+        requested_models.append(payload["model"])
+        delay = 0.2 if payload["model"] == "mimo-v2.5-pro" else 0.0
+        text = (
+            "natural\\t主模型回复\\n"
+            if delay
+            else "快速回复一\\n快速回复二\\n快速回复三"
+        )
+        return httpx.Response(
+            200,
+            headers={"content-type": "text/event-stream"},
+            stream=DelayedOpenAiStream(
+                delay,
+                [
+                    f'data: {{"choices":[{{"delta":{{"content":"{text}"}}}}]}}\n\n',
+                    "data: [DONE]\n\n",
+                ],
+            ),
+        )
+
+    client = httpx.AsyncClient(
+        transport=httpx.MockTransport(handler),
+        base_url="https://token-plan-cn.xiaomimimo.com/v1/",
+    )
+    provider = suggestions.MimoSuggestionProvider(
+        client=client,
+        primary_model="mimo-v2.5-pro",
+        fallback_model="mimo-v2.5",
+        first_suggestion_timeout_seconds=0.5,
+        fallback_hedge_seconds=0.01,
+    )
+    request = SuggestionRequest.model_validate(
+        {
+            "request_id": "req_01JZQ6K3EP7EZAW4ZK2B7J1X8M",
+            "device_id": "dev_01JZQ6M0HZK9TBEXB1N6H7Y2RP",
+            "application": "wechat",
+            "locale": "zh-CN",
+            "turns": [{"role": "other", "text": "快回复我"}],
+            "save_history": False,
+        }
+    )
+
+    started = time.monotonic()
+    result = [item async for item in provider.generate(request)]
+    elapsed = time.monotonic() - started
+
+    assert requested_models == ["mimo-v2.5-pro", "mimo-v2.5"]
+    assert [item.text for item in result] == ["快速回复一", "快速回复二", "快速回复三"]
+    assert elapsed < 0.15
     await client.aclose()
