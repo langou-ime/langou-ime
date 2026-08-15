@@ -7,8 +7,6 @@ package com.osfans.trime.langou
 
 import android.Manifest
 import android.content.ComponentName
-import android.content.Context
-import android.os.ParcelFileDescriptor
 import android.os.SystemClock
 import android.provider.Settings
 import android.view.KeyEvent
@@ -22,13 +20,13 @@ import androidx.test.uiautomator.By
 import androidx.test.uiautomator.UiDevice
 import androidx.test.uiautomator.Until
 import com.osfans.trime.ime.core.TrimeInputMethodService
-import org.junit.After
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
-import org.junit.Before
+import org.junit.AfterClass
+import org.junit.BeforeClass
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.io.FileInputStream
@@ -42,48 +40,6 @@ class InputMethodSmokeTest {
             targetContext,
             "com.osfans.trime.ime.core.TrimeInputMethodService",
         )
-    private var previousIme: String = ""
-
-    @Before
-    fun selectLangouIme() {
-        previousIme =
-            Settings.Secure.getString(
-                targetContext.contentResolver,
-                Settings.Secure.DEFAULT_INPUT_METHOD,
-            ).orEmpty()
-        shell("settings put secure show_ime_with_hard_keyboard 1")
-        shell("ime enable ${imeComponent.flattenToShortString()}")
-        shell("ime set ${imeComponent.flattenToShortString()}")
-        assertEquals(
-            "instrumentation must run against the debug Langou IME package",
-            "tech.langou.ime.debug",
-            targetContext.packageName,
-        )
-        assertEquals(
-            "the debug Langou IME must become the default input method before continuing",
-            imeComponent.flattenToShortString(),
-            Settings.Secure.getString(
-                targetContext.contentResolver,
-                Settings.Secure.DEFAULT_INPUT_METHOD,
-            ),
-        )
-        assertNotEquals(
-            "connected tests must not silently fall back to the release IME package",
-            "tech.langou.ime/com.osfans.trime.ime.core.TrimeInputMethodService",
-            Settings.Secure.getString(
-                targetContext.contentResolver,
-                Settings.Secure.DEFAULT_INPUT_METHOD,
-            ),
-        )
-    }
-
-    @After
-    fun restorePreviousIme() {
-        if (previousIme.isNotBlank()) {
-            shell("ime set $previousIme")
-        }
-    }
-
     @Test
     fun inputMethodAndCaptureServicesHaveTheExpectedSecurityBoundary() {
         val packageManager = targetContext.packageManager
@@ -279,9 +235,64 @@ class InputMethodSmokeTest {
         device.waitForIdle(500)
     }
 
-    private fun shell(command: String): String {
-        val descriptor: ParcelFileDescriptor =
-            instrumentation.uiAutomation.executeShellCommand(command)
-        return FileInputStream(descriptor.fileDescriptor).bufferedReader().use { it.readText() }
+    companion object {
+        private var previousIme: String = ""
+
+        @JvmStatic
+        @BeforeClass
+        fun selectLangouImeForClass() {
+            val instrumentation = InstrumentationRegistry.getInstrumentation()
+            val targetContext = instrumentation.targetContext
+            val imeComponent =
+                ComponentName(
+                    targetContext,
+                    "com.osfans.trime.ime.core.TrimeInputMethodService",
+                )
+            previousIme =
+                Settings.Secure.getString(
+                    targetContext.contentResolver,
+                    Settings.Secure.DEFAULT_INPUT_METHOD,
+                ).orEmpty()
+            shell(instrumentation, "settings put secure show_ime_with_hard_keyboard 1")
+            shell(instrumentation, "ime enable ${imeComponent.flattenToShortString()}")
+            shell(instrumentation, "ime set ${imeComponent.flattenToShortString()}")
+            assertEquals(
+                "instrumentation must run against the debug Langou IME package",
+                "tech.langou.ime.debug",
+                targetContext.packageName,
+            )
+            assertEquals(
+                "the debug Langou IME must become the default input method before continuing",
+                imeComponent.flattenToShortString(),
+                Settings.Secure.getString(
+                    targetContext.contentResolver,
+                    Settings.Secure.DEFAULT_INPUT_METHOD,
+                ),
+            )
+            assertNotEquals(
+                "connected tests must not silently fall back to the release IME package",
+                "tech.langou.ime/com.osfans.trime.ime.core.TrimeInputMethodService",
+                Settings.Secure.getString(
+                    targetContext.contentResolver,
+                    Settings.Secure.DEFAULT_INPUT_METHOD,
+                ),
+            )
+        }
+
+        @JvmStatic
+        @AfterClass
+        fun restorePreviousImeAfterClass() {
+            if (previousIme.isNotBlank()) {
+                shell(InstrumentationRegistry.getInstrumentation(), "ime set $previousIme")
+            }
+        }
+
+        private fun shell(
+            instrumentation: android.app.Instrumentation,
+            command: String,
+        ): String {
+            val descriptor = instrumentation.uiAutomation.executeShellCommand(command)
+            return FileInputStream(descriptor.fileDescriptor).bufferedReader().use { it.readText() }
+        }
     }
 }

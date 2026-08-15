@@ -47,6 +47,11 @@ class Rime {
     trime_traits.shared_data_dir = sharedDir;
     trime_traits.user_data_dir = userDir;
     trime_traits.log_dir = "";  // set empty log_dir to log to logcat only
+    // INFO emits one Android log line for every dictionary entry during a
+    // first-run compile. On slower devices that turns seconds of CPU work into
+    // minutes of logcat I/O and delays the first keyboard. Keep actionable
+    // warnings and errors without the per-entry noise.
+    trime_traits.min_log_level = 1;
     trime_traits.app_name = "rime.trime";
     trime_traits.distribution_name = "Trime";
     trime_traits.distribution_code_name = "trime";
@@ -56,6 +61,9 @@ class Rime {
     rime->initialize(&trime_traits);
     rime->set_notification_handler(notificationHandler, GlobalRef->jvm);
     rime->start_maintenance(fullCheck);
+    // RimeDispatcher publishes READY as soon as this function returns. Do not
+    // let schema selection race the asynchronous first-run compiler.
+    rime->join_maintenance_thread();
   }
 
   bool deploySchema(std::string_view schemaFile) {

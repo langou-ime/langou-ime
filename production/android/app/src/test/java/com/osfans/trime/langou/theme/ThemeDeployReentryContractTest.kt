@@ -27,4 +27,16 @@ class ThemeDeployReentryContractTest :
             themeManager shouldContain "fun reloadSelectedThemeAfterDeployment()"
             themeManager shouldContain "resolveTheme(configId, deployConfig = false)"
         }
+
+        "ime startup loads the bundled theme without blocking on native dictionary deployment" {
+            val themeManager =
+                File("src/main/java/com/osfans/trime/data/theme/ThemeManager.kt").readText()
+            val initBlock =
+                themeManager
+                    .substringAfter("fun init(configuration: Configuration)")
+                    .substringBefore("fun selectTheme")
+
+            initBlock shouldContain "evaluateActiveTheme(deployConfig = false)"
+            initBlock shouldNotContain "evaluateActiveTheme()"
+        }
     })

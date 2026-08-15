@@ -144,9 +144,9 @@ object ThemeManager {
         error("No valid theme available")
     }
 
-    private fun evaluateActiveTheme(): Theme {
+    private fun evaluateActiveTheme(deployConfig: Boolean = true): Theme {
         val selectedThemeId = prefs.selectedTheme.getValue()
-        val resolvedTheme = resolveTheme(selectedThemeId)
+        val resolvedTheme = resolveTheme(selectedThemeId, deployConfig)
         val newTheme = resolvedTheme.theme
         if (resolvedTheme.configId != selectedThemeId) {
             prefs.selectedTheme.setValue(resolvedTheme.configId)
@@ -159,7 +159,11 @@ object ThemeManager {
     }
 
     fun init(configuration: Configuration) {
-        _activeTheme = evaluateActiveTheme()
+        // Native RIME startup may be compiling the first-run dictionaries. Calling the native
+        // theme deployer from the IME main thread at the same time blocks old Android devices for
+        // tens of seconds. Load the bundled/source theme immediately; the deployment callback
+        // reloads the built copy when RIME becomes ready.
+        _activeTheme = evaluateActiveTheme(deployConfig = false)
         ColorManager.init(configuration)
     }
 

@@ -41,4 +41,16 @@ class ManagedSchemaFallbackContractTest :
                 "rime.launchOnReady { api ->\n            lifecycleScope.launch {"
             layoutSwitch shouldNotContain "service.lifecycleScope.launch"
         }
+
+        "repeated input starts serialize schema fallback and deployment" {
+            val service =
+                File("src/main/java/com/osfans/trime/ime/core/TrimeInputMethodService.kt").readText()
+            val fallback =
+                service
+                    .substringAfter("private fun ensureLangouSchemaSelected()")
+                    .substringBefore("private fun scheduleLangouSuggestions")
+
+            fallback shouldContain "postRimeJob {"
+            fallback shouldNotContain "rime.launchOnReady"
+        }
     })

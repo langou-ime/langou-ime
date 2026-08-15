@@ -44,7 +44,6 @@ import com.osfans.trime.core.RimeKeyMapping
 import com.osfans.trime.core.RimeMessage
 import com.osfans.trime.daemon.RimeDaemon
 import com.osfans.trime.daemon.RimeSession
-import com.osfans.trime.daemon.launchOnReady
 import com.osfans.trime.data.prefs.AppPrefs
 import com.osfans.trime.data.prefs.PreferenceDelegate
 import com.osfans.trime.data.prefs.PreferenceDelegateProvider
@@ -702,23 +701,23 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
     }
 
     private fun ensureLangouSchemaSelected() {
-        rime.launchOnReady { api ->
-            val currentSchema = api.selectedSchemaId()
+        postRimeJob {
+            val currentSchema = selectedSchemaId()
             val managedSchema = LangouPinyinLayout.ensureManagedSchema(currentSchema)
             if (managedSchema == currentSchema) {
                 syncLangouKeyboardToSchema(managedSchema)
-                return@launchOnReady
+                return@postRimeJob
             }
             Timber.i(
                 "Langou schema fallback current=%s target=%s",
                 currentSchema,
                 managedSchema,
             )
-            api.commitComposition()
-            var selected = api.selectSchema(managedSchema)
+            commitComposition()
+            var selected = selectSchema(managedSchema)
             if (!selected) {
-                api.deploy()
-                selected = api.selectSchema(managedSchema)
+                deploy()
+                selected = selectSchema(managedSchema)
             }
             if (selected) {
                 syncLangouKeyboardToSchema(managedSchema)
