@@ -703,27 +703,25 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
 
     private fun ensureLangouSchemaSelected() {
         rime.launchOnReady { api ->
-            lifecycleScope.launch {
-                val currentSchema = api.selectedSchemaId()
-                val managedSchema = LangouPinyinLayout.ensureManagedSchema(currentSchema)
-                if (managedSchema == currentSchema) {
-                    syncLangouKeyboardToSchema(managedSchema)
-                    return@launch
-                }
-                Timber.i(
-                    "Langou schema fallback current=%s target=%s",
-                    currentSchema,
-                    managedSchema,
-                )
-                api.commitComposition()
-                var selected = api.selectSchema(managedSchema)
-                if (!selected) {
-                    api.deploy()
-                    selected = api.selectSchema(managedSchema)
-                }
-                if (selected) {
-                    syncLangouKeyboardToSchema(managedSchema)
-                }
+            val currentSchema = api.selectedSchemaId()
+            val managedSchema = LangouPinyinLayout.ensureManagedSchema(currentSchema)
+            if (managedSchema == currentSchema) {
+                syncLangouKeyboardToSchema(managedSchema)
+                return@launchOnReady
+            }
+            Timber.i(
+                "Langou schema fallback current=%s target=%s",
+                currentSchema,
+                managedSchema,
+            )
+            api.commitComposition()
+            var selected = api.selectSchema(managedSchema)
+            if (!selected) {
+                api.deploy()
+                selected = api.selectSchema(managedSchema)
+            }
+            if (selected) {
+                syncLangouKeyboardToSchema(managedSchema)
             }
         }
     }

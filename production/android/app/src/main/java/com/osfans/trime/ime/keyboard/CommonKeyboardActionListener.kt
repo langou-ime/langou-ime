@@ -209,38 +209,36 @@ class CommonKeyboardActionListener {
 
             private fun handleLangouPinyinLayout() {
                 rime.launchOnReady { api ->
-                    service.lifecycleScope.launch {
-                        api.commitComposition()
-                        val target =
-                            LangouPinyinLayout.targetSchema(api.selectedSchemaId())
-                        var deployed = false
-                        var selected = api.selectSchema(target)
-                        if (!selected) {
-                            Timber.i(
-                                "Langou pinyin layout switch fallback full deploy target=%s",
-                                target,
-                            )
-                            api.deploy()
-                            deployed = true
-                            selected = api.selectSchema(target)
-                        }
-                        if (selected) {
-                            service.syncLangouKeyboardToSchema(target)
-                        }
+                    api.commitComposition()
+                    val target =
+                        LangouPinyinLayout.targetSchema(api.selectedSchemaId())
+                    var deployed = false
+                    var selected = api.selectSchema(target)
+                    if (!selected) {
                         Timber.i(
-                            "Langou pinyin layout switch target=%s deployed=%s selected=%s",
+                            "Langou pinyin layout switch fallback full deploy target=%s",
                             target,
-                            deployed,
-                            selected,
                         )
-                        if (!selected) {
-                            Toast
-                                .makeText(
-                                    context,
-                                    R.string.langou_layout_switch_failed,
-                                    Toast.LENGTH_SHORT,
-                                ).show()
-                        }
+                        api.deploy()
+                        deployed = true
+                        selected = api.selectSchema(target)
+                    }
+                    if (selected) {
+                        service.syncLangouKeyboardToSchema(target)
+                    }
+                    Timber.i(
+                        "Langou pinyin layout switch target=%s deployed=%s selected=%s",
+                        target,
+                        deployed,
+                        selected,
+                    )
+                    if (!selected) {
+                        Toast
+                            .makeText(
+                                context,
+                                R.string.langou_layout_switch_failed,
+                                Toast.LENGTH_SHORT,
+                            ).show()
                     }
                 }
             }
