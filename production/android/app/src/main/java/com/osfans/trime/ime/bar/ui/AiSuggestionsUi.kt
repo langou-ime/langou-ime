@@ -15,6 +15,7 @@ import android.widget.HorizontalScrollView
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.view.isVisible
 import com.osfans.trime.R
 import com.osfans.trime.data.theme.ColorManager
 import com.osfans.trime.langou.ai.AiSuggestionSelection
@@ -32,6 +33,24 @@ class AiSuggestionsUi(
         }
 
     private var selection = AiSuggestionSelection {}
+    private val suggestionChips =
+        List(MAX_SUGGESTIONS) { index ->
+            createChip("", multiline = true).apply {
+                isVisible = false
+                setOnClickListener { selection.select(index) }
+            }
+        }
+    private val refreshChip =
+        createChip(ctx.getString(R.string.langou_ai_refresh)).apply {
+            setOnClickListener { refreshAction() }
+        }
+    private val forgetChip =
+        createChip(ctx.getString(R.string.langou_ai_forget_chat)).apply {
+            setOnClickListener { forgetAction() }
+        }
+    private var refreshAction: () -> Unit = {}
+    private var forgetAction: () -> Unit = {}
+    private var suggestionLayoutAttached = false
 
     override val root: HorizontalScrollView =
         HorizontalScrollView(ctx).apply {
@@ -47,6 +66,8 @@ class AiSuggestionsUi(
         }
 
     fun showLoading() {
+        selection.update(emptyList())
+        suggestionLayoutAttached = false
         content.removeAllViews()
         content.addView(createMascot(), mascotLayoutParams())
         content.addView(
@@ -56,6 +77,8 @@ class AiSuggestionsUi(
     }
 
     fun showContextLoading() {
+        selection.update(emptyList())
+        suggestionLayoutAttached = false
         content.removeAllViews()
         content.addView(createMascot(), mascotLayoutParams())
         content.addView(
@@ -66,6 +89,7 @@ class AiSuggestionsUi(
 
     fun showRetry(onClick: () -> Unit) {
         selection.update(emptyList())
+        suggestionLayoutAttached = false
         content.removeAllViews()
         content.addView(createMascot(), mascotLayoutParams())
         content.addView(
@@ -78,6 +102,7 @@ class AiSuggestionsUi(
 
     fun showPermissionRequired(onClick: () -> Unit) {
         selection.update(emptyList())
+        suggestionLayoutAttached = false
         content.removeAllViews()
         content.addView(createMascot(), mascotLayoutParams())
         content.addView(
@@ -95,34 +120,33 @@ class AiSuggestionsUi(
         onSelect: (String) -> Unit,
     ): Boolean {
         selection = AiSuggestionSelection(onSelect).apply { update(values) }
-        content.removeAllViews()
-        content.addView(createMascot(), mascotLayoutParams())
-        selection.items.forEachIndexed { index, text ->
-            content.addView(
-                createChip(text, multiline = true).apply {
-                    setOnClickListener { selection.select(index) }
-                },
-                chipLayoutParams(),
-            )
+        refreshAction = onRefresh
+        forgetAction = onForget
+        ensureSuggestionLayout()
+        suggestionChips.forEachIndexed { index, chip ->
+            chip.text = selection.items.getOrNull(index).orEmpty()
+            chip.isVisible = index < selection.items.size
         }
-        content.addView(
-            createChip(ctx.getString(R.string.langou_ai_refresh)).apply {
-                setOnClickListener { onRefresh() }
-            },
-            compactChipLayoutParams(),
-        )
-        content.addView(
-            createChip(ctx.getString(R.string.langou_ai_forget_chat)).apply {
-                setOnClickListener { onForget() }
-            },
-            compactChipLayoutParams(),
-        )
+        root.post { root.scrollTo(0, 0) }
         return selection.items.isNotEmpty()
     }
 
     fun clear() {
         selection.update(emptyList())
+        suggestionLayoutAttached = false
         content.removeAllViews()
+    }
+
+    private fun ensureSuggestionLayout() {
+        if (suggestionLayoutAttached) return
+        content.removeAllViews()
+        content.addView(createMascot(), mascotLayoutParams())
+        suggestionChips.forEach { chip ->
+            content.addView(chip, chipLayoutParams())
+        }
+        content.addView(refreshChip, compactChipLayoutParams())
+        content.addView(forgetChip, compactChipLayoutParams())
+        suggestionLayoutAttached = true
     }
 
     private fun createChip(
@@ -138,6 +162,9 @@ class AiSuggestionsUi(
             isClickable = enabled
             gravity = Gravity.CENTER
             setPadding(dp(14), 0, dp(14), 0)
+            if (multiline) {
+                maxWidth = ctx.dp(MAX_SUGGESTION_WIDTH_DP)
+            }
             setTextColor(ColorManager.getColor("candidate_text_color"))
             alpha = if (enabled) 1f else 0.72f
             background =
@@ -176,4 +203,9 @@ class AiSuggestionsUi(
         chipLayoutParams().apply {
             marginEnd = ctx.dp(4)
         }
+
+    private companion object {
+        const val MAX_SUGGESTIONS = 3
+        const val MAX_SUGGESTION_WIDTH_DP = 280
+    }
 }

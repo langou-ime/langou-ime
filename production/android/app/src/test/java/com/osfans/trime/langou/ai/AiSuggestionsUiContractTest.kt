@@ -16,16 +16,28 @@ class AiSuggestionsUiContractTest :
             File("src/main/java/com/osfans/trime/ime/bar/ui/AiSuggestionsUi.kt").readText()
 
         "renders reply chips before management actions" {
-            source.indexOf("selection.items.forEachIndexed") shouldBeLessThan
-                source.indexOf("langou_ai_refresh")
-            source.indexOf("selection.items.forEachIndexed") shouldBeLessThan
-                source.indexOf("langou_ai_forget_chat")
+            val layout = source.substringAfter("private fun ensureSuggestionLayout()")
+            layout.indexOf("suggestionChips.forEach") shouldBeLessThan
+                layout.indexOf("content.addView(refreshChip")
+            layout.indexOf("suggestionChips.forEach") shouldBeLessThan
+                layout.indexOf("content.addView(forgetChip")
         }
 
         "allows reply chips to wrap to two lines instead of forcing one-line truncation" {
-            source shouldContain "createChip(text, multiline = true)"
+            source shouldContain "maxWidth = ctx.dp(MAX_SUGGESTION_WIDTH_DP)"
             source shouldContain "maxLines = if (multiline) 2 else 1"
             source shouldContain "isSingleLine = !multiline"
+        }
+
+        "updates stable reply chips while SSE suggestions stream in" {
+            source shouldContain "private val suggestionChips"
+            source shouldContain "suggestionChips.forEachIndexed { index, chip ->"
+            source shouldContain "chip.text = selection.items.getOrNull(index).orEmpty()"
+            source shouldContain "chip.isVisible = index < selection.items.size"
+        }
+
+        "keeps the first reply visible after every streamed update" {
+            source shouldContain "root.post { root.scrollTo(0, 0) }"
         }
     })
 
