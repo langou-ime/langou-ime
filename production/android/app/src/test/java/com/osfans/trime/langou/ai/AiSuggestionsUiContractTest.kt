@@ -39,6 +39,11 @@ class AiSuggestionsUiContractTest :
         "keeps the first reply visible after every streamed update" {
             source shouldContain "root.post { root.scrollTo(0, 0) }"
         }
+
+        "commits the reply rendered by the tapped chip instead of a mutable list index" {
+            source shouldContain "selection.selectDisplayed(chip.text)"
+            source.contains("selection.select(index)") shouldBe false
+        }
     })
 
 private infix fun Int.shouldBeLessThan(other: Int) {

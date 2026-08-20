@@ -23,6 +23,13 @@ class AiSuggestionSelection(
         return true
     }
 
+    fun selectDisplayed(value: CharSequence): Boolean {
+        val displayed = value.toString().trim()
+        if (displayed.isEmpty()) return false
+        insertText(displayed)
+        return true
+    }
+
     private companion object {
         const val MAX_SUGGESTIONS = 3
     }

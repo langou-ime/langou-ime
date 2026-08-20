@@ -23,4 +23,14 @@ class AiSuggestionSelectionTest :
             selection.select(9) shouldBe false
             inserted shouldContainExactly listOf("可以呀")
         }
+
+        "commits the exact reply text shown on a chip when streamed state moves on" {
+            val inserted = mutableListOf<String>()
+            val selection = AiSuggestionSelection { inserted.add(it) }
+
+            selection.update(listOf("新的流式回复"))
+
+            selection.selectDisplayed("用户当前看到的回复") shouldBe true
+            inserted shouldContainExactly listOf("用户当前看到的回复")
+        }
     })

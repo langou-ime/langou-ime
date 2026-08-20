@@ -34,10 +34,10 @@ class AiSuggestionsUi(
 
     private var selection = AiSuggestionSelection {}
     private val suggestionChips =
-        List(MAX_SUGGESTIONS) { index ->
-            createChip("", multiline = true).apply {
-                isVisible = false
-                setOnClickListener { selection.select(index) }
+        List(MAX_SUGGESTIONS) {
+            createChip("", multiline = true).also { chip ->
+                chip.isVisible = false
+                chip.setOnClickListener { selection.selectDisplayed(chip.text) }
             }
         }
     private val refreshChip =
