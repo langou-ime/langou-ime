@@ -23,5 +23,10 @@ class AiContextLoadingUiContractTest :
                 "if (preserveExistingSuggestions && isAiSuggestionPresent) return"
             service shouldContain
                 "showAiContextLoading(preserveExistingSuggestions = debugAiSuggestions.isNotEmpty())"
+            service shouldContain "ContextCaptureState.requestCapture(packageName)"
+            service shouldContain "awaitLangouContextSnapshot(packageName)"
+            service shouldContain "withTimeoutOrNull(LANGOU_CONTEXT_CAPTURE_TIMEOUT_MS)"
+            service shouldContain "LANGOU_CONTEXT_CAPTURE_TIMEOUT_MS = 5_000L"
+            service shouldContain "Langou context unavailable package=%s"
         }
     })

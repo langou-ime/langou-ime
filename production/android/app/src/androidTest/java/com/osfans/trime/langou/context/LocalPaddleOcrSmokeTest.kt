@@ -37,6 +37,7 @@ class LocalPaddleOcrSmokeTest {
             }
             val ocr = LocalPaddleOcr(context)
             try {
+                ocr.prepare()
                 assertNotNull(ocr.recognize(bitmap))
             } finally {
                 ocr.release()

@@ -8,6 +8,11 @@ package com.osfans.trime.langou.context
 import com.osfans.trime.langou.memory.IdentityConfidence
 import io.kotest.core.spec.style.StringSpec
 import io.kotest.matchers.shouldBe
+import kotlinx.coroutines.CoroutineStart
+import kotlinx.coroutines.async
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.withTimeout
 
 class ContextSnapshotStoreTest :
     StringSpec({
@@ -49,5 +54,20 @@ class ContextSnapshotStoreTest :
 
             ContextSnapshotStore.snapshots.replayCache.single() shouldBe null
             ContextCaptureState.isActive("com.tencent.mobileqq") shouldBe true
+        }
+
+        "requests a fresh capture when the same chat app remains active" {
+            ContextCaptureState.activate("com.tencent.mm")
+
+            runBlocking {
+                val requestedPackage =
+                    async(start = CoroutineStart.UNDISPATCHED) {
+                        withTimeout(1_000) { ContextCaptureState.captureRequests.first() }
+                    }
+
+                ContextCaptureState.requestCapture("com.tencent.mm") shouldBe true
+                requestedPackage.await() shouldBe "com.tencent.mm"
+                ContextCaptureState.requestCapture("com.tencent.mobileqq") shouldBe false
+            }
         }
     })

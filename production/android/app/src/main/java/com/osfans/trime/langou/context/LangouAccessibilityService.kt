@@ -39,16 +39,23 @@ class LangouAccessibilityService : AccessibilityService() {
 
     override fun onCreate() {
         super.onCreate()
+        serviceScope.launch(Dispatchers.Default) {
+            runCatching { localOcr.prepare() }
+                .onFailure { failure ->
+                    Timber.w("Local OCR warm-up unavailable: ${failure.javaClass.simpleName}")
+                }
+        }
         serviceScope.launch {
             ContextCaptureState.activePackages.collect { packageName ->
                 if (packageName == null) {
                     ContextSnapshotStore.clear()
                 } else {
-                    findChatRoot(packageName)?.let { root ->
-                        captureVisibleContext(root, packageName)
-                    }
+                    captureCurrentContext(packageName)
                 }
             }
+        }
+        serviceScope.launch {
+            ContextCaptureState.captureRequests.collect(::captureCurrentContext)
         }
     }
 
@@ -200,6 +207,13 @@ class LangouAccessibilityService : AccessibilityService() {
             .firstOrNull { it.belongsToTarget() }
             ?.let { return it }
         return fallback?.takeIf { it.belongsToTarget() }
+    }
+
+    private fun captureCurrentContext(packageName: String) {
+        if (!ContextCaptureState.isActive(packageName)) return
+        findChatRoot(packageName)?.let { root ->
+            captureVisibleContext(root, packageName)
+        }
     }
 
     override fun onInterrupt() {

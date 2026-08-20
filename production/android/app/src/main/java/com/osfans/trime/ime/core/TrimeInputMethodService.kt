@@ -61,6 +61,7 @@ import com.osfans.trime.langou.ai.SuggestionTrigger
 import com.osfans.trime.langou.context.ContextAccessSettings
 import com.osfans.trime.langou.context.ContextCaptureState
 import com.osfans.trime.langou.context.ContextPermissionStatus
+import com.osfans.trime.langou.context.ChatContextSnapshot
 import com.osfans.trime.langou.context.ContextSnapshotStore
 import com.osfans.trime.langou.context.stableSignature
 import com.osfans.trime.langou.memory.ConversationIdentity
@@ -89,8 +90,11 @@ import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.channels.consumeEach
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.distinctUntilChangedBy
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import kotlinx.coroutines.withTimeoutOrNull
 import splitties.bitflags.hasFlag
 import splitties.systemservices.clipboardManager
 import splitties.systemservices.inputMethodManager
@@ -771,12 +775,23 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         if (ContextSnapshotStore.get(packageName) == null) {
             Timber.i("Langou suggestions waiting reason=context_loading package=%s", packageName)
             inputView?.showAiContextLoading(preserveExistingSuggestions = debugAiSuggestions.isNotEmpty())
+            ContextCaptureState.requestCapture(packageName)
         }
 
         langouSuggestionJob =
             lifecycleScope.launch {
                 delay(LANGOU_SUGGESTION_DEBOUNCE_MS)
-                val snapshot = ContextSnapshotStore.get(packageName) ?: return@launch
+                val snapshot = awaitLangouContextSnapshot(packageName)
+                if (snapshot == null) {
+                    Timber.w("Langou context unavailable package=%s", packageName)
+                    inputView?.showAiRetry {
+                        scheduleLangouSuggestions(
+                            currentInputEditorInfo,
+                            SuggestionTrigger.ManualRefresh,
+                        )
+                    }
+                    return@launch
+                }
                 val identity =
                     langouIdentityResolver.resolve(
                         application = application,
@@ -938,6 +953,19 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
                     langouSuggestionGate.complete(identity.id, context, requestSucceeded)
                 }
             }
+    }
+
+    private suspend fun awaitLangouContextSnapshot(packageName: String): ChatContextSnapshot? {
+        ContextSnapshotStore.get(packageName)?.let { return it }
+        ContextCaptureState.requestCapture(packageName)
+        return withTimeoutOrNull(LANGOU_CONTEXT_CAPTURE_TIMEOUT_MS) {
+            ContextSnapshotStore.snapshots
+                .filterNotNull()
+                .first { snapshot ->
+                    snapshot.packageName == packageName &&
+                        ContextSnapshotStore.get(packageName) == snapshot
+                }
+        }
     }
 
     private fun resolveActiveConversationIdentity(
@@ -1473,6 +1501,7 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         fun debugAiSuggestionTexts(): List<String> = activeInstance?.debugAiSuggestionTexts.orEmpty()
 
         const val LANGOU_SUGGESTION_DEBOUNCE_MS = 80L
+        const val LANGOU_CONTEXT_CAPTURE_TIMEOUT_MS = 5_000L
         const val MAX_LANGOU_TURNS = 12
         const val MAX_LANGOU_MEMORY_TURNS = 100
         const val LANGOU_MEMORY_RETENTION_MILLIS = 30L * 24L * 60L * 60L * 1_000L
