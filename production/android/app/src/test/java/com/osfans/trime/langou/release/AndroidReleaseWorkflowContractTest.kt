@@ -111,6 +111,41 @@ class AndroidReleaseWorkflowContractTest :
             }
         }
 
+        "unified Android workflows cache and verify pinned Boost before Gradle" {
+            val monorepoRoot = locateMonorepoRoot()
+            val prepareScript = File(monorepoRoot, ".github/scripts/prepare-android-boost.sh")
+
+            prepareScript.isFile shouldBe true
+            val script = prepareScript.readText()
+            script shouldContain "BOOST_VERSION=1.89.0"
+            script shouldContain
+                "BOOST_SHA256=67acec02d0d118b5de9eb441f5fb707b3a1cdd884be00ca24b9a73c995511f74"
+            script shouldContain "--retry 8"
+            script shouldContain "--retry-all-errors"
+            script shouldContain "command -v sha256sum"
+            script shouldContain "shasum -a 256"
+            script shouldContain "calculate_sha256"
+
+            val workflows =
+                mapOf(
+                    "ci.yml" to "testDebugUnitTest assembleDebug",
+                    "android-rc.yml" to "testReleaseUnitTest lintRelease assembleRelease",
+                    "release.yml" to "testReleaseUnitTest lintRelease assembleRelease",
+                )
+            workflows.forEach { (filename, gradleCommand) ->
+                val workflow = File(monorepoRoot, ".github/workflows/$filename").readText()
+                workflow shouldContain "Cache pinned Android Boost source"
+                workflow shouldContain
+                    "actions/cache@caa296126883cff596d87d8935842f9db880ef25"
+                workflow shouldContain "Prepare pinned Android Boost source"
+                workflow shouldContain ".github/scripts/prepare-android-boost.sh"
+                check(
+                    workflow.indexOf("Prepare pinned Android Boost source") <
+                        workflow.indexOf(gradleCommand),
+                )
+            }
+        }
+
         "lint report models wait for generated assets" {
             val buildScript = File(repositoryRoot, "app/build.gradle.kts").readText()
             buildScript shouldContain

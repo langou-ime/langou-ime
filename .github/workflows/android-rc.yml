@@ -61,6 +61,15 @@ jobs:
       - name: Install native build tools
         run: sdkmanager --install "cmake;3.31.6" "build-tools;$ANDROID_BUILD_TOOLS_VERSION"
 
+      - name: Cache pinned Android Boost source
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: production/android/app/boost-1.89.0.tar.xz
+          key: android-boost-1.89.0-cmake-67acec02d0d118b5de9eb441f5fb707b3a1cdd884be00ca24b9a73c995511f74
+
+      - name: Prepare pinned Android Boost source
+        run: .github/scripts/prepare-android-boost.sh
+
       - name: Prepare ephemeral signing configuration
         working-directory: production/android
         shell: bash
