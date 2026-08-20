@@ -22,8 +22,8 @@ class Settings(BaseSettings):
     phone_key: str | None = None
     mimo_api_base: AnyHttpUrl | None = None
     mimo_api_key: str | None = None
-    mimo_primary_model: str = "mimo-v2.5-pro"
-    mimo_fallback_model: str = "mimo-v2.5"
+    mimo_primary_model: str = "mimo-v2.5"
+    mimo_fallback_model: str = "mimo-v2.5-pro"
     mimo_first_suggestion_timeout_seconds: float = Field(default=3.2, gt=0.1, le=10.0)
     mimo_fallback_hedge_seconds: float = Field(default=0.8, ge=0.0, le=5.0)
     ai_per_minute_limit: int = Field(default=20, ge=1, le=300)

@@ -57,7 +57,8 @@ class LangouAccessibilityService : AccessibilityService() {
         val packageName = ContextCaptureState.activePackages.value ?: return
         // The IME creates its own accessibility window. Ignore those events and keep the chat
         // snapshot instead of clearing it as soon as the keyboard becomes visible.
-        val root = findChatRoot(packageName, event?.source) ?: return
+        if (!eventBelongsToActiveApp(event.packageName, packageName)) return
+        val root = findChatRoot(packageName, event.source) ?: return
         if (!beginAccessibilityCapture()) return
         captureVisibleContext(root, packageName)
     }
@@ -406,7 +407,7 @@ class LangouAccessibilityService : AccessibilityService() {
         const val MAX_SCREEN_LABEL_CHARACTERS = 4_000
         const val MIN_ACCESSIBILITY_TURNS = 2
         const val ACCESSIBILITY_CAPTURE_THROTTLE_MILLIS = 120L
-        const val OCR_THROTTLE_MILLIS = 800L
+        const val OCR_THROTTLE_MILLIS = 8_000L
         const val CHAT_CONTENT_START_RATIO = 0.18
     }
 }

@@ -51,5 +51,5 @@ def test_production_config_accepts_secret_only_runtime_values() -> None:
 
     settings = config.Settings(**production_values())
 
-    assert settings.mimo_primary_model == "mimo-v2.5-pro"
-    assert settings.mimo_fallback_model == "mimo-v2.5"
+    assert settings.mimo_primary_model == "mimo-v2.5"
+    assert settings.mimo_fallback_model == "mimo-v2.5-pro"

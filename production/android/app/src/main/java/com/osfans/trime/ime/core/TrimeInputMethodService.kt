@@ -729,6 +729,10 @@ open class TrimeInputMethodService : LifecycleInputMethodService() {
         info: EditorInfo? = currentInputEditorInfo,
         trigger: SuggestionTrigger = SuggestionTrigger.ContextChange,
     ) {
+        if (trigger == SuggestionTrigger.ContextChange && langouSuggestionJob?.isActive == true) {
+            Timber.i("Langou suggestions skipped reason=request_in_flight")
+            return
+        }
         langouSuggestionJob?.cancel()
         if (!langouSettings.getBoolean(LangouPreferences.AI_AUTO_SUGGEST, true)) {
             Timber.i("Langou suggestions skipped reason=disabled")
