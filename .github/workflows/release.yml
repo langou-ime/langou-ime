@@ -81,6 +81,22 @@ jobs:
             > keystore.properties
           chmod 600 keystore.properties
 
+      - name: Verify Android signing credentials before build
+        working-directory: production/android
+        shell: bash
+        run: |
+          signing_probe_dir="$RUNNER_TEMP/langou-signing-probe"
+          install -d -m 0700 "$signing_probe_dir"
+          printf '%s' "$ANDROID_KEYSTORE_BASE64" | base64 --decode \
+            > "$signing_probe_dir/release.jks"
+          chmod 0600 "$signing_probe_dir/release.jks"
+          cp gradle/wrapper/gradle-wrapper.jar "$signing_probe_dir/probe.jar"
+          jarsigner -keystore "$signing_probe_dir/release.jks" \
+            -storepass:env ANDROID_KEYSTORE_PASSWORD \
+            -keypass:env ANDROID_KEY_PASSWORD \
+            "$signing_probe_dir/probe.jar" "$ANDROID_KEY_ALIAS"
+          jarsigner -verify "$signing_probe_dir/probe.jar"
+
       - name: Test, lint, shrink, and sign Android release
         working-directory: production/android
         run: ./gradlew testReleaseUnitTest lintRelease assembleRelease --stacktrace

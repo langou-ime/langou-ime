@@ -93,6 +93,24 @@ class AndroidReleaseWorkflowContractTest :
                 "LANGOU_RELEASE_PUBLIC_KEY_BASE64: \"NL+5JaOJjU8FhrLZueXoqi7XNagy6K0xe9etWtUvPQY=\""
         }
 
+        "unified signed workflows verify the private key password before expensive builds" {
+            val workflows =
+                listOf("android-rc.yml", "release.yml").map {
+                    File(locateMonorepoRoot(), ".github/workflows/$it").readText()
+                }
+
+            workflows.forEach { workflow ->
+                workflow shouldContain "Verify Android signing credentials before build"
+                workflow shouldContain "jarsigner -keystore"
+                workflow shouldContain "-storepass:env ANDROID_KEYSTORE_PASSWORD"
+                workflow shouldContain "-keypass:env ANDROID_KEY_PASSWORD"
+                check(
+                    workflow.indexOf("Verify Android signing credentials before build") <
+                        workflow.indexOf("testReleaseUnitTest lintRelease assembleRelease"),
+                )
+            }
+        }
+
         "lint report models wait for generated assets" {
             val buildScript = File(repositoryRoot, "app/build.gradle.kts").readText()
             buildScript shouldContain
