@@ -224,9 +224,16 @@ jobs:
           call install_boost.bat
           if errorlevel 1 exit /b 1
 
-      - name: Fetch pinned librime binaries
+      - name: Cache pinned Windows librime archives
+        uses: actions/cache@caa296126883cff596d87d8935842f9db880ef25 # v5
+        with:
+          path: production/windows/deps/librime-1.13.1
+          key: windows-librime-1.13.1-msvc-05fcf8cc-22cb6288-3ede059e-v1
+
+      - name: Prepare pinned Windows librime binaries
+        working-directory: ${{ github.workspace }}
         shell: pwsh
-        run: .\get-rime.ps1 -tag 1.13.1 -use dev
+        run: ./.github/scripts/prepare-windows-librime.ps1
 
       - name: Compile and run native bridge parser test
         shell: cmd

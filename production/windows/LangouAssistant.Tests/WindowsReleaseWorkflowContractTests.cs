@@ -101,6 +101,47 @@ public sealed class WindowsReleaseWorkflowContractTests
     }
 
     [Fact]
+    public void Unified_workflows_use_hash_pinned_librime_assets_without_the_release_api()
+    {
+        var root = MonorepoRoot();
+        var prepareScript = File.ReadAllText(
+            Path.Combine(root, ".github", "scripts", "prepare-windows-librime.ps1"));
+
+        Assert.Contains("1.13.1", prepareScript, StringComparison.Ordinal);
+        Assert.Contains("rime-1c23358-Windows-msvc-x64.7z", prepareScript, StringComparison.Ordinal);
+        Assert.Contains("rime-1c23358-Windows-msvc-x86.7z", prepareScript, StringComparison.Ordinal);
+        Assert.Contains(
+            "05fcf8cc2d058a0186dd9f04d6e021ad41687db50dc81e85cf655dfabfdf0009",
+            prepareScript,
+            StringComparison.Ordinal);
+        Assert.Contains(
+            "22cb6288a5b30fd47e63ea56a5e0620c7198dbb178570da148cc33e4b589147f",
+            prepareScript,
+            StringComparison.Ordinal);
+        Assert.Contains("Get-FileHash", prepareScript, StringComparison.Ordinal);
+        Assert.Contains("MaximumAttempts", prepareScript, StringComparison.Ordinal);
+        Assert.Contains("rime_api.h", prepareScript, StringComparison.Ordinal);
+        Assert.Contains("rime_levers_api.h", prepareScript, StringComparison.Ordinal);
+        Assert.Contains("TSCharacters.ocd2", prepareScript, StringComparison.Ordinal);
+
+        foreach (var workflowName in new[] { "ci.yml", "release.yml" })
+        {
+            var workflow = File.ReadAllText(Path.Combine(root, ".github", "workflows", workflowName));
+            Assert.Contains("Cache pinned Windows librime archives", workflow, StringComparison.Ordinal);
+            Assert.Contains(
+                "actions/cache@caa296126883cff596d87d8935842f9db880ef25",
+                workflow,
+                StringComparison.Ordinal);
+            Assert.Contains("Prepare pinned Windows librime binaries", workflow, StringComparison.Ordinal);
+            Assert.Contains(
+                ".github/scripts/prepare-windows-librime.ps1",
+                workflow,
+                StringComparison.Ordinal);
+            Assert.DoesNotContain("get-rime.ps1 -tag 1.13.1", workflow, StringComparison.Ordinal);
+        }
+    }
+
+    [Fact]
     public void Pull_request_branches_are_not_built_twice()
     {
         var workflow = File.ReadAllText(CiSourcePath());
@@ -116,4 +157,19 @@ public sealed class WindowsReleaseWorkflowContractTests
 
     private static string CiSourcePath() =>
         Path.Combine(AppContext.BaseDirectory, "Workflows", "langou-windows-ci.yml");
+
+    private static string MonorepoRoot()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+        while (directory is not null)
+        {
+            if (File.Exists(Path.Combine(directory.FullName, ".github", "workflows", "ci.yml")))
+            {
+                return directory.FullName;
+            }
+            directory = directory.Parent;
+        }
+
+        throw new DirectoryNotFoundException("Langou monorepo root was not found.");
+    }
 }
